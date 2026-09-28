@@ -1,0 +1,39 @@
+{
+  "param_rmse": {
+    "kappa_s": 0.40048401290050484,
+    "theta_s": 0.03311105351528086,
+    "sigma_s": 0.09033800905542004,
+    "rho_s": 0.22555397542584357,
+    "v0_s": 0.021432739047269465,
+    "kappa_f": 1.4828274507124757,
+    "theta_f": 0.021687617186344044,
+    "sigma_f": 0.1609220744206636,
+    "rho_f": 0.22879186572930155,
+    "v0_f": 0.023870293953902347
+  },
+  "param_skill": {
+    "kappa_s": 0.9489512587631838,
+    "theta_s": 0.9089832132399116,
+    "sigma_s": 0.9084532051429492,
+    "rho_s": 0.7949166215443129,
+    "v0_s": 0.4695972196184255,
+    "kappa_f": 0.9372880880137723,
+    "theta_f": 0.742186709655053,
+    "sigma_f": 0.8332339133713035,
+    "rho_f": 0.8067796522605123,
+    "v0_f": 0.6567785635652214
+  },
+  "mean_skill": 0.8007168445174646,
+  "standardized_parameter_rmse": 0.8130400050704156,
+  "constraint_validity": {
+    "constraint_validity_rate": 1.0,
+    "positivity_violation_rate": 0.0,
+    "ordering_violation_rate": 0.0,
+    "slow_feller_violation_rate": 0.0,
+    "fast_feller_violation_rate": 0.0,
+    "correlation_disk_violation_rate": 0.0
+  },
+  "rmse": 0.4999037631971,
+  "mae": 0.21022816261376856,
+  "test_samples": 1500
+}

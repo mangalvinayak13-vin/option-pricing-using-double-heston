@@ -106,6 +106,9 @@ class DoubleHestonWebIntegration:
             },
             'parameter_recovery': metrics.get('param_rmse', {}),
             'parameter_mae': metrics.get('param_mae', {}),
+            'parameter_skill': metrics.get('param_skill', {}),
+            'mean_skill': metrics.get('mean_skill'),
+            'constraint_validity': metrics.get('constraint_validity', {}),
         }
 
     def get_parameter_names(self) -> List[str]:
