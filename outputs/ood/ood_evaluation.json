@@ -1,0 +1,45 @@
+{
+  "checkpoint": "Model_2_canonical_latent_checkpoint.pt",
+  "interior_reference_skill": 0.801,
+  "cohorts": [
+    {
+      "cohort": "boundary_challenge",
+      "surfaces": 800,
+      "pricing_failures": 0,
+      "mean_skill": 0.916400886131683,
+      "param_skill": {
+        "kappa_s": 1.0691503042203516,
+        "theta_s": 1.0258915739201566,
+        "sigma_s": 1.0479234832228241,
+        "rho_s": 0.8978965496078163,
+        "v0_s": 0.5756092634243674,
+        "kappa_f": 1.0839716375688393,
+        "theta_f": 0.8843898482036199,
+        "sigma_f": 0.9823357124940957,
+        "rho_f": 0.818497126622417,
+        "v0_f": 0.7783433620323424
+      },
+      "evaluation_only": true
+    },
+    {
+      "cohort": "ood_test",
+      "surfaces": 800,
+      "pricing_failures": 0,
+      "mean_skill": 2.091931527453916,
+      "param_skill": {
+        "kappa_s": 1.0782982758615849,
+        "theta_s": 1.023415826167755,
+        "sigma_s": 0.9976782476327758,
+        "rho_s": 0.9044785385224346,
+        "v0_s": 0.5514347798430257,
+        "kappa_f": 12.900792620271094,
+        "theta_f": 0.8446085365671464,
+        "sigma_f": 1.0482885242213102,
+        "rho_f": 0.7817437455991479,
+        "v0_f": 0.7885761798528865
+      },
+      "evaluation_only": true
+    }
+  ],
+  "note": "Both cohorts are evaluation-only by the reviewed sampling contract. Surfaces use the unchanged production pricer on the frozen dataset's own conditioning lattice, so only the parameters differ from training."
+}

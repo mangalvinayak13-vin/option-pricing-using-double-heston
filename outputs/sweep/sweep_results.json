@@ -1,0 +1,525 @@
+{
+  "configurations": 36,
+  "best_skill": 0.7822452202090245,
+  "worst_skill": 0.8283160739743739,
+  "median_skill": 0.7926429680779823,
+  "spread": 0.04607085376534936,
+  "best_config": {
+    "architecture": "deep_5x256",
+    "hidden": [
+      256,
+      256,
+      256,
+      256,
+      256
+    ],
+    "lr": 0.0003,
+    "dropout": 0.0,
+    "batch": 128,
+    "mean_skill": 0.7822452202090245,
+    "best_val_loss": 0.09807171640396119,
+    "parameters": 272138
+  },
+  "results": [
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7838152171945028,
+      "best_val_loss": 0.09975898885726929,
+      "parameters": 6410
+    },
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.786755434893988,
+      "best_val_loss": 0.0986360533952713,
+      "parameters": 6410
+    },
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7901107834732116,
+      "best_val_loss": 0.10025623419284821,
+      "parameters": 6410
+    },
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7923289807230579,
+      "best_val_loss": 0.10046216642856598,
+      "parameters": 6410
+    },
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.8264623608581767,
+      "best_val_loss": 0.10804048669338226,
+      "parameters": 6410
+    },
+    {
+      "architecture": "tiny_2x64",
+      "hidden": [
+        64,
+        64
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.8283160739743739,
+      "best_val_loss": 0.10854024200439454,
+      "parameters": 6410
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7904345216239971,
+      "best_val_loss": 0.09995379214286804,
+      "parameters": 21002
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7842863212925206,
+      "best_val_loss": 0.09874313652515411,
+      "parameters": 21002
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7870260476219533,
+      "best_val_loss": 0.1003473729133606,
+      "parameters": 21002
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.784642147613122,
+      "best_val_loss": 0.09843006975650788,
+      "parameters": 21002
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.8064795163976181,
+      "best_val_loss": 0.10361488139629364,
+      "parameters": 21002
+    },
+    {
+      "architecture": "small_2x128",
+      "hidden": [
+        128,
+        128
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.8047332057293677,
+      "best_val_loss": 0.1033682744026184,
+      "parameters": 21002
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.8026400692576189,
+      "best_val_loss": 0.10177942836284637,
+      "parameters": 140554
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.8051228005172717,
+      "best_val_loss": 0.10216148262023926,
+      "parameters": 140554
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7891535469624223,
+      "best_val_loss": 0.1002234961271286,
+      "parameters": 140554
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7929569554329066,
+      "best_val_loss": 0.10027892167568207,
+      "parameters": 140554
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7871739074665687,
+      "best_val_loss": 0.10001362631320954,
+      "parameters": 140554
+    },
+    {
+      "architecture": "base_3x256",
+      "hidden": [
+        256,
+        256,
+        256
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7873651416680053,
+      "best_val_loss": 0.09976586215496064,
+      "parameters": 140554
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.8025670650120444,
+      "best_val_loss": 0.10174045095443726,
+      "parameters": 543242
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.8040262832332002,
+      "best_val_loss": 0.10162520060539246,
+      "parameters": 543242
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7919207956033477,
+      "best_val_loss": 0.1011431580066681,
+      "parameters": 543242
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7995065080031519,
+      "best_val_loss": 0.1010651379585266,
+      "parameters": 543242
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.790076101071605,
+      "best_val_loss": 0.10055770525932312,
+      "parameters": 543242
+    },
+    {
+      "architecture": "wide_3x512",
+      "hidden": [
+        512,
+        512,
+        512
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7922416428338904,
+      "best_val_loss": 0.10079917180538177,
+      "parameters": 543242
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.807237150153561,
+      "best_val_loss": 0.10219271261692048,
+      "parameters": 272138
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.8076892069296324,
+      "best_val_loss": 0.10405271575450897,
+      "parameters": 272138
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7889032499525095,
+      "best_val_loss": 0.09952556266784668,
+      "parameters": 272138
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7911331296027444,
+      "best_val_loss": 0.09971780352592469,
+      "parameters": 272138
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7822452202090245,
+      "best_val_loss": 0.09807171640396119,
+      "parameters": 272138
+    },
+    {
+      "architecture": "deep_5x256",
+      "hidden": [
+        256,
+        256,
+        256,
+        256,
+        256
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7879158665845007,
+      "best_val_loss": 0.09936331963539123,
+      "parameters": 272138
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.797681806819049,
+      "best_val_loss": 0.10082005655765533,
+      "parameters": 1085450
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.796553516481558,
+      "best_val_loss": 0.10033637773990631,
+      "parameters": 1085450
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.001,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7951033635435616,
+      "best_val_loss": 0.10176468758583068,
+      "parameters": 1085450
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.001,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7937567307891873,
+      "best_val_loss": 0.10098106682300567,
+      "parameters": 1085450
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.0003,
+      "dropout": 0.0,
+      "batch": 128,
+      "mean_skill": 0.7949839931710133,
+      "best_val_loss": 0.10194128286838532,
+      "parameters": 1085450
+    },
+    {
+      "architecture": "very_wide_2x1024",
+      "hidden": [
+        1024,
+        1024
+      ],
+      "lr": 0.0003,
+      "dropout": 0.1,
+      "batch": 128,
+      "mean_skill": 0.7944054969187574,
+      "best_val_loss": 0.10126713075637818,
+      "parameters": 1085450
+    }
+  ],
+  "latent": false,
+  "epochs": 150
+}

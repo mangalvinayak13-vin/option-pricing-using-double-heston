@@ -52,6 +52,9 @@ local_settings.*
 # Generated research datasets and binary arrays
 data/raw/
 market_data_audit/stage_a/
+# G8 held-out bhavcopy, same convention as stage_a: raw NSE files stay out of git
+# and are re-fetched with `python -m src.nse_bhavcopy_fetch` / `src.g8_evaluation`.
+market_data_audit/g8/
 data/synthetic/*
 !data/synthetic/.gitkeep
 data/processed/*
