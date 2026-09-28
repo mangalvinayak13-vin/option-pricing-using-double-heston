@@ -1,0 +1,65 @@
+{
+  "note": "Multiplicative gaussian noise on test prices; models NOT retrained.",
+  "levels": [
+    0.0,
+    0.001,
+    0.005,
+    0.01,
+    0.02,
+    0.05
+  ],
+  "results": {
+    "Model_1_direct": [
+      {
+        "noise": 0.0,
+        "mean_skill": 0.7962356403882125
+      },
+      {
+        "noise": 0.001,
+        "mean_skill": 0.7965922393274251
+      },
+      {
+        "noise": 0.005,
+        "mean_skill": 0.8049397867730754
+      },
+      {
+        "noise": 0.01,
+        "mean_skill": 0.831843915256672
+      },
+      {
+        "noise": 0.02,
+        "mean_skill": 0.9080253916548798
+      },
+      {
+        "noise": 0.05,
+        "mean_skill": 1.238679231202089
+      }
+    ],
+    "Model_2_canonical_latent": [
+      {
+        "noise": 0.0,
+        "mean_skill": 0.8007168445174646
+      },
+      {
+        "noise": 0.001,
+        "mean_skill": 0.8010503167833178
+      },
+      {
+        "noise": 0.005,
+        "mean_skill": 0.8112579274666748
+      },
+      {
+        "noise": 0.01,
+        "mean_skill": 0.8346332004525205
+      },
+      {
+        "noise": 0.02,
+        "mean_skill": 0.9169862007947799
+      },
+      {
+        "noise": 0.05,
+        "mean_skill": 1.3185856216400003
+      }
+    ]
+  }
+}

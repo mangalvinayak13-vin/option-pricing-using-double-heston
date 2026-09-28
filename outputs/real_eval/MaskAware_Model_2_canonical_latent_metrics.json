@@ -1,0 +1,121 @@
+{
+  "tag": "MaskAware_Model_2_canonical_latent",
+  "inputs": 44,
+  "synthetic_mean_skill": 0.9165812099700219,
+  "synthetic_param_skill": {
+    "kappa_s": 1.018868215834287,
+    "theta_s": 0.96825864150423,
+    "sigma_s": 0.9922097891892343,
+    "rho_s": 1.000096693572671,
+    "v0_s": 0.527799329373352,
+    "kappa_f": 1.0005826233656945,
+    "theta_f": 0.9406612843414272,
+    "sigma_f": 0.9342977110093308,
+    "rho_f": 1.0024044706456932,
+    "v0_f": 0.7806333408642976
+  },
+  "synthetic_test_samples": 1500,
+  "real_market": [
+    {
+      "date_id": "2026-07-01",
+      "usable_slots": 11,
+      "repricing_rmse_normalized": 0.00480101870058247,
+      "repricing_rmse_relative": 0.15843361711922152,
+      "priced": true,
+      "parameters_valid": true,
+      "parameters": {
+        "kappa_s": 0.753710401147054,
+        "theta_s": 0.06458352294184191,
+        "sigma_s": 0.15408822538580663,
+        "rho_s": -0.17914541272704712,
+        "v0_s": 0.03600047493460412,
+        "kappa_f": 3.4578412134273924,
+        "theta_f": 0.034428311529134496,
+        "sigma_f": 0.26687313767803766,
+        "rho_f": -0.006569299648609373,
+        "v0_f": 0.028608747432576603
+      }
+    },
+    {
+      "date_id": "2026-07-08",
+      "usable_slots": 18,
+      "repricing_rmse_normalized": 0.005787917186830065,
+      "repricing_rmse_relative": 0.17511902152257214,
+      "priced": true,
+      "parameters_valid": true,
+      "parameters": {
+        "kappa_s": 0.7682688418608166,
+        "theta_s": 0.07065056021827686,
+        "sigma_s": 0.17461823067155616,
+        "rho_s": -0.25392219253732146,
+        "v0_s": 0.03467155033190174,
+        "kappa_f": 3.7084521427619337,
+        "theta_f": 0.033447863120258964,
+        "sigma_f": 0.266413216910291,
+        "rho_f": -0.06207097543744479,
+        "v0_f": 0.03493967891406355
+      }
+    },
+    {
+      "date_id": "2026-07-15",
+      "usable_slots": 19,
+      "repricing_rmse_normalized": 0.002908363856617082,
+      "repricing_rmse_relative": 0.09316233432800858,
+      "priced": true,
+      "parameters_valid": true,
+      "parameters": {
+        "kappa_s": 0.8855154197182951,
+        "theta_s": 0.06857054056266024,
+        "sigma_s": 0.1862182371030091,
+        "rho_s": -0.24584885159955605,
+        "v0_s": 0.031912268447383145,
+        "kappa_f": 3.57579645058039,
+        "theta_f": 0.03416679774756952,
+        "sigma_f": 0.2661631295356815,
+        "rho_f": -0.08873583073116569,
+        "v0_f": 0.028285856251058943
+      }
+    },
+    {
+      "date_id": "2026-07-22",
+      "usable_slots": 18,
+      "repricing_rmse_normalized": 0.00308003027207096,
+      "repricing_rmse_relative": 0.12065762798196637,
+      "priced": true,
+      "parameters_valid": true,
+      "parameters": {
+        "kappa_s": 0.7464667376106298,
+        "theta_s": 0.06308590343999622,
+        "sigma_s": 0.15949350286983147,
+        "rho_s": -0.24476602566202707,
+        "v0_s": 0.030885700944350173,
+        "kappa_f": 3.4909162932557045,
+        "theta_f": 0.03053192235301021,
+        "sigma_f": 0.2534211239724088,
+        "rho_f": -0.028471155683755085,
+        "v0_f": 0.030691110557550288
+      }
+    },
+    {
+      "date_id": "2026-07-29",
+      "usable_slots": 12,
+      "repricing_rmse_normalized": 0.004505145922499288,
+      "repricing_rmse_relative": 0.1355984774920925,
+      "priced": true,
+      "parameters_valid": true,
+      "parameters": {
+        "kappa_s": 0.7593949342664275,
+        "theta_s": 0.07270670070537284,
+        "sigma_s": 0.17613888168351663,
+        "rho_s": -0.2508026484175254,
+        "v0_s": 0.03596832010173055,
+        "kappa_f": 3.6275342335778142,
+        "theta_f": 0.03579615561403096,
+        "sigma_f": 0.27017975164267316,
+        "rho_f": -0.08458410072065177,
+        "v0_f": 0.026602924995337934
+      }
+    }
+  ],
+  "real_market_caveat": "Repricing only. NTPC's true parameters are unknown, so parameter recovery is undefined on real data. Good repricing does not imply recovery."
+}
