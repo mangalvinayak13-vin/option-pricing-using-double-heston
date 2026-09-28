@@ -27,18 +27,13 @@ class DoubleHestonWebIntegration:
 
     def _load_model_results(self):
         """Load model training results."""
-        for model_dir in self.results_dir.glob("Model_*"):
-            model_name = model_dir.name
+        for metrics_file in sorted(self.results_dir.glob("*_metrics.json")):
+            model_name = metrics_file.name[: -len("_metrics.json")]
 
-            # Load metrics
-            metrics_file = self.results_dir / f"{model_name}_metrics.json"
             history_file = self.results_dir / f"{model_name}_history.json"
 
-            if metrics_file.exists():
-                with open(metrics_file) as f:
-                    metrics = json.load(f)
-            else:
-                metrics = {}
+            with open(metrics_file) as f:
+                metrics = json.load(f)
 
             if history_file.exists():
                 with open(history_file) as f:
@@ -71,6 +66,8 @@ class DoubleHestonWebIntegration:
                     'rmse': metrics.get('rmse', None),
                     'mae': metrics.get('mae', None),
                     'mse': metrics.get('mse', None),
+                    'mean_skill': metrics.get('mean_skill', None),
+                    'param_skill': metrics.get('param_skill', {}),
                     'test_samples': metrics.get('test_samples', 0),
                 })
 

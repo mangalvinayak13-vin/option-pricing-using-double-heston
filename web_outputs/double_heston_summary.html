@@ -1,0 +1,39 @@
+<div class='double-heston-results'>
+<h2>Double Heston Inverse Calibration</h2>
+<p>Training on 10,000 frozen synthetic surfaces from R2 representation</p>
+<h3>Model Comparison</h3>
+<table style='width: 100%;'>
+<tr><th>Model</th><th>RMSE</th><th>MAE</th><th>Test Samples</th></tr>
+<tr><td>Model_1_ANN</td><td>0.510604</td><td>0.221291</td><td>1500</td></tr>
+<tr><td>Model_2_Constraint</td><td>0.517480</td><td>0.224295</td><td>1500</td></tr>
+</table>
+<h3>Parameter Recovery Accuracy (RMSE)</h3>
+<h4>Model_1_ANN</h4>
+<table style='width: 100%;'>
+<tr><th>Parameter</th><th>RMSE</th></tr>
+<tr><td>κ_slow (mean reversion)</td><td>0.408157</td></tr>
+<tr><td>θ_slow (long-term vol)</td><td>0.034846</td></tr>
+<tr><td>σ_slow (volatility)</td><td>0.094766</td></tr>
+<tr><td>ρ_slow (correlation)</td><td>0.239967</td></tr>
+<tr><td>V₀_slow (initial var)</td><td>0.034407</td></tr>
+<tr><td>κ_fast (mean reversion)</td><td>1.510279</td></tr>
+<tr><td>θ_fast (long-term vol)</td><td>0.026678</td></tr>
+<tr><td>σ_fast (volatility)</td><td>0.175310</td></tr>
+<tr><td>ρ_fast (correlation)</td><td>0.241327</td></tr>
+<tr><td>V₀_fast (initial var)</td><td>0.031288</td></tr>
+</table>
+<h4>Model_2_Constraint</h4>
+<table style='width: 100%;'>
+<tr><th>Parameter</th><th>RMSE</th></tr>
+<tr><td>κ_slow (mean reversion)</td><td>0.412052</td></tr>
+<tr><td>θ_slow (long-term vol)</td><td>0.035211</td></tr>
+<tr><td>σ_slow (volatility)</td><td>0.095391</td></tr>
+<tr><td>ρ_slow (correlation)</td><td>0.233870</td></tr>
+<tr><td>V₀_slow (initial var)</td><td>0.040332</td></tr>
+<tr><td>κ_fast (mean reversion)</td><td>1.533032</td></tr>
+<tr><td>θ_fast (long-term vol)</td><td>0.027452</td></tr>
+<tr><td>σ_fast (volatility)</td><td>0.181791</td></tr>
+<tr><td>ρ_fast (correlation)</td><td>0.237324</td></tr>
+<tr><td>V₀_fast (initial var)</td><td>0.033065</td></tr>
+</table>
+</div>

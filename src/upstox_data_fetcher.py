@@ -1,6 +1,18 @@
 """
 Upstox API wrapper for fetching NSE option chain data.
 Integrates with Physics Project SEM 1 API credentials.
+
+STATUS: INCOMPLETE SCAFFOLD -- DOES NOT YET FETCH HISTORICAL DATA.
+
+`fetch_nse_option_data` currently returns empty DataFrames: it builds an empty
+`records` list and never populates it. Nothing in this repository has been
+trained or evaluated on real NSE data.
+
+Upstox's REST API serves live/recent quotes, not a 10-year option-chain
+history, so multi-year history needs a different source (paid vendor feed or
+NSE bhavcopy archives, which the main project already parses under
+`market_data_audit/`). Do not present output of this module as real-market
+evidence until it is finished.
 """
 
 import os
@@ -105,13 +117,17 @@ class UpstoxDataFetcher:
 
     def fetch_nse_option_data(self, symbols: List[str], days_back: int = 2555) -> Dict[str, pd.DataFrame]:
         """
-        Fetch NSE option data for given symbols over the last N days.
-        days_back ~= 10 years (approximately 2555 trading days)
+        NOT IMPLEMENTED -- this scaffold returns no data.
 
-        Returns dict of {symbol: DataFrame with columns [date, strike, expiry, call_bid, call_ask, put_bid, put_ask, spot]}
+        The per-symbol `records` list below is never populated, so every frame it
+        would return is empty. Callers must not treat its output as market data.
         """
-
-        logger.info(f"Fetching NSE option data for {symbols} over last {days_back} days")
+        raise NotImplementedError(
+            "fetch_nse_option_data is an unfinished scaffold and returns no data. "
+            "Implement historical option-chain retrieval (vendor feed, or the NSE "
+            "bhavcopy archive that the main project already parses) before using "
+            "this for research."
+        )
 
         results = {}
 

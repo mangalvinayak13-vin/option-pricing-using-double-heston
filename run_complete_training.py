@@ -137,6 +137,14 @@ def load_synthetic_data(data_path: Path) -> Tuple[torch.Tensor, torch.Tensor]:
                 logger.warning(f"Record {i} has {len(prices)} prices, expected 20. Skipping.")
                 continue
 
+            # Conditioning. The same parameters price differently under different
+            # maturity/rate/carry, so the network must see them or the inverse map is
+            # ambiguous by construction. Rate and carry are scalar per surface and
+            # maturities take exactly two distinct values (expiry rank 1 and 2).
+            maturities = sorted(set(record["maturities"]))
+            conditioning = [maturities[0], maturities[1],
+                            record["rates"][0], record["carries"][0]]
+
             # Extract 10 parameters from metadata
             params_dict = record.get("metadata", {}).get("parameters_canonical_order", {})
             if not params_dict:
@@ -150,7 +158,7 @@ def load_synthetic_data(data_path: Path) -> Tuple[torch.Tensor, torch.Tensor]:
                 params_dict["rho_fast"], params_dict["v0_fast"]
             ]
 
-            inputs.append(prices)
+            inputs.append(list(prices) + conditioning)
             outputs.append(params)
 
     X = torch.tensor(inputs, dtype=torch.float32)
@@ -299,10 +307,15 @@ def evaluate_model(
                    'kappa_f', 'theta_f', 'sigma_f', 'rho_f', 'v0_f']
     param_rmse = {}
     param_mae = {}
+    param_skill = {}
 
     for i, name in enumerate(param_names):
         param_rmse[name] = np.sqrt(np.mean((y_preds_denorm[:, i] - y_trues_denorm[:, i]) ** 2))
         param_mae[name] = np.mean(np.abs(y_preds_denorm[:, i] - y_trues_denorm[:, i]))
+        # Skill vs the trivial "always predict the test-set mean" baseline.
+        # 1.0 means no better than that baseline; 0.0 means perfect recovery.
+        baseline = np.std(y_trues_denorm[:, i])
+        param_skill[name] = param_rmse[name] / baseline if baseline > 0 else float("nan")
 
     metrics = {
         'mse': float(mse),
@@ -310,6 +323,8 @@ def evaluate_model(
         'mae': float(mae),
         'param_rmse': {k: float(v) for k, v in param_rmse.items()},
         'param_mae': {k: float(v) for k, v in param_mae.items()},
+        'param_skill': {k: float(v) for k, v in param_skill.items()},
+        'mean_skill': float(np.mean(list(param_skill.values()))),
         'test_samples': len(y_trues),
     }
 
@@ -372,10 +387,11 @@ def main():
     model_name = f"Model_{args.model}_{'ANN' if args.model == 1 else 'Constraint'}"
     model_path = args.output_dir / f"{model_name}_checkpoint.pt"
 
+    input_dim = X_norm.shape[1]
     if args.model == 1:
-        model = OrdinaryANNInverseModel()
+        model = OrdinaryANNInverseModel(input_dim=input_dim)
     else:
-        model = ConstraintAwareInverseModel()
+        model = ConstraintAwareInverseModel(input_dim=input_dim)
 
     # Train or evaluate
     if not args.eval_only and not model_path.exists():
