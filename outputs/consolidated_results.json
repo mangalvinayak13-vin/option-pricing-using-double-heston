@@ -1,0 +1,202 @@
+{
+  "generated_at": "2026-09-29T01:37:07.777206",
+  "models": {
+    "Model_1_direct": {
+      "mean_skill": 0.7962356403882125,
+      "param_skill": {
+        "kappa_s": 0.9286441274528637,
+        "theta_s": 0.9048699346726928,
+        "sigma_s": 0.9159437714219537,
+        "rho_s": 0.7984612057434525,
+        "v0_s": 0.47263943698230176,
+        "kappa_f": 0.8986485422756277,
+        "theta_f": 0.7379612074517071,
+        "sigma_f": 0.8291483955228165,
+        "rho_f": 0.8064044624867017,
+        "v0_f": 0.669635319872007
+      },
+      "constraint_validity": {
+        "constraint_validity_rate": 0.9986666666666667,
+        "positivity_violation_rate": 0.0006666666666667043,
+        "ordering_violation_rate": 0.0,
+        "slow_feller_violation_rate": 0.0,
+        "fast_feller_violation_rate": 0.0013333333333333333,
+        "correlation_disk_violation_rate": 0.0
+      },
+      "test_samples": 1500
+    },
+    "Model_2_canonical_latent": {
+      "mean_skill": 0.8007168445174646,
+      "param_skill": {
+        "kappa_s": 0.9489512587631838,
+        "theta_s": 0.9089832132399116,
+        "sigma_s": 0.9084532051429492,
+        "rho_s": 0.7949166215443129,
+        "v0_s": 0.4695972196184255,
+        "kappa_f": 0.9372880880137723,
+        "theta_f": 0.742186709655053,
+        "sigma_f": 0.8332339133713035,
+        "rho_f": 0.8067796522605123,
+        "v0_f": 0.6567785635652214
+      },
+      "constraint_validity": {
+        "constraint_validity_rate": 1.0,
+        "positivity_violation_rate": 0.0,
+        "ordering_violation_rate": 0.0,
+        "slow_feller_violation_rate": 0.0,
+        "fast_feller_violation_rate": 0.0,
+        "correlation_disk_violation_rate": 0.0
+      },
+      "test_samples": 1500
+    }
+  },
+  "multi_seed": {
+    "Model_1_direct": {
+      "n": 5,
+      "mean": 0.7926448624585143,
+      "sd": 0.0027614142832207665,
+      "values": [
+        0.7962356403882125,
+        0.7892706691393381,
+        0.7911038154524921,
+        0.7945258722426788,
+        0.79208831506985
+      ]
+    },
+    "Model_2_canonical_latent": {
+      "n": 5,
+      "mean": 0.8018038275930822,
+      "sd": 0.0019960595831334947,
+      "values": [
+        0.8007168445174646,
+        0.8019395961451696,
+        0.8051013664365689,
+        0.8013758730550944,
+        0.7998854578111129
+      ]
+    },
+    "comparison": {
+      "difference": 0.009158965134567931,
+      "welch_t": -6.010652312090749,
+      "p_value": 0.0004606851250255418,
+      "significant": true
+    }
+  },
+  "noise_robustness": {
+    "Model_1_direct": [
+      {
+        "noise": 0.0,
+        "mean_skill": 0.7962356403882125
+      },
+      {
+        "noise": 0.001,
+        "mean_skill": 0.7965922393274251
+      },
+      {
+        "noise": 0.005,
+        "mean_skill": 0.8049397867730754
+      },
+      {
+        "noise": 0.01,
+        "mean_skill": 0.831843915256672
+      },
+      {
+        "noise": 0.02,
+        "mean_skill": 0.9080253916548798
+      },
+      {
+        "noise": 0.05,
+        "mean_skill": 1.238679231202089
+      }
+    ],
+    "Model_2_canonical_latent": [
+      {
+        "noise": 0.0,
+        "mean_skill": 0.8007168445174646
+      },
+      {
+        "noise": 0.001,
+        "mean_skill": 0.8010503167833178
+      },
+      {
+        "noise": 0.005,
+        "mean_skill": 0.8112579274666748
+      },
+      {
+        "noise": 0.01,
+        "mean_skill": 0.8346332004525205
+      },
+      {
+        "noise": 0.02,
+        "mean_skill": 0.9169862007947799
+      },
+      {
+        "noise": 0.05,
+        "mean_skill": 1.3185856216400003
+      }
+    ]
+  },
+  "real_market": {
+    "rows": [
+      {
+        "date_id": "2026-07-01",
+        "usable_slots": 11,
+        "network_relative": 0.15843361711922152,
+        "best_fit_relative": 0.04570218350118148,
+        "gap_pp": 11.273143361804005,
+        "parameters_valid": true
+      },
+      {
+        "date_id": "2026-07-08",
+        "usable_slots": 18,
+        "network_relative": 0.17511902152257214,
+        "best_fit_relative": 0.11920726374360835,
+        "gap_pp": 5.591175777896379,
+        "parameters_valid": true
+      },
+      {
+        "date_id": "2026-07-15",
+        "usable_slots": 19,
+        "network_relative": 0.09316233432800858,
+        "best_fit_relative": 0.06722531886942874,
+        "gap_pp": 2.5937015458579835,
+        "parameters_valid": true
+      },
+      {
+        "date_id": "2026-07-22",
+        "usable_slots": 18,
+        "network_relative": 0.12065762798196637,
+        "best_fit_relative": 0.10235002565757476,
+        "gap_pp": 1.8307602324391616,
+        "parameters_valid": true
+      },
+      {
+        "date_id": "2026-07-29",
+        "usable_slots": 12,
+        "network_relative": 0.1355984774920925,
+        "best_fit_relative": 0.025311255606706592,
+        "gap_pp": 11.028722188538591,
+        "parameters_valid": true
+      }
+    ],
+    "mask_aware_synthetic_skill": 0.9165812099700219,
+    "caveat": "Repricing only. NTPC's true parameters are unknown, so parameter recovery is undefined on real data. Good repricing does not imply recovery."
+  },
+  "repricing_sweep": [
+    {
+      "price_weight": 0.0,
+      "mean_skill": 0.7931563761488158,
+      "test_price_rmse": 0.0007932381602189715
+    },
+    {
+      "price_weight": 0.5,
+      "mean_skill": 0.792585272610196,
+      "test_price_rmse": 0.0006474610664495291
+    },
+    {
+      "price_weight": 0.9,
+      "mean_skill": 0.7923592830020698,
+      "test_price_rmse": 0.00041306645843328614
+    }
+  ]
+}
