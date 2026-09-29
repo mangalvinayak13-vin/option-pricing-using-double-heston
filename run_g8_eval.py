@@ -157,8 +157,8 @@ def main():
     model.eval()
     logger.info("loaded %s (%d inputs)", Path(args.checkpoint).name, in_dim)
 
-    rate_observation = G8.register_g8_dates()
-    logger.info("G8 rate observation carried forward from %s", rate_observation)
+    rate_sources = G8.register_g8_dates()
+    logger.info("G8 rate observations in use: %s", sorted(set(rate_sources.values())))
 
     from src.constraints import validate_parameters
 
@@ -204,7 +204,7 @@ def main():
             "best_fit_relative": floor / scale,
             "gap_pp": (net_rmse - floor) / scale * 100,
             "parameters_valid": bool(validate_parameters(vector)["is_valid"]),
-            "rate_carry_forward_from": rate_observation,
+            "rate_carry_forward_from": rate_sources[date_id],
         })
         logger.info("  %s  slots %2d/20  network %5.1f%%  floor %5.1f%%  gap %+5.1fpp",
                     date_id, int(mk.sum()), rows[-1]["network_relative"] * 100,
@@ -217,7 +217,7 @@ def main():
         "milestone": "G8_FROZEN_REAL_MARKET_EVALUATION",
         "held_out": True,
         "dates_evaluated": len(rows),
-        "rate_observation_carried_forward_from": rate_observation,
+        "rate_observations_used": sorted(set(rate_sources.values())),
         "median_network_relative": float(np.median(net_rel)),
         "median_best_fit_relative": float(np.median(floor_rel)),
         "median_gap_pp": float(np.median(net_rel - floor_rel) * 100),

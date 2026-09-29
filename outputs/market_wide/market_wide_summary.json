@@ -1,0 +1,12 @@
+{
+  "universe_size": 210,
+  "dates": 60,
+  "attempted": 12600,
+  "surfaces_built": 12480,
+  "tickers_with_any_surface": 210,
+  "rejected": 120,
+  "median_repricing_relative": 0.12405821540116013,
+  "all_parameters_valid": true,
+  "held_out_share": 0.9170673076923077,
+  "runtime_minutes": 81.91174685160318
+}

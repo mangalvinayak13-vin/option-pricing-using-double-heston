@@ -40,9 +40,34 @@ logger = logging.getLogger(__name__)
 G8_RAW_ROOT = "market_data_audit/g8/raw/nse"
 SOURCE_G8 = "REAL_NSE_G8_HELD_OUT"
 
-# Wednesdays after the last development date (2026-07-29), through mid-September.
-# Kept well clear of the development window so there is no overlap to argue about.
-G8_CANDIDATE_DATES: tuple[str, ...] = (
+def _weekdays(first: str, last: str) -> tuple[str, ...]:
+    out, day = [], date.fromisoformat(first)
+    stop = date.fromisoformat(last)
+    while day <= stop:
+        if day.weekday() < 5:
+            out.append(day.isoformat())
+        day += timedelta(days=1)
+    return tuple(out)
+
+
+# Every weekday the sealed rate observations cover, excluding the five development
+# dates. The window opens at 2026-07-01 because that is the earliest hash-sealed RBI
+# observation and the contract forbids a rate dated after its valuation date.
+#
+# An earlier version took only Wednesdays, matching the development cadence. That was
+# a convention rather than a constraint, and it left 13 dates where 63 were available.
+# Parameter stability across dates is a headline result, and it needs the sample.
+#
+# NSE holidays have no bhavcopy; they fail the download and are recorded as rejected
+# rather than filtered up front, so the exclusion is visible instead of assumed.
+G8_CANDIDATE_DATES: tuple[str, ...] = tuple(
+    d for d in _weekdays("2026-07-01", "2026-09-25")
+    if d not in frozen.MARKET_DATES
+)
+
+# The original eight, kept so the held-out headline figures stay reproducible after
+# the window widened.
+G8_WEDNESDAY_SUBSET: tuple[str, ...] = (
     "2026-08-05", "2026-08-12", "2026-08-19", "2026-08-26",
     "2026-09-02", "2026-09-09", "2026-09-16", "2026-09-23",
 )
@@ -70,17 +95,24 @@ def register_g8_dates(dates: tuple[str, ...] = G8_CANDIDATE_DATES) -> str:
     shifts prices by about 0.05% -- two orders of magnitude below the repricing
     errors being measured. Returns the observation date used.
     """
-    latest = max(frozen.RATE_OBSERVATIONS)
+    observations = sorted(frozen.RATE_OBSERVATIONS)
+    used: dict[str, str] = {}
     for date_id in dates:
         if date_id in frozen.MARKET_DATES:
             raise ValueError(f"{date_id} is a development date; it cannot be used for G8")
-        if date.fromisoformat(latest) > date.fromisoformat(date_id):
+        # Per date, the latest observation on or before it -- not simply the newest
+        # one overall, which would attach a mid-July yield to an early-July date and
+        # violate the contract's own "on or before the valuation date" rule.
+        eligible = [o for o in observations
+                    if date.fromisoformat(o) <= date.fromisoformat(date_id)]
+        if not eligible:
             raise ValueError(
-                f"no rate observation on or before {date_id}; latest is {latest}"
+                f"no rate observation on or before {date_id}; earliest is {observations[0]}"
             )
         frozen.MARKET_RAW_ROOTS[date_id] = G8_RAW_ROOT
-        frozen.RATE_SOURCE_BY_VALUATION[date_id] = latest
-    return latest
+        frozen.RATE_SOURCE_BY_VALUATION[date_id] = eligible[-1]
+        used[date_id] = eligible[-1]
+    return used
 
 
 def build_g8_surface(date_id: str, report: dict[str, Any] | None = None) -> R2Surface:
@@ -179,6 +211,21 @@ def fetch_and_audit(dates: tuple[str, ...] = G8_CANDIDATE_DATES) -> dict[str, An
             continue
         try:
             surface = build_g8_surface(date_id)
+        except ZeroDivisionError:
+            # NSE monthly expiry day: the nearest listed expiry is the same session,
+            # so dte is 0 and the sealed contract's rate derivation
+            # (-log(discount)/maturity) divides by zero.
+            #
+            # Excluding these dates is correct on the merits, not a workaround. An
+            # option expiring the same session is pure intrinsic value and carries no
+            # information about volatility dynamics, so it cannot inform a stochastic
+            # volatility calibration even where the arithmetic survives.
+            #
+            # The five development dates are all Wednesdays and NSE monthly expiry is
+            # the last Tuesday, so the original date set could never surface this.
+            rejected[date_id] = "monthly expiry day: nearest expiry has zero days to run"
+            logger.warning("%s rejected: expiry day (zero-dte front expiry)", date_id)
+            continue
         except Exception as exc:
             rejected[date_id] = str(exc)
             logger.warning("%s rejected: %s", date_id, exc)

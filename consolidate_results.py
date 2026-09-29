@@ -152,7 +152,7 @@ def main():
             "median_best_fit_relative": g8["median_best_fit_relative"],
             "median_gap_pp": g8["median_gap_pp"],
             "all_parameters_valid": g8["all_parameters_valid"],
-            "rate_carry_forward_from": g8.get("rate_observation_carried_forward_from"),
+            "rate_observations_used": g8.get("rate_observations_used"),
             "coverage_vs_gap": coverage,
             "rows": rows,
         }
