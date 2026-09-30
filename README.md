@@ -1,145 +1,106 @@
-# Physics-Informed Inverse Calibration of the Canonical Double Heston Model
+# Option Pricing Using Double Heston
 
-The latest **regular pricing-PINN** experiment is documented in
-[the regular PINN handoff](docs/REGULAR_PINN_HANDOFF.md), with
-[all development trials](outputs/regular_pinn_recovery/all_development_report/REPORT.md)
-and [the locked synthetic assessment](outputs/regular_pinn_recovery/locked_assessment_report/REPORT.md).
-The ten-parameter Double Heston recovery target is **not achieved**. Neural price
-accuracy must not be substituted for structural parameter recovery.
+A B.Tech physics capstone project asking a single question: given a real option
+price surface, can you actually recover the ten parameters of a Double Heston
+stochastic-volatility model that fits it? The answer, proven two independent
+ways, is no.
 
-The earlier hybrid Double Heston calibration repair is documented in
-[the September repair handoff](docs/CALIBRATION_REPAIR_HANDOFF.md) and its
-[predeclared assessment protocol](docs/CALIBRATION_REPAIR_PROTOCOL.md).
-It uses the trained unified set encoder, an exact differentiable Fourier pricer,
-and accepted optimisation steps. The older status table below describes the
-historical R2 milestone, not the current unified calibrator. Read the new handoff
-before rerunning historical evaluators or interpreting their test claims.
+## The core finding
 
-This private B.Tech capstone repository contains an ordinary ANN inverse-calibration baseline, an independently implemented canonical Double Heston European-option pricing engine, and a completed deterministic official-NSE Stage A market-support screen. The production engine has been benchmarked against a separately coded adaptive-quadrature reference. The unavailable teammate engine is being replaced by this reimplementation; equivalence to the unavailable source is not claimed.
+**A good price fit does not mean the underlying parameters were recovered.**
 
-> The pricing benchmark passed, the normal reviewed synthetic core is ready under the existing contract, and official-NSE Stage A candidate selection is complete. The selected primaries are NTPC, CIPLA, INFY, and HDFCBANK; NTPC was selected at moderate confidence after a predeclared five-Wednesday Power extension resolved the original three-date tie. G2 established a market-supported near/middle, central-five, calls-and-puts geometry, but reduced-grid, third-expiry, multi-date, and independent CIR-path replication diagnostics did not demonstrate stable recovery of the canonical ten parameters. A bounded clean multi-start diagnostic subsequently established global ambiguity in all four predeclared representative cases: 40 near-equivalent solutions formed 39 separated scaled-parameter clusters despite median normalized price RMSE `4.708e-8` and median range-scaled parameter RMSE `0.1485`. The self-governed G2 protocol subsequently froze R2 with practical non-identifiability retained as a research finding (`G2 = PASSED_REPRESENTATION_FROZEN_WITH_PRACTICAL_NON_IDENTIFIABILITY`; see `docs/G2_R2_R3_REPRESENTATION_SELECTION_RESULTS.md`). The historical challenge-stress decision remains `NEEDS_SAMPLER_CORRECTION`. The final clean 10,000-surface R2 synthetic truth dataset has been generated and validated (frozen before model training); no ANN/PINN research training result exists.
+- **On synthetic data**, where the true parameters are known because this
+  project's own pricing engine generated the surfaces: a classical least-squares
+  optimizer, given every advantage (exact target prices, many multi-starts), fits
+  prices to machine precision (median RMSE 9.16e-08) and still recovers
+  parameters at a median **skill of 1.80**, where 1.0 means doing no better than
+  guessing the population average and above 1.0 means doing worse than that.
+- **On 2,400 real option surfaces** — 40 of the most liquid NSE-listed stocks,
+  63 separately audited trading dates, 16 optimizer starts per surface — 99%
+  produce more than one price-equivalent solution, and the median pairwise
+  dispersion among those solutions is **4.636x** the training distribution's own
+  parameter spread. Price-equivalent fits to the same real surface routinely
+  land further apart than two completely unrelated stocks' parameters would.
 
-| Component | Status |
-|---|---|
-| ANN infrastructure | Complete |
-| Canonical Double Heston engine | Independently benchmarked and frozen for review |
-| Independent pricing benchmark | 36 / 36 cases passed at 64 and 96 nodes |
-| Full automated suite | 219 passed at the global-ambiguity milestone |
-| Synthetic pricing/calibration validation | Complete for one clean and one 1% noise fixture |
-| ANN pricing adapter | Integrated with the real canonical engine |
-| Genuine-engine pilot data | 12 surfaces / 1,296 quotes generated |
-| Parameter-bounds audit | Prior 5,000-candidate audit retained as historical evidence |
-| Reviewed sampling audit | 19,000 candidates; normal core ready, challenge stress separate |
-| Stage A official-NSE screen | Complete: 24 candidate stock surfaces across three dates |
-| Candidate selection | Complete: NTPC, CIPLA, INFY, and HDFCBANK; NTPC confidence moderate |
-| G2 market-supported geometry | Established: near + middle, central-five, calls + puts |
-| G2 global ambiguity | Established in 4/4 predeclared representative cases |
-| Surface-representation G2 gate | Not passed at the original gate; superseded by the sealed self-governed R2-vs-R3 protocol |
-| G2 final representation | Frozen: `FROZEN_R2_RANKED_TWO_EXPIRY_CENTRAL_FIVE` (20 slots) |
-| Final 10,000-surface research dataset | Generated, validated, and full-replay verified (clean core, noise 0, frozen before training) |
-| Full ANN research training | Not started |
-| PINN infrastructure | Implemented; not research-trained |
-| Frozen real-market evaluation | Not started |
+Neither finding depends on the other. The real-market result needs no assumed
+ground truth at all — it's established directly from what NSE actually printed.
 
-## Documentation
+Trained neural networks that attempt the same inverse mapping score a mean skill
+of about 0.80 (worse than perfect, but *better* than the classical optimizer's
+1.80) — because a network trained across many surfaces regresses toward the
+population average, and when a surface doesn't determine its parameters, that
+average is closer to the truth than an arbitrary price-equivalent solution the
+optimizer might land on. See `outputs/consolidated_results.json` and the
+**Double Heston** page of the archived site (`legacy_streamlit_site/`) for the
+full numbers.
 
-- [Canonical research control and current status](docs/RESEARCH_CONTROL_AND_CURRENT_STATUS.md)
-- [Mentor approval brief for G2 information design](docs/MENTOR_APPROVAL_BRIEF_G2_INFORMATION_DESIGN.md)
-- [Canonical engine](docs/DOUBLE_HESTON_ENGINE.md)
-- [Independent pricing benchmark](docs/INDEPENDENT_PRICING_BENCHMARK.md)
-- [Parameter-bounds audit](docs/PARAMETER_BOUNDS_AUDIT.md)
-- [Reviewed parameter sampling](docs/REVIEWED_PARAMETER_SAMPLING.md)
-- [Engine freeze](docs/ENGINE_FREEZE.md)
-- [Validation results](docs/DOUBLE_HESTON_VALIDATION_RESULTS.md)
-- [Market-data availability audit](docs/market_data_availability_audit.md)
-- [Stage A NSE results](docs/STAGE_A_NSE_RESULTS.md)
-- [Stage A candidate selection](docs/STAGE_A_CANDIDATE_SELECTION.md)
-- [G2 identifiability checkpoint](docs/G2_IDENTIFIABILITY_CHECKPOINT.md)
-- [G2 evidence manifest](docs/evidence/G2_CHECKPOINT_MANIFEST.json)
-- [G2 global-ambiguity analysis](docs/G2_GLOBAL_AMBIGUITY_ANALYSIS.md)
-- [G2 global-ambiguity manifest](docs/evidence/G2_GLOBAL_AMBIGUITY_MANIFEST.json)
-- [Current status](docs/CURRENT_STATUS.md)
-- [Results to date](docs/RESULTS_TO_DATE.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Next steps](docs/NEXT_STEPS.md)
-- [Reproducibility](docs/REPRODUCIBILITY.md)
-- [Handoff status](docs/TEAM_HANDOFF_REQUIREMENTS.md)
+## Repository layout
 
-## Exact ten-parameter order
+- `src/double_heston.py` — the canonical Double Heston pricing engine
+  (characteristic function + Gauss-Laguerre integration).
+- `mentor_dh_pinn/params_v2.py` — the canonical latent parameterization: a
+  bijection between R^10 and the ten physical parameters that makes every
+  decoded vector structurally valid by construction.
+- `run_*.py` (repo root) — the real-market evaluation scripts: dev-date and G8
+  held-out floor fits, the market-wide 210-stock/60-date calibration, the
+  option-repricing backtest, and the 40-stock/63-date parameter-ambiguity study.
+- `check_*.py` (repo root) — diagnostic scripts, kept deliberately rather than
+  deleted, since each one documents how a real bug was found and verified fixed.
+- `outputs/` — every experiment's results. `outputs/ambiguity/`,
+  `outputs/g8/`, `outputs/market_wide/`, and `outputs/option_backtest/` hold the
+  current, verified-correct real-market results; a handful of `*_backup` and
+  `*_smoke` subdirectories are deliberately-kept scratch output from debugging,
+  not part of any reported result.
+- `legacy_streamlit_site/` — the source of the project's exhibition website
+  (a live Black-Scholes/Heston/Double Heston pricing calculator, calibrated
+  against real NSE/Upstox option chains), archived here as reference for a
+  planned rewrite. See its own README for what is and isn't included.
+- `video_report/` — a report written for Google NotebookLM's Video Overview
+  feature, explaining the project to a non-finance audience, with figures
+  generated directly from this project's own code.
+- `docs/` — the research log from earlier phases of this project. Written
+  incrementally over months of work; treat any specific number in it as
+  possibly superseded by `outputs/consolidated_results.json` unless you've
+  checked the two agree.
 
-```text
-kappa_slow, theta_slow, sigma_slow, rho_slow, v0_slow,
-kappa_fast, theta_fast, sigma_fast, rho_fast, v0_fast
+## Three bugs found and fixed in the real-market pipeline
+
+Documented in detail in `check_corner_bug.py`, `check_corner_bug2.py`, and the
+commit history, but summarized here since they materially changed every
+real-market number this project reports:
+
+1. **A flat latent-coordinate box didn't bound composite parameters** like
+   `kappa_fast`, which is a product of two coordinates — real, partial option
+   surfaces have flat-enough directions that an optimizer actually ran to the
+   box edge. Fixed with a physical-parameter penalty (`src/plausible_bounds.py`)
+   derived from the training set's own parameter range, replacing the flat box.
+2. **Real-market "floor" fits lacked a guaranteed flat-Black-Scholes-corner
+   start.** Double Heston nests Black-Scholes exactly, so a genuine optimum can
+   never lose to a single fitted flat volatility on the same quotes — but random
+   starts near the origin could simply miss that corner, and did.
+3. **Every real-market repricing function indexed interest rate and carry by
+   `rates[rank - 1]`**, which is correct by coincidence for the first (nearer)
+   expiry and wrong for the second — every longer-dated option leg in the whole
+   real-market pipeline was priced with the *shorter* expiry's rate and carry.
+   Fixed with `src/rank_conditioning.py`, which looks up the correct slot from
+   the canonical representation itself rather than assuming an index formula.
+
+Every real-market result in `outputs/` postdates all three fixes, verified by
+timestamp and, where a script bundled training with evaluation, by re-running
+just the affected evaluation step against the existing trained weights.
+
+## Reproducing the headline results
+
+```bash
+python3 run_real_classical_fit.py      # 5 dev-date floor vs flat Black-Scholes
+python3 run_g8_eval.py                 # 8 held-out G8 dates, network + floor
+python3 run_market_wide.py             # 210 stocks x 60 dates
+python3 run_option_backtest.py         # does yesterday's fit still price today?
+python3 run_market_ambiguity.py        # the 2,400-surface ambiguity study (~15 hours)
+python3 consolidate_results.py         # gathers everything into one JSON
 ```
 
-All `kappa`, `theta`, `sigma`, and `v0` values are positive; `kappa_slow < kappa_fast`; both Feller gaps are positive; each correlation lies inside `(-1, 1)`; and `rho_slow^2 + rho_fast^2 < 1`.
-
-## Engine
-
-`src/double_heston.py` implements:
-
-- a stable Little-Heston-Trap factor exponent;
-- a two-factor characteristic function formed by adding factor log-exponents;
-- configurable Gauss-Laguerre integration, defaulting to 64 nodes;
-- call pricing and put pricing through put-call parity;
-- scalar option and quote-aligned surface APIs;
-- strict validation with no silent price replacement or clipping;
-- documented variance-state propagation.
-
-The canonical regression fixture at `tests/fixtures/double_heston_clean_fixture.json` is marked `CANONICAL_REIMPLEMENTATION_FIXTURE`. It is generated by this implementation only and is not described as the teammate's fixture.
-
-## ANN and dataset boundary
-
-`src/pricing_interface.py` routes research pricing to the real canonical engine. `dummy_surface_generator_for_smoke_test` remains separate and can be used only by the explicit smoke-test path, whose rows retain `NOT_RESEARCH_DATA`.
-
-The repository now also includes a PINN infrastructure path built around a differentiable torch Double Heston repricer plus a constraint-by-construction inverse network. This infrastructure is not a dated research result and does not imply that G2 has passed, that the final representation is frozen, or that a research-trained PINN comparison already exists.
-
-The current candidate ANN grid has nine log-moneyness values, six maturities, and separate call and put blocks: `9 * 6 * 2 = 108` normalized price inputs. The ANN produces the ten parameters in the fixed order above. Complete surfaces stay within one train, validation, or test split.
-
-The Stage A evidence shows that the 108-input grid is **unsuitable as the final unchanged representation**: 180 DTE is unsupported on all 24 candidate surfaces and the extreme moneyness wings are rarely observed. G2 common-support analysis established a market-supported 20-price geometry using the near and middle listed expiries, five central log-moneyness nodes, calls, and puts. That geometry did not pass the inverse-identifiability gate, so it must not be used for final 10,000-surface generation and no replacement feature count is frozen.
-
-`configs/parameter_bounds_PROVISIONAL.yaml` remains unchanged. The reviewed audit generated 10,000 interior, 5,000 wide-valid, 2,000 boundary-challenge, and 2,000 OOD candidates. Interior accepted 8,116 (`81.16%`) and wide-valid accepted 3,371 (`67.42%`); challenge and OOD rows remain explicitly isolated. Four retained challenge pricing-tolerance stress cases keep the historical global stress decision at `NEEDS_SAMPLER_CORRECTION`; they pass at 96 Gauss-Laguerre nodes and agree with the independent adaptive reference within the frozen comparison tolerance, so they remain separate evidence rather than ordinary ANN training data. The reviewed ranges were not recovered from unavailable source and must not be treated as externally confirmed or market-calibrated.
-
-## Stage A market-data boundary
-
-The deterministic Stage A screen uses official NSE CM and F&O UDiFF bhavcopies as the primary source. It processed 01, 15, and 22 July 2026 and found all eight sector candidates on every date, producing 24 candidate stock surfaces; NIFTY remains a separate non-ranked reference. The original three-date Power comparison was unresolved, so the predeclared five-Wednesday July extension compared only NTPC and POWERGRID and selected NTPC at moderate confidence. The complete primary set is NTPC, CIPLA, INFY, and HDFCBANK, with POWERGRID, SUNPHARMA, TCS, and ICICIBANK retained as backups.
-
-Free NSE bhavcopy does not contain historical bid/ask quotes or quote sizes. Bloomberg was not used for candidate selection. Raw and derived Stage A data remain ignored by Git. Candidate selection and G2 common-support analysis are complete; the final representation is not frozen and G2 has not passed. Global ten-parameter ambiguity is established. The bounded complementary-observable diagnostic found the declared design insufficient: the exact total-variance oracle improved point recovery but retained separated solutions, while the sampled 21/126-day realized-variance plus persistence screen rejected the truth in all four cases and therefore could not support an ambiguity-resolution claim. See [Stage A candidate selection](docs/STAGE_A_CANDIDATE_SELECTION.md), the [G2 checkpoint](docs/G2_IDENTIFIABILITY_CHECKPOINT.md), the [global-ambiguity analysis](docs/G2_GLOBAL_AMBIGUITY_ANALYSIS.md), and the [complementary-observable analysis](docs/G2_COMPLEMENTARY_OBSERVABLE_ANALYSIS.md).
-
-## Install and validate
-
-Run from the repository root:
-
-```powershell
-python -m pip install -r requirements.txt
-python -m compileall .
-python -m pytest tests -q
-python -m src.run_independent_pricing_benchmark
-python -m src.audit_reviewed_sampling
-python -m src.run_double_heston_validation
-python -m src.run_smoke_test
-python -m src.evaluate_repricing
-```
-
-The independent benchmark, bounds audit, and freeze evidence are written under `outputs/double_heston_benchmark/`, `outputs/parameter_bounds_audit/`, and `outputs/engine_freeze/`. The controlled calibration validation remains under `outputs/double_heston_validation/`. The default repricing command evaluates the best clean controlled calibration output; it is explicitly not an ANN research result.
-
-To regenerate a small genuine-engine pilot without starting full training:
-
-```powershell
-python -m src.synthetic_dataset pilot --count 12
-```
-
-The pilot command rejects counts above 100 and labels its rows `GENUINE_CANONICAL_DOUBLE_HESTON_SYNTHETIC_DATA`. This label means the values are genuine outputs of the new canonical engine, not proof of agreement with real market data.
-
-## Current limitations
-
-- The unavailable teammate source, helpers, tests, fixtures, and exact original bounds cannot be reproduced or compared directly.
-- The repository's correlation-disk convention is preserved, but its provenance differs from the separable four-shock literature model; see the engine document.
-- Controlled clean recovery does not prove global or unique identification.
-- The 1% noise experiment shows substantial parameter instability and boundary-near solutions.
-- Stage A rejects the current 108-input grid as the final unchanged representation; G2 geometry is established but the final representation remains unfrozen.
-- Multi-date observations and exact CIR dynamics materially improve local conditioning, but stable global ten-parameter recovery remains unproven and `G2 = NOT_PASSED`.
-- Clean central-market-geometry surfaces admit multiple materially separated valid ten-parameter solutions with essentially indistinguishable prices; local weakest directions are informative in aggregate but do not fully explain every global displacement.
-- The declared complementary-observable experiment is `INSUFFICIENT`: local conditioning improved, but the finite-history C/D truth vectors failed the fixed complementary screen and the oracle B design retained material global ambiguity.
-- The four sector primaries are selected, but the market maturity grid, carry convention, and Black-Scholes baseline protocol are not yet frozen.
-- Full ANN/PINN research training, broader seed/noise studies, and frozen unseen real-market validation remain outstanding.
+Each script's own docstring explains what it measures and why. `annotate_front_dte.py`
+must be re-run after any fresh `run_market_wide.py` run, before anything downstream
+reads its output — it tags each surface with whether its nearest expiry falls inside
+the training window, which several later scripts and the exhibition site both rely on.
