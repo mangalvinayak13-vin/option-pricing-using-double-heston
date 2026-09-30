@@ -64,7 +64,9 @@ html[data-mode="dark"][data-theme="amber"] .am-p { box-shadow: 0 1px 0 rgb(255 2
 html.motion[data-theme="amber"] .am-p[data-anim] { opacity: 0; transform: translateY(12px); }
 html.motion[data-theme="amber"] .am-p.is-in { opacity: 1; transform: none; transition: opacity .5s ease calc(var(--i, 0) * 50ms), transform .8s var(--spring-soft) calc(var(--i, 0) * 50ms), border-color .2s ease; }
 [data-theme="amber"] .am-ph { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 18px; border-bottom: 1px solid var(--line); }
+[data-theme="amber"] main.am { counter-reset: am-ch; }
 [data-theme="amber"] .am-ch { font-weight: 800; color: var(--acc); font-size: 14.5px; }
+[data-theme="amber"] .am-ch::before { counter-increment: am-ch; content: "[" counter(am-ch, decimal-leading-zero) "]"; }
 [data-theme="amber"] .am-ph h3 { font: 700 16.5px/1.25 var(--font-display); color: var(--ink); letter-spacing: -.005em; }
 [data-theme="amber"] .am-note { margin-left: auto; font-size: 13.5px; color: var(--muted); white-space: nowrap; }
 [data-theme="amber"] .am-pb { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; min-width: 0; }

@@ -12,7 +12,6 @@ const TWEAK = { 'home:nifty': 6, 'home:option': 3, 'home:finding': 3, 'home:fact
 const two = n => String(n).padStart(2, '0');
 
 const renderers = ctx => {
-  let ch = 0;
   return {
     hero: s => `<section class="am-hero wrap" data-sec="${s.key}" data-anim>
       <p class="am-prompt"><span class="am-dollar" aria-hidden="true">$</span> ${esc(s.q)}<span class="am-caret" aria-hidden="true"></span></p>
@@ -27,9 +26,8 @@ const renderers = ctx => {
       : `<header class="am-head wrap" data-sec="${s.key}" data-anim><h1>${esc(s.title)}</h1>${s.lead ? `<p class="am-lede">${esc(s.lead)}</p>` : ''}</header>`),
     panel: (s, i) => {
       const span = TWEAK[`${ctx.page}:${s.key}`] || SPAN[s.size] || 12;
-      const n = ++ch;
       return `<article class="am-p am-s${span}${s.accent ? ' am-acc' : ''}" data-sec="${s.key}" data-anim style="--i:${i % 10}">
-        <header class="am-ph"><span class="am-ch">[${two(n)}]</span>${s.ico ? icon(s.ico, { size: 24, tint: 'amber' }) : ''}<h3>${esc(s.title || '')}</h3>${s.note ? `<span class="am-note">${esc(s.note)}</span>` : ''}</header>
+        <header class="am-ph"><span class="am-ch" aria-hidden="true"></span>${s.ico ? icon(s.ico, { size: 24, tint: 'amber' }) : ''}<h3>${esc(s.title || '')}</h3>${s.note ? `<span class="am-note">${esc(s.note)}</span>` : ''}</header>
         <div class="am-pb">${inner(s)}</div></article>`;
     },
     note: s => `<div class="am-notes am-s12" data-sec="${s.key}">${inner(s)}</div>`,
