@@ -1,0 +1,12 @@
+# Pinned to the versions this was built and tested against.
+numpy==2.5.3
+scipy==1.18.1
+pandas==3.0.5
+streamlit==1.63.0
+plotly==7.1.0          # every chart in the app
+yfinance==1.7.0        # price history and option chains
+requests==2.34.2        # Upstox API calls (NIFTY/BANKNIFTY option chain)
+python-dotenv==1.2.3    # loads .env for UPSTOX_ACCESS_TOKEN
+arch==8.0.0            # GARCH(1,1) on the forecast page
+pytest==9.1.1          # tests/test_models.py (also runs as a plain script)
+python-docx==1.2.0     # only to rebuild report/*.docx; not needed to run the app
