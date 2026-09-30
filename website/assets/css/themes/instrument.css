@@ -112,4 +112,5 @@ html.motion[data-theme="instrument"] .in-m.is-in { opacity: 1; transform: none; 
 @media (max-width: 720px) {
   [data-theme="instrument"] .in-s3, [data-theme="instrument"] .in-s6 { grid-column: span 12; }
   [data-theme="instrument"] .in-top { padding-right: 90px; } [data-theme="instrument"] .in-brand { display: none; }
+  [data-theme="instrument"] .in-mh { flex-wrap: wrap; } [data-theme="instrument"] .in-meta { white-space: normal; min-width: 0; }
 }
