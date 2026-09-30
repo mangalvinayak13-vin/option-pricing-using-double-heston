@@ -285,10 +285,12 @@ registerChart('paramBars', (w, o, ctx) => {
   let rows = [...ctx.D.per_param].sort((a, b) => b.fits - a.fits);
   if (o.only) rows = rows.filter(r => o.only.includes(r.name));
   const narrow = w < 640;
-  const rowH = o.rowH || 38, labelW = narrow ? Math.min(o.labelW || 150, 150) : Math.max(o.labelW || 290, 290), top = narrow ? 64 : 42;
+  const rowH = o.rowH || 38, labelW = narrow ? Math.min(o.labelW || 150, 150) : Math.max(o.labelW || 290, 290);
+  const top = narrow || w - labelW < 450 ? 64 : 42;
   const h = top + rowH * rows.length + 40;
   const xs = scale(0, 6, labelW, w - 52);
-  const lx = narrow ? 0 : labelW, ly2 = narrow ? 44 : 19, lx2 = narrow ? 0 : labelW + 200;
+  const stackLegend = narrow || w - labelW < 450;
+  const lx = narrow ? 0 : labelW, ly2 = stackLegend ? 44 : 19, lx2 = stackLegend ? lx : labelW + 200;
   let b = `<g class="a-fade">${R(lx, 8, 24, 12, 'c-fill-model', 'rx="3"')}${T(lx + 32, 19, 'Equally good fits')}` +
     `${L(lx2 + 12, ly2 - 14, lx2 + 12, ly2 + 4, 'c-alt', 'style="stroke-width:2.6"')}${T(lx2 + 32, ly2, 'Two random parameter sets')}</g>`;
   for (let v = 0; v <= 6; v++) b += L(xs(v), top - 4, xs(v), top + rowH * rows.length, v ? 'grid' : 'axis') + T(xs(v), top + rowH * rows.length + 22, String(v), '', 'middle');

@@ -110,17 +110,19 @@ try {
 
   // back to the theme under test; the dash nav opens near the cursor
   await load(`index.html?theme=${THEME}&mode=dark`);
-  await mouse('mouseMoved', 400, 450); await sleep(200);
-  for (let x = 300; x >= 30; x -= 30) { await mouse('mouseMoved', x, 450); await sleep(16); }
+  const right = await evalJS("!!document.querySelector('.fnav, .mdash.side-r')");
+  const edgeX = x => (right ? 1440 - x : x);
+  await mouse('mouseMoved', edgeX(400), 450); await sleep(200);
+  for (let x = 300; x >= 30; x -= 30) { await mouse('mouseMoved', edgeX(x), 450); await sleep(16); }
   const navF = fps(900);
-  for (let y = 380; y <= 540; y += 8) { await mouse('mouseMoved', 30, y); await sleep(16); }
+  for (let y = 380; y <= 540; y += 8) { await mouse('mouseMoved', edgeX(30), y); await sleep(16); }
   const nf = await navF;
   await sleep(300);
   const open = await evalJS("!!document.querySelector('.mdash.open, .fnav.open')");
   check('side nav opens near the cursor', open);
   check('frame rate while the nav animates', nf.fps >= 55, JSON.stringify(nf));
   await shot(`${THEME}-nav`);
-  await mouse('mouseMoved', 900, 450); await sleep(900);
+  await mouse('mouseMoved', 720, 450); await sleep(900);
   check('side nav relaxes when the cursor leaves', !(await evalJS("!!document.querySelector('.mdash.open, .fnav.open')")));
   const idle = await fps(1000);
   check('frame rate at rest (ticker running)', idle.fps >= 55, JSON.stringify(idle));

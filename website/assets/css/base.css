@@ -152,7 +152,7 @@ html[data-mode="dark"] .tmenu {
   background: color-mix(in srgb, var(--bg) 72%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 12%, transparent), var(--sh-3);
-  opacity: 0; transform: translateX(-10px) scale(.98); transform-origin: 0 50%;
+  opacity: 0; transform: translateX(-10px) scale(.98); transform-origin: 0 50%; will-change: opacity, transform;
   transition: opacity .2s ease, transform .45s var(--spring-snappy);
 }
 .mdash.side-r .mdash-panel { left: auto; right: 12px; transform-origin: 100% 50%; transform: translateX(10px) scale(.98); }
@@ -198,7 +198,7 @@ html[data-mode="dark"] .tmenu {
 .fnav .fnav-panel { position: absolute; top: -16px; bottom: -16px; right: 84px; width: 200px; border-radius: 18px; pointer-events: none;
   background: color-mix(in srgb, var(--bg) 74%, transparent); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 14%, transparent), var(--sh-3); opacity: 0; transform: translateX(10px) scale(.98);
-  transform-origin: 100% 50%; transition: opacity .2s ease, transform .45s var(--spring-snappy); }
+  transform-origin: 100% 50%; transition: opacity .2s ease, transform .45s var(--spring-snappy); will-change: opacity, transform; }
 .fnav.open .fnav-panel { opacity: 1; transform: none; }
 .fnav .fnav-a:focus-visible { outline: 3px solid var(--focus); outline-offset: -2px; }
 @media (hover: none) { .fnav.open .fnav-l { opacity: 1 !important; transform: none !important; } }
