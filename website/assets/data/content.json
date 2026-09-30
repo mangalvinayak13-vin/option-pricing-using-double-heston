@@ -1,0 +1,693 @@
+{
+ "ABOUT_HEAD": "A B.Tech physics project about one question and an honest answer.",
+ "ALSO": "Also explored: whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.",
+ "A_LONG": "Real option prices bend: protection against a fall usually costs more than a bet on a rise. Double Heston bends the same way, and on all 2,400 real NSE option surfaces we tested, its best fit beat one fixed volatility.",
+ "A_SHORT": "For fitting today's prices, yes.",
+ "BACKTEST": "Across 210 stocks and 60 days, prices from the network's settings lost to a single flat volatility on every one of the 210 stocks.",
+ "BEND": "Black–Scholes prices every strike at the same volatility, so its smile is flat. Double Heston's two moving volatilities, tied to the price by a negative ρ, make protection against falls dearer: the line bends.",
+ "BEND_HEAD": "One fixed volatility draws a flat line. Real prices bend.",
+ "CHAIN": [
+  {
+   "strike": 22900,
+   "call": 536.0,
+   "call_oi": 68575.0,
+   "call_vol": 2009.0,
+   "call_iv": 11.92,
+   "dh_call": 748.34,
+   "put": 177.45,
+   "put_oi": 382395.0,
+   "put_vol": 8109.0,
+   "put_iv": 12.05,
+   "dh_put": 386.44,
+   "dh_iv": 20.21,
+   "mkt_iv": 12.05
+  },
+  {
+   "strike": 22950,
+   "call": 500.85,
+   "call_oi": 3770.0,
+   "call_vol": 59.0,
+   "call_iv": 11.81,
+   "dh_call": 717.38,
+   "put": 191.25,
+   "put_oi": 55055.0,
+   "put_vol": 782.0,
+   "put_iv": 11.91,
+   "dh_put": 405.24,
+   "dh_iv": 20.14,
+   "mkt_iv": 11.91
+  },
+  {
+   "strike": 23000,
+   "call": 465.15,
+   "call_oi": 1888575.0,
+   "call_vol": 38781.0,
+   "call_iv": 11.65,
+   "dh_call": 687.1,
+   "put": 208.0,
+   "put_oi": 4766580.0,
+   "put_vol": 65459.0,
+   "put_iv": 11.85,
+   "dh_put": 424.72,
+   "dh_iv": 20.08,
+   "mkt_iv": 11.85
+  },
+  {
+   "strike": 23050,
+   "call": 432.9,
+   "call_oi": 53560.0,
+   "call_vol": 1690.0,
+   "call_iv": 11.58,
+   "dh_call": 657.5,
+   "put": 222.85,
+   "put_oi": 76505.0,
+   "put_vol": 2146.0,
+   "put_iv": 11.68,
+   "dh_put": 444.89,
+   "dh_iv": 20.01,
+   "mkt_iv": 11.68
+  },
+  {
+   "strike": 23100,
+   "call": 400.5,
+   "call_oi": 788450.0,
+   "call_vol": 22543.0,
+   "call_iv": 11.46,
+   "dh_call": 628.6,
+   "put": 241.15,
+   "put_oi": 1021735.0,
+   "put_vol": 23631.0,
+   "put_iv": 11.59,
+   "dh_put": 465.76,
+   "dh_iv": 19.94,
+   "mkt_iv": 11.59
+  },
+  {
+   "strike": 23150,
+   "call": 370.15,
+   "call_oi": 38610.0,
+   "call_vol": 1673.0,
+   "call_iv": 11.37,
+   "dh_call": 600.4,
+   "put": 260.2,
+   "put_oi": 54795.0,
+   "put_vol": 1651.0,
+   "put_iv": 11.49,
+   "dh_put": 487.33,
+   "dh_iv": 19.87,
+   "mkt_iv": 11.37
+  },
+  {
+   "strike": 23200,
+   "call": 339.7,
+   "call_oi": 1942655.0,
+   "call_vol": 34903.0,
+   "call_iv": 11.24,
+   "dh_call": 572.92,
+   "put": 279.8,
+   "put_oi": 2325895.0,
+   "put_vol": 32841.0,
+   "put_iv": 11.37,
+   "dh_put": 509.62,
+   "dh_iv": 19.8,
+   "mkt_iv": 11.24
+  },
+  {
+   "strike": 23250,
+   "call": 310.5,
+   "call_oi": 75400.0,
+   "call_vol": 2347.0,
+   "call_iv": 11.11,
+   "dh_call": 546.16,
+   "put": 301.85,
+   "put_oi": 77675.0,
+   "put_vol": 1748.0,
+   "put_iv": 11.29,
+   "dh_put": 532.62,
+   "dh_iv": 19.73,
+   "mkt_iv": 11.11
+  },
+  {
+   "strike": 23300,
+   "call": 284.55,
+   "call_oi": 2711800.0,
+   "call_vol": 27260.0,
+   "call_iv": 11.04,
+   "dh_call": 520.13,
+   "put": 324.65,
+   "put_oi": 2859155.0,
+   "put_vol": 17603.0,
+   "put_iv": 11.19,
+   "dh_put": 556.36,
+   "dh_iv": 19.66,
+   "mkt_iv": 11.04
+  },
+  {
+   "strike": 23350,
+   "call": 258.2,
+   "call_oi": 72735.0,
+   "call_vol": 1068.0,
+   "call_iv": 10.92,
+   "dh_call": 494.82,
+   "put": 349.95,
+   "put_oi": 54340.0,
+   "put_vol": 482.0,
+   "put_iv": 11.13,
+   "dh_put": 580.82,
+   "dh_iv": 19.59,
+   "mkt_iv": 10.92
+  },
+  {
+   "strike": 23400,
+   "call": 233.6,
+   "call_oi": 1731600.0,
+   "call_vol": 22130.0,
+   "call_iv": 10.81,
+   "dh_call": 470.26,
+   "put": 373.6,
+   "put_oi": 1620255.0,
+   "put_vol": 10291.0,
+   "put_iv": 10.97,
+   "dh_put": 606.02,
+   "dh_iv": 19.52,
+   "mkt_iv": 10.81
+  }
+ ],
+ "CONTRACT": "NIFTY 23,150 call",
+ "CONTRACT_SUB": "Expires 27 Oct 2026, 32 days",
+ "CTA": {
+  "model": "Price an option",
+  "finding": "See the finding",
+  "market": "Open the market"
+ },
+ "EQ_CALL": "C = e^(−rT) [ F·P₁ − K·P₂ ],   Pⱼ = ½ + (1/π) ∫₀^∞ Re[ e^(−iu·ln(K/F)) φⱼ(u) / (iu) ] du",
+ "EQ_CF": "φ(u) = φ₁(u) · φ₂(u)",
+ "EQ_FELLER": "2κᵢθᵢ > ξᵢ²",
+ "EQ_PRICE": "dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂",
+ "EQ_VAR": "dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2",
+ "EXPIRY": "27 Oct 2026",
+ "FACTORS": "Each factor gets knocked about and drifts back to its long-run level. The fast one (κ 5.0) loses half of any shock in 51 days; the slow one (κ 0.5) takes 1.4 years. Same kind of process, different clocks.",
+ "FACTORS_HEAD": "Two volatilities, one fast and one slow.",
+ "FAST": [
+  "Fast factor",
+  "κ 5.0",
+  "Half of any shock fades in about 7 weeks"
+ ],
+ "FAST_HL": "51 days",
+ "FEATURED": [
+  "NIFTY 50",
+  "NIFTY BANK",
+  "RELIANCE",
+  "HDFCBANK",
+  "INFY",
+  "TCS",
+  "ICICIBANK",
+  "SBIN",
+  "ITC",
+  "LT"
+ ],
+ "FELLER": {
+  "slow": "Feller condition fails: 2κθ = 0.02 is below ξ² = 0.09",
+  "fast": "Feller condition fails: 2κθ = 0.20 is below ξ² = 0.25"
+ },
+ "FELLER_NOTE": "Both factors can touch zero at these settings. The simulator uses full truncation, so prices stay valid.",
+ "FINDING_LINE": "On 99% of 2,400 real NSE option surfaces, several different settings priced the options equally well.",
+ "FINDING_SUB": "They sat 3.9 times further apart than two settings picked at random from the model's training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.",
+ "FIND_HEAD": "A perfect price fit is not the same as knowing the settings.",
+ "FIRST_DAY": "1 Jul 2026",
+ "FLAT_BETTER": 0.22732612776006444,
+ "GAP": 230.25,
+ "GREEKS": [
+  [
+   "Delta",
+   "0.583",
+   "per ₹1 move in NIFTY"
+  ],
+  [
+   "Gamma",
+   "0.00029",
+   "change in delta per ₹1"
+  ],
+  [
+   "Vega",
+   "27.2",
+   "₹ per volatility point"
+  ],
+  [
+   "Theta",
+   "-10.44",
+   "₹ per calendar day"
+  ],
+  [
+   "Rho",
+   "11.4",
+   "₹ per rate point"
+  ]
+ ],
+ "HELDOUT": "On 8 later dates the model never saw, a trained network repriced options with a median error of 17.4%, against 4.3% for the best possible fit: a gap of 10.8 points.",
+ "LAST_DAY": "25 Sep 2026",
+ "LIMITS": [
+  "No jumps: the largest one-day moves are still underestimated.",
+  "Dividends are supported but set to zero; one interest rate for every maturity.",
+  "Prices are frictionless. Real trading crosses a bid–ask spread.",
+  "End-of-day research data has closing prices only, no bid–ask quotes.",
+  "Only 11 to 19 of the 20 target option slots are quoted on a typical day."
+ ],
+ "LINEAGE": [
+  [
+   "1973",
+   "Black–Scholes",
+   "one fixed volatility, 1 setting"
+  ],
+  [
+   "1993",
+   "Heston",
+   "volatility that moves, 5 settings"
+  ],
+  [
+   "2009",
+   "Double Heston",
+   "two moving factors, 10 settings"
+  ]
+ ],
+ "MARKET_SUB": "Official NSE closing prices, 1 Jul 2026 to 25 Sep 2026, 62 trading days. During market hours the site shows live prices from Upstox in the same places.",
+ "MARKET_TITLE": "Market",
+ "MATHS_INTRO": "Double Heston (Christoffersen, Heston and Jacobs, 2009) lets the stock's variance come from two independent sources. Each follows its own mean-reverting process with five settings, ten in all.",
+ "MATHS_STEPS": [
+  [
+   "Two variances, not one",
+   "The stock's variance is v₁ + v₂. Each factor pulls back toward its long-run level θ at speed κ, is shaken by ξ, and moves with the price at correlation ρ. A negative ρ means falls come with rising volatility: that tilts the smile."
+  ],
+  [
+   "Independent factors multiply",
+   "Because the two factors are independent, the model's characteristic function is the product of each factor's own. That's what keeps pricing fast."
+  ],
+  [
+   "Price by one integral",
+   "The option price comes from inverting the characteristic function (Gil-Pelaez). The code uses the 'little trap' form (Albrecher et al., 2007), which avoids a branch-cut error in the 1993 formula at long maturities."
+  ],
+  [
+   "Check by simulation",
+   "Monte Carlo prices the same option by simulating 20,000 paths with full-truncation Euler steps and antithetic pairs. The two methods agree within the simulation's standard error."
+  ],
+  [
+   "The Feller condition",
+   "If 2κθ > ξ², a factor's variance never reaches zero. Real markets often break it; full truncation keeps the simulation valid when it does."
+  ]
+ ],
+ "MC_LINE": "Monte Carlo check, 20,000 paths: ₹597.10 ± 3.56",
+ "METHOD": [
+  "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
+  "Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. Live prices on the site come from Upstox.",
+  "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat volatility, which a true best fit can never lose to."
+ ],
+ "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the finding explains why a computer can't pick all ten settings for you.",
+ "MODEL_SOURCE": "Option prices: NSE closing prices, 25 Sep 2026. Forward from NIFTY October futures (23,263.60). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
+ "NAMES": {
+  "NIFTY 50": "Index",
+  "NIFTY BANK": "Index",
+  "RELIANCE": "Reliance Industries",
+  "HDFCBANK": "HDFC Bank",
+  "INFY": "Infosys",
+  "TCS": "Tata Consultancy",
+  "ICICIBANK": "ICICI Bank",
+  "SBIN": "State Bank of India",
+  "ITC": "ITC",
+  "LT": "Larsen & Toubro",
+  "BHARTIARTL": "Bharti Airtel",
+  "KOTAKBANK": "Kotak Mahindra Bank",
+  "BAJFINANCE": "Bajaj Finance",
+  "MARUTI": "Maruti Suzuki",
+  "HCLTECH": "HCL Technologies",
+  "WIPRO": "Wipro",
+  "TATASTEEL": "Tata Steel",
+  "ONGC": "ONGC",
+  "COALINDIA": "Coal India",
+  "HINDUNILVR": "Hindustan Unilever"
+ },
+ "NB": {
+  "kappa_s": 0.45166666666666666,
+  "theta_s": 0.06166666666666667,
+  "sigma_s": 0.0025,
+  "rho_s": 0.0,
+  "v0_s": 0.0,
+  "kappa_f": 0.7341666666666666,
+  "theta_f": 0.0033333333333333335,
+  "sigma_f": 0.00125,
+  "rho_f": 0.0,
+  "v0_f": 0.00125
+ },
+ "N_DAYS": 62,
+ "PAGES": [
+  [
+   "home",
+   "index.html",
+   "Home",
+   "the question and the answer"
+  ],
+  [
+   "market",
+   "market.html",
+   "Market",
+   "real NSE prices"
+  ],
+  [
+   "model",
+   "model.html",
+   "The model",
+   "price an option"
+  ],
+  [
+   "maths",
+   "how-it-works.html",
+   "How it works",
+   "the equations"
+  ],
+  [
+   "finding",
+   "finding.html",
+   "The finding",
+   "why a fit isn't an answer"
+  ],
+  [
+   "about",
+   "about.html",
+   "About",
+   "video, method, limits"
+  ],
+  [
+   "team",
+   "team.html",
+   "Team",
+   "who built it"
+  ],
+  [
+   "references",
+   "references.html",
+   "References",
+   "papers and data"
+  ]
+ ],
+ "PAIR_ERR": [
+  0.6735115954255907,
+  0.6658999992932944
+ ],
+ "PAIR_GAP_1Y": 11.700350038715413,
+ "PAIR_HEAD": "Same surface, different magnets.",
+ "PAIR_LEDE": "Here is Bharti Airtel's option surface at the close on 21 Aug 2026, fitted twice. Both fits miss the market by ₹0.67 an option on average. One says a volatility shock takes 1.1 years to fade by half; the other says 9 days to 37 days.",
+ "PAIR_MAGNETS": "Ferrofluid takes its shape from magnets you can't see, and different magnets can raise the same surface. Option prices are the surface; the model's ten settings are the magnets.",
+ "PAIR_MAGNETS_HEAD": "Underneath, the ten settings look nothing alike.",
+ "PAIR_NOTE": "Spike height is each setting's size on its own scale. * pressed against the fit's upper search limit for that setting.",
+ "PAIR_PART": "That day Bharti Airtel had options expiring in 4 and 39 days, and both fits price them alike. Ask them about a one-year option, which isn't traded, and fit A says 33.6% volatility while fit B says 21.9%. The prices give no reason to prefer either.",
+ "PAIR_PART_HEAD": "Where the market trades, they agree. A year out, they're 11.7 points apart.",
+ "PAIR_SIX": "Bharti Airtel, 21 Aug 2026: 16 starts, 6 fits within 10% of the best price error. Each spike is one fit. Where they bunch, the prices pin the setting down; where they scatter, they don't.",
+ "PAIR_SPOT": 1946.0,
+ "PAIR_TYPICAL": "This surface had 6 equally good fits out of 16 starts, and their spread, 4.64, is the median of all 2,400 surfaces. It's the typical case, not the worst.",
+ "PER_PARAM": "Split by setting, the pattern is physical. Today's level (v₀) is pinned down: equally good fits agree on it more closely than random sets would. The speeds back to normal (κ) are not pinned down at all; the best fit's speed sat at the edge of the allowed range on 45% (slow) and 73% (fast) of surfaces.",
+ "PROOF1": "We generated 60 option surfaces from known settings and asked a classical optimizer to find them again, from 4 starting points each. It matched the prices almost exactly: a median price error of 9.16 × 10⁻⁸. The settings it found scored 1.80 on recovery, where 1.00 is what you'd get by always guessing the typical value, and lower is better.",
+ "PROOF1_HEAD": "Simulated surfaces, where the right answer is known",
+ "PROOF1_NET": "A neural network trained to read the settings from prices scores 0.80 on the RMSE-based version of the same score, where the optimizer scores 3.00. It does better by leaning toward typical values; the one setting it reads well is today's level (v₀, 0.47).",
+ "PROOF1_NUMS": [
+  [
+   "9.16 × 10⁻⁸",
+   "median price error"
+  ],
+  [
+   "1.80",
+   "recovery skill (1.00 = guessing)"
+  ],
+  [
+   "1.85",
+   "on the 49 closest price fits"
+  ]
+ ],
+ "PROOF2": "On 2,400 real surfaces (40 of NSE's most traded stocks over 60 days) we started the fit from 16 places each time. On 99% of them, more than one set of settings priced the options equally well, within 10% of the best fit's price error. Those equally good fits sat a median 4.64 apart, against 1.18 for two settings picked at random from the training data: 3.9 times as far.",
+ "PROOF2_HEAD": "Real NSE surfaces, where no answer is assumed",
+ "PROOF2_NUMS": [
+  [
+   "99%",
+   "of 2,400 surfaces had several equally good fits"
+  ],
+  [
+   "3.9×",
+   "further apart than two random parameter sets"
+  ],
+  [
+   "23%",
+   "less price error than one flat volatility, median"
+  ]
+ ],
+ "Q": "Does letting volatility move price options better?",
+ "RAND": 1.1839031285922819,
+ "RATIO": 3.91607370361155,
+ "REFS": [
+  [
+   "Models",
+   [
+    [
+     "Black, F. and Scholes, M. (1973)",
+     "The pricing of options and corporate liabilities.",
+     "Journal of Political Economy 81(3)."
+    ],
+    [
+     "Heston, S. L. (1993)",
+     "A closed-form solution for options with stochastic volatility with applications to bond and currency options.",
+     "Review of Financial Studies 6(2)."
+    ],
+    [
+     "Christoffersen, P., Heston, S. and Jacobs, K. (2009)",
+     "The shape and term structure of the index option smirk: why multifactor stochastic volatility models work so well.",
+     "Management Science 55(12)."
+    ]
+   ]
+  ],
+  [
+   "Numerical methods",
+   [
+    [
+     "Gil-Pelaez, J. (1951)",
+     "Note on the inversion theorem.",
+     "Biometrika 38."
+    ],
+    [
+     "Feller, W. (1951)",
+     "Two singular diffusion problems.",
+     "Annals of Mathematics 54."
+    ],
+    [
+     "Albrecher, H., Mayer, P., Schoutens, W. and Tistaert, J. (2007)",
+     "The little Heston trap.",
+     "Wilmott Magazine."
+    ],
+    [
+     "Lord, R., Koekkoek, R. and van Dijk, D. (2010)",
+     "A comparison of biased simulation schemes for stochastic volatility models.",
+     "Quantitative Finance 10(2)."
+    ],
+    [
+     "Glasserman, P. (2003)",
+     "Monte Carlo Methods in Financial Engineering.",
+     "Springer."
+    ]
+   ]
+  ],
+  [
+   "History",
+   [
+    [
+     "Bachelier, L. (1900)",
+     "Théorie de la spéculation.",
+     "Annales scientifiques de l'École normale supérieure 17."
+    ]
+   ]
+  ],
+  [
+   "Data and software",
+   [
+    [
+     "National Stock Exchange of India",
+     "Bhavcopy end-of-day files, cash market and F&O, July to September 2026.",
+     "nseindia.com."
+    ],
+    [
+     "Reserve Bank of India",
+     "91-day Treasury bill yields.",
+     "rbi.org.in."
+    ],
+    [
+     "Upstox",
+     "Market data API (quotes, candles, option chains).",
+     "upstox.com/developer."
+    ],
+    [
+     "NumPy, SciPy, pandas",
+     "Numerical and data libraries used by the pricer and the research.",
+     "numpy.org, scipy.org, pandas.pydata.org."
+    ]
+   ]
+  ]
+ ],
+ "REL_LAST": [
+  "2026-09-25",
+  1210.5,
+  1227.4,
+  1210.5,
+  1226.0,
+  13138735.0,
+  1219.2
+ ],
+ "REL_LINE": "RELIANCE, day by day: its best Double Heston fit beat a flat volatility on every one of its 60 days (median price error 0.11% of the share price, against 0.13%). On the same days the equally good fits sat a median 4.3 apart.",
+ "REPO": "github.com/mangalvinayak13-vin/option-pricing-using-double-heston",
+ "SHARE": 0.99125,
+ "SITE_NAME": "Double Heston",
+ "SLIDERS": [
+  [
+   "slow",
+   "v₀",
+   "today's variance",
+   0.02,
+   0.0005,
+   1.0
+  ],
+  [
+   "slow",
+   "κ",
+   "speed back to normal",
+   0.5,
+   0.1,
+   10.0
+  ],
+  [
+   "slow",
+   "θ",
+   "long-run variance",
+   0.02,
+   0.0005,
+   1.0
+  ],
+  [
+   "slow",
+   "ξ",
+   "volatility of volatility",
+   0.3,
+   0.05,
+   2.0
+  ],
+  [
+   "slow",
+   "ρ",
+   "price–volatility link",
+   -0.7,
+   -0.99,
+   0.99
+  ],
+  [
+   "fast",
+   "v₀",
+   "today's variance",
+   0.02,
+   0.0005,
+   1.0
+  ],
+  [
+   "fast",
+   "κ",
+   "speed back to normal",
+   5.0,
+   0.1,
+   10.0
+  ],
+  [
+   "fast",
+   "θ",
+   "long-run variance",
+   0.02,
+   0.0005,
+   1.0
+  ],
+  [
+   "fast",
+   "ξ",
+   "volatility of volatility",
+   0.5,
+   0.05,
+   2.0
+  ],
+  [
+   "fast",
+   "ρ",
+   "price–volatility link",
+   -0.7,
+   -0.99,
+   0.99
+  ]
+ ],
+ "SLOW": [
+  "Slow factor",
+  "κ 0.5",
+  "Half of any shock fades in 1.4 years"
+ ],
+ "SLOW_HL": "1.4 years",
+ "SMILE_CAPTION": "Implied volatility by strike, 30 days to expiry, at the model's starting settings. Computed with the project's pricer.",
+ "SPOT": 23140.5,
+ "STATUS": "Market closed. Last close 25 Sep 2026, 15:30 IST",
+ "SUPERVISOR": [
+  "[Supervisor name]",
+  "[Department], [College]"
+ ],
+ "TEAM": [
+  [
+   "[Name]",
+   "[Role: e.g. model and pricer]"
+  ],
+  [
+   "[Name]",
+   "[Role: e.g. data pipeline]"
+  ],
+  [
+   "[Name]",
+   "[Role: e.g. website and design]"
+  ],
+  [
+   "[Name]",
+   "[Role: e.g. research and report]"
+  ]
+ ],
+ "TEAM_HEAD": "The team",
+ "TEAM_INTRO": "Built for [Event] at [College]. Replace each placeholder with the real name and what that person built.",
+ "THANKS": [
+  "NSE, for the public end-of-day files the research uses.",
+  "Upstox, for the market-data API behind the live prices.",
+  "The authors of NumPy, SciPy and pandas."
+ ],
+ "TICKER_MODEL": [
+  [
+   "Double Heston, NIFTY 23,150 call",
+   "₹600.40"
+  ],
+  [
+   "Market close, same option",
+   "₹370.15"
+  ],
+  [
+   "Monte Carlo check",
+   "₹597.10 ± 3.56"
+  ],
+  [
+   "Slow factor half-life",
+   "1.4 years"
+  ],
+  [
+   "Fast factor half-life",
+   "51 days"
+  ],
+  [
+   "Surfaces with several equally good fits",
+   "99%"
+  ]
+ ],
+ "TWIST": "Ask it which of its ten settings produced the bend, though, and the prices can't tell you.",
+ "TWO_CLOCKS": "Each factor is a volatility that gets knocked around and drifts back to normal. One drifts back slowly, one quickly, which lets the model shape short- and long-dated options differently.",
+ "UNIVERSE": "NIFTY 50, NIFTY BANK and the 40 most traded F&O stocks: every stock we show an implied volatility for.",
+ "VIDEO_CAPTION": "A narrated overview of the model and the finding, made from the project report. [Video to be added]"
+}

@@ -1,0 +1,2 @@
+/* glass theme: being built tonight */
+.dr-sec{padding-block:40px;display:flex;flex-direction:column;gap:20px}.dr h1{font-size:var(--fs-h1)}.dr-lede{font-size:var(--fs-lede)}.dr-2{display:grid;grid-template-columns:1fr 1fr;gap:40px}.dr-5{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}.dr-row{display:flex;gap:12px}.dr .b-tick{padding:10px 220px 10px 24px;border-bottom:1px solid var(--line)}
