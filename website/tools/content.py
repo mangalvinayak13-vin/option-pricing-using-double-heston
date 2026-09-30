@@ -304,6 +304,18 @@ PAIR_SIX = (f"Bharti Airtel, 21 Aug 2026: 16 starts, {PAIR['equivalents']} fits 
 BEND_HEAD = "One fixed volatility draws a flat line. Real prices bend."
 BEND = ("Black–Scholes prices every strike at the same volatility, so its smile is flat. Double Heston's two moving "
         "volatilities, tied to the price by a negative ρ, make protection against falls dearer: the line bends.")
+_SURF = D["surface"]
+_S1M = _SURF["iv"][_SURF["days"].index(30)]
+_S1Y = _SURF["iv"][_SURF["days"].index(365)]
+SURFACE_NOTE = (f"Implied volatility at the starting settings, for every strike and expiry. Low strikes, the protection "
+                f"against falls, carry the most. The tilt is steepest at short expiries: {_S1M[0]:.1f}% down to {_S1M[-1]:.1f}% "
+                f"across strikes at one month, {_S1Y[0]:.1f}% to {_S1Y[-1]:.1f}% at one year. ≈ 0 marks options worth almost "
+                "nothing, where no volatility can be read.")
+SKEW_NOTE = ("The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets "
+             "further away.")
+FAN_NOTE = (f"Sixty of the simulated one-year paths from 100, with the middle 50% and 90% of all paths shaded. "
+            f"The same simulator checks the pricer: 20,000 paths price the NIFTY {inr(K['strike'], 0)} call at ₹{inr(K['mc'])} "
+            f"± {K['mc_se']:.2f}, against ₹{inr(K['dh'])} from the formula.")
 FACTORS_HEAD = "Two volatilities, one fast and one slow."
 FACTORS = (f"Each factor gets knocked about and drifts back to its long-run level. The fast one (κ 5.0) loses half "
            f"of any shock in {FAST_HL}; the slow one (κ 0.5) takes {SLOW_HL}. Same kind of process, different clocks.")

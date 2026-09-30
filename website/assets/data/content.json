@@ -188,6 +188,7 @@
  "EXPIRY": "27 Oct 2026",
  "FACTORS": "Each factor gets knocked about and drifts back to its long-run level. The fast one (κ 5.0) loses half of any shock in 51 days; the slow one (κ 0.5) takes 1.4 years. Same kind of process, different clocks.",
  "FACTORS_HEAD": "Two volatilities, one fast and one slow.",
+ "FAN_NOTE": "Sixty of the simulated one-year paths from 100, with the middle 50% and 90% of all paths shaded. The same simulator checks the pricer: 20,000 paths price the NIFTY 23,150 call at ₹597.10 ± 3.56, against ₹600.40 from the formula.",
  "FAST": [
   "Fast factor",
   "κ 5.0",
@@ -540,6 +541,7 @@
  "REPO": "github.com/mangalvinayak13-vin/option-pricing-using-double-heston",
  "SHARE": 0.99125,
  "SITE_NAME": "Double Heston",
+ "SKEW_NOTE": "The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets further away.",
  "SLIDERS": [
   [
    "slow",
@@ -635,6 +637,7 @@
   "[Supervisor name]",
   "[Department], [College]"
  ],
+ "SURFACE_NOTE": "Implied volatility at the starting settings, for every strike and expiry. Low strikes, the protection against falls, carry the most. The tilt is steepest at short expiries: 26.2% down to 15.5% across strikes at one month, 23.4% to 16.6% at one year. ≈ 0 marks options worth almost nothing, where no volatility can be read.",
  "TEAM": [
   [
    "[Name]",

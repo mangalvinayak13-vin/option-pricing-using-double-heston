@@ -97,7 +97,7 @@ export function countUp(el, instant = false) {
   const from = parseFloat(el.dataset.from ?? (to > 0 ? 0 : to));
   const write = v => { el.textContent = (el.dataset.pre || '') + f(v, dp) + (el.dataset.suf || ''); };
   if (instant || reduced()) return write(to);
-  tween(+(el.dataset.dur || 1100), k => write(from + (to - from) * k), ease.outExpo);
+  el._cancel = tween(+(el.dataset.dur || 1100), k => write(from + (to - from) * k), ease.outExpo);
 }
 
 // animate a number already on screen to a new value (model reprices)

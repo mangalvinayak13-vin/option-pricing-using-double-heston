@@ -20,7 +20,7 @@ export function ticker(ctx, { label = true, model = true, syms } = {}) {
   const run = items.join('<span class="tick-sep" aria-hidden="true"></span>') + '<span class="tick-sep" aria-hidden="true"></span>';
   return `<div class="tick b-tick" role="region" aria-label="Closing prices on ${esc(C.LAST_DAY)} and the model's outputs, scrolling">
     ${label ? `<span class="b-tick-lab">Close ${esc(C.LAST_DAY)}</span>` : ''}
-    <div class="tick-track"><div class="tick-run">${run}</div><div class="tick-run" aria-hidden="true">${run}</div></div></div>`;
+    <div class="tick-view"><div class="tick-track"><div class="tick-run">${run}</div><div class="tick-run" aria-hidden="true">${run}</div></div></div></div>`;
 }
 
 // ------------------------------------------------------------------ market
@@ -35,6 +35,18 @@ export function watchTable(ctx, { syms, spark = [84, 26], names = true, cols = [
       `<td class="b-spark">${sparkline(v.closes, spark[0], spark[1])}</td><td class="num">${inr(v.last)}</td><td class="num ${c}">${a} ${Math.abs(v.pct).toFixed(2)}%</td></tr>`;
   });
   return `<table class="b-tb b-watch" data-ctl="watch"><caption class="vh">Closing prices, ${esc(C.LAST_DAY)}. Pick a stock to chart it.</caption><thead><tr>${cols.map((h, i) => `<th scope="col"${i ? ' class="num"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+// a Stocks-app style list: symbol and name, sparkline, price over a coloured change pill
+export function stocksList(ctx, { syms, spark = [64, 26] } = {}) {
+  const C = ctx.C, sel = store.get('market.sym', 'RELIANCE');
+  const list = syms || [...C.FEATURED, 'BHARTIARTL', 'KOTAKBANK', 'BAJFINANCE', 'MARUTI', 'TCS', 'WIPRO'].filter((s, i, a) => a.indexOf(s) === i && w(ctx, s));
+  return `<ul class="b-stocks" aria-label="Closing prices, ${esc(C.LAST_DAY)}. Pick a stock to chart it.">${list.map(s => {
+    const v = w(ctx, s), [a, c] = arrow(v.pct), pick = !!ctx.D.equity[s];
+    const inner = `<span class="bs-l"><b>${esc(s)}</b><span class="b-sub">${esc(C.NAMES[s] || '')}</span></span>${sparkline(v.closes, spark[0], spark[1])}
+      <span class="bs-r"><b class="num">${inr(v.last)}</b><span class="bs-pill ${c} num">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
+    return `<li class="${s === sel ? 'sel' : ''}">${pick ? `<button type="button" class="bs-row" data-sym="${s}" aria-pressed="${s === sel}">${inner}</button>` : `<div class="bs-row">${inner}</div>`}</li>`;
+  }).join('')}</ul>`;
 }
 
 export function stockHead(ctx, sym) {
@@ -82,11 +94,11 @@ export function pricingForm(ctx, cls = 'b-form') {
 export function priceReadouts(ctx) {
   const K = ctx.D.contract, row = ctx.D.chain.find(r => r.strike === K.strike);
   return {
-    dh: `<b class="num" data-bind="dh" data-v="${K.dh}">₹${inr(K.dh)}</b>`,
+    dh: `<b class="num" data-bind="dh" data-v="${K.dh}" data-count="${K.dh}" data-fmt="inr" data-pre="₹">₹${inr(K.dh)}</b>`,
     dhIv: `<span class="num" data-bind="dh-iv" data-v="${K.dh_iv}">${K.dh_iv.toFixed(2)}%</span>`,
     mkt: `<b class="num" data-bind="mkt">₹${inr(row.call)}</b>`,
     mktIv: `<span class="num" data-bind="mkt-iv">${row.call_iv.toFixed(2)}%</span>`,
-    gap: `<b class="num" data-bind="gap" data-v="${K.dh - row.call}">+₹${inr(K.dh - row.call)}</b>`,
+    gap: `<b class="num" data-bind="gap" data-v="${K.dh - row.call}" data-count="${K.dh - row.call}" data-fmt="inr" data-pre="+₹">+₹${inr(K.dh - row.call)}</b>`,
     mc: `<span class="num" data-bind="mc">₹${inr(K.mc)} ± ${K.mc_se.toFixed(2)}</span>`,
     contract: `<span data-bind="contract">NIFTY ${inr(K.strike, 0)} call</span>`,
     status: `<span class="b-status" data-bind="status" role="status" aria-live="polite">Starting settings</span>`,
@@ -107,7 +119,7 @@ export function sliders(ctx, factor) {
     const key = SLIDER_KEYS[factor][i], v = p[key];
     const f = ['v0', 'theta'].some(k => key.startsWith(k)) ? 4 : 2;
     const id = `sl-${key}`;
-    return `<div class="b-sl"><b class="b-sym-g">${sym}</b><label for="${id}"><span>${esc(name)}</span><input id="${id}" type="range" min="${lo}" max="${hi}" step="${key.startsWith('rho') ? 0.01 : (hi - lo) / 400}" value="${v}" data-param="${key}" data-dp="${f}"></label><output for="${id}" class="num" data-out="${key}">${v.toFixed(f)}</output></div>`;
+    return `<div class="b-sl"><b class="b-sym-g">${sym}</b><label for="${id}"><span>${esc(name)}</span><input id="${id}" type="range" min="${lo}" max="${hi}" step="${f === 4 ? 0.0005 : 0.01}" value="${v}" data-param="${key}" data-dp="${f}" style="--p:${((v - lo) / (hi - lo) * 100).toFixed(2)}%"></label><output for="${id}" class="num" data-out="${key}">${v.toFixed(f)}</output></div>`;
   }).join('');
 }
 
@@ -123,18 +135,41 @@ export function greeks(ctx, cls = 'b-greek') {
 }
 
 // ------------------------------------------------------------------ text blocks
+// a plain number like "99%", "3.9×", "1.80" or "17.4%" counts up on first view; anything else stays as written
+function autoRaw(n) {
+  const m = /^([\d.]+)(%|×)?$/.exec(n);
+  if (!m) return null;
+  const dp = (m[1].split('.')[1] || '').length;
+  return { v: +m[1], dp, suf: m[2] || '' };
+}
+
 export function nums(items, cls = 'b-num', count = true) {
-  return items.map(([n, c, raw]) => {
+  return items.map(([n, c, raw = autoRaw(n)]) => {
     const counter = count && raw ? ` data-count="${raw.v}" data-fmt="${raw.f || 'num'}" data-dp="${raw.dp ?? 2}"${raw.pre ? ` data-pre="${raw.pre}"` : ''}${raw.suf ? ` data-suf="${esc(raw.suf)}"` : ''}` : '';
     return `<div class="${cls}"><b class="num"${counter}>${esc(n)}</b><span>${esc(c)}</span></div>`;
   }).join('');
 }
 
+// the model's equations, typeset in MathML (native in Safari and Chrome)
+const mi = s => `<mi>${s}</mi>`, mo = s => (/[()]/.test(s) ? `<mo stretchy="false">${s}</mo>` : `<mo>${s}</mo>`), mn = s => `<mn>${s}</mn>`;
+const sub = (b, s) => `<msub>${b}${s}</msub>`, sup = (b, s) => `<msup>${b}${s}</msup>`;
+const sqrt = x => `<msqrt>${x}</msqrt>`, d = s => `<mi mathvariant="normal">d</mi>${s}`;
+const vi = k => sub(mi('v'), mn(k));
+const MATH = {
+  price: `${d(mi('S'))}${mo('=')}${mo('(')}${mi('r')}${mo('−')}${mi('q')}${mo(')')}${mi('S')}${d(mi('t'))}${mo('+')}${sqrt(vi(1))}${mi('S')}${d(sub(mi('W'), mn(1)))}${mo('+')}${sqrt(vi(2))}${mi('S')}${d(sub(mi('W'), mn(2)))}`,
+  variance: `${d(sub(mi('v'), mi('i')))}${mo('=')}${sub(mi('κ'), mi('i'))}${mo('(')}${sub(mi('θ'), mi('i'))}${mo('−')}${sub(mi('v'), mi('i'))}${mo(')')}${d(mi('t'))}${mo('+')}${sub(mi('ξ'), mi('i'))}${sqrt(sub(mi('v'), mi('i')))}${d(sub(mi('Z'), mi('i')))}` +
+    `<mspace width="1em"/>${mi('corr')}${mo('(')}${d(sub(mi('W'), mi('i')))}${mo(',')}${d(sub(mi('Z'), mi('i')))}${mo(')')}${mo('=')}${sub(mi('ρ'), mi('i'))}`,
+  cf: `${mi('φ')}${mo('(')}${mi('u')}${mo(')')}${mo('=')}${sub(mi('φ'), mn(1))}${mo('(')}${mi('u')}${mo(')')}${mo('·')}${sub(mi('φ'), mn(2))}${mo('(')}${mi('u')}${mo(')')}`,
+  call: `${mi('C')}${mo('=')}${sup(mi('e'), `<mrow>${mo('−')}${mi('r')}${mi('T')}</mrow>`)}${mo('[')}${mi('F')}${sub(mi('P'), mn(1))}${mo('−')}${mi('K')}${sub(mi('P'), mn(2))}${mo(']')}` +
+    `<mspace width="1em"/>${sub(mi('P'), mi('j'))}${mo('=')}<mfrac>${mn(1)}${mn(2)}</mfrac>${mo('+')}<mfrac>${mn(1)}${mi('π')}</mfrac>` +
+    `<msubsup>${mo('∫')}${mn(0)}${mi('∞')}</msubsup>${mi('Re')}${mo('[')}<mfrac><mrow>${sup(mi('e'), `<mrow>${mo('−')}${mi('i')}${mi('u')}${mi('ln')}${mo('(')}${mi('K')}${mo('/')}${mi('F')}${mo(')')}</mrow>`)}${sub(mi('φ'), mi('j'))}${mo('(')}${mi('u')}${mo(')')}</mrow><mrow>${mi('i')}${mi('u')}</mrow></mfrac>${mo(']')}${d(mi('u'))}`,
+  feller: `${mn(2)}${sub(mi('κ'), mi('i'))}${sub(mi('θ'), mi('i'))}${mo('>')}${sup(sub(mi('ξ'), mi('i')), mn(2))}`,
+};
 export function equations(ctx, cls = 'b-eq') {
   const C = ctx.C;
-  return [['The price moves with two variances', C.EQ_PRICE], ['Each variance pulls back to its own level', C.EQ_VAR], ['Independent factors multiply', C.EQ_CF],
-    ['The price is one integral (Gil-Pelaez)', C.EQ_CALL], ['A factor never touches zero when', C.EQ_FELLER]]
-    .map(([l, e]) => `<div class="${cls}"><span class="b-lab">${esc(l)}</span><div class="b-eqn">${esc(e)}</div></div>`).join('');
+  return [['The price moves with two variances', 'price', C.EQ_PRICE], ['Each variance pulls back to its own level (i = 1, 2)', 'variance', C.EQ_VAR],
+    ['Independent factors multiply', 'cf', C.EQ_CF], ['The price is one integral (Gil-Pelaez)', 'call', C.EQ_CALL], ['A factor never touches zero when', 'feller', C.EQ_FELLER]]
+    .map(([l, k, plain]) => `<div class="${cls}"><span class="b-lab">${esc(l)}</span><div class="b-eqn"><math displaystyle="true" alttext="${esc(plain)}">${MATH[k]}</math></div></div>`).join('');
 }
 
 export function steps(ctx, cls = 'b-steps', numbered = true) {

@@ -91,4 +91,5 @@ const controls = initControls({ onTheme: switchTheme });
 on(what => { if (what === 'mode') controls.sync(); });
 await render(theme());
 document.body.dataset.ready = '1';
+document.fonts?.ready.then(() => { document.body.dataset.h = String(document.documentElement.scrollHeight); });
 export { THEMES, mode };

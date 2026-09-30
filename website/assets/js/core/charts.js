@@ -130,7 +130,7 @@ registerChart('smileBend', (w, o, ctx) => {
 registerChart('marketSmile', (w, o, ctx, el) => {
   const D = ctx.D, K = D.contract;
   const res = el._res; // latest model result, if repriced
-  const lo = 22550, hi = 23750;
+  const lo = D.chain[0].strike - 50, hi = D.chain[D.chain.length - 1].strike + 50;
   const mk = D.chain.filter(r => r.mkt_iv).map(r => [r.strike, r.mkt_iv]);
   const dh = res ? res.smile.filter(([k, v]) => v != null && k >= lo && k <= hi) : D.chain.map(r => [r.strike, r.dh_iv]);
   const all = [...mk.map(p => p[1]), ...dh.map(p => p[1])];
@@ -140,9 +140,9 @@ registerChart('marketSmile', (w, o, ctx, el) => {
   let b = '';
   for (const v of ticks(y0, y1, 4)) b += L(left, ys(v), w - right, ys(v)) + T(left - 10, ys(v) + 5, `${v}%`, '', 'end');
   b += L(left, h - bottom, w - right, h - bottom, 'axis');
-  for (const k of [lo, 22950, 23350, hi]) b += T(xs(k), h - bottom + 22, inr(k, 0), '', 'middle');
+  for (const k of ticks(lo, hi, w < 600 ? 3 : 5).filter(k => k % 50 === 0)) b += T(xs(k), h - bottom + 22, inr(k, 0), '', 'middle');
   b += T((left + w - right) / 2, h - 4, 'Strike (NIFTY, 27 Oct 2026 expiry)', '', 'middle');
-  b += L(xs(K.spot), top - 8, xs(K.spot), h - bottom, 'c-ref', 'style="stroke-dasharray:2 5"') + T(xs(K.spot) + 6, top - 12, `spot ${inr(K.spot)}`, '');
+  b += L(xs(K.spot), top, xs(K.spot), h - bottom, 'c-ref', 'style="stroke-dasharray:2 5"') + T(xs(K.spot) + 6, h - bottom - 8, `spot ${inr(K.spot)}`, '');
   const strike = o.strike || K.strike;
   b += L(xs(strike), top, xs(strike), h - bottom, 'axis', 'style="stroke:var(--ink);stroke-width:1.5;opacity:.5"');
   const P = dh.map(([k, v]) => [xs(k), ys(v)]);
@@ -273,11 +273,13 @@ const PLAIN = {
 registerChart('paramBars', (w, o, ctx) => {
   let rows = [...ctx.D.per_param].sort((a, b) => b.fits - a.fits);
   if (o.only) rows = rows.filter(r => o.only.includes(r.name));
-  const rowH = o.rowH || 38, labelW = w < 640 ? 190 : (o.labelW || 290), top = 42;
+  const narrow = w < 640;
+  const rowH = o.rowH || 38, labelW = narrow ? Math.min(o.labelW || 150, 150) : (o.labelW || 290), top = narrow ? 64 : 42;
   const h = top + rowH * rows.length + 40;
   const xs = scale(0, 6, labelW, w - 52);
-  let b = `<g class="a-fade">${R(labelW, 8, 24, 12, 'c-fill-model', 'rx="3"')}${T(labelW + 32, 19, 'Equally good fits')}` +
-    `${L(labelW + 200, 5, labelW + 200, 23, 'c-alt', 'style="stroke-width:2.6"')}${T(labelW + 210, 19, 'Two random parameter sets')}</g>`;
+  const lx = narrow ? 0 : labelW, ly2 = narrow ? 44 : 19, lx2 = narrow ? 0 : labelW + 200;
+  let b = `<g class="a-fade">${R(lx, 8, 24, 12, 'c-fill-model', 'rx="3"')}${T(lx + 32, 19, 'Equally good fits')}` +
+    `${L(lx2 + 12, ly2 - 14, lx2 + 12, ly2 + 4, 'c-alt', 'style="stroke-width:2.6"')}${T(lx2 + 32, ly2, 'Two random parameter sets')}</g>`;
   for (let v = 0; v <= 6; v++) b += L(xs(v), top - 4, xs(v), top + rowH * rows.length, v ? 'grid' : 'axis') + T(xs(v), top + rowH * rows.length + 22, String(v), '', 'middle');
   rows.forEach((r, i) => {
     const [name, fac, sym] = PLAIN[r.name];
@@ -288,7 +290,7 @@ registerChart('paramBars', (w, o, ctx) => {
     b += L(xs(r.random), yc - rowH * 0.4, xs(r.random), yc + rowH * 0.4, 'c-alt a-pop', `style="stroke-width:2.6;--i:${i};--d:400ms"`);
     b += T(Math.max(xs(r.fits), xs(r.random)) + 9, yc + 5, r.fits.toFixed(2), 't-strong a-fade', 'start', `style="--i:${i};--d:500ms"`);
   });
-  b += T(labelW, h - 2, 'Median distance between the fits, in spreads of the training data', '', 'start', 'style="font-size:12.5px"');
+  b += T(narrow ? 0 : labelW, h - 2, narrow ? 'Distance between fits, in training-data spreads' : 'Median distance between the fits, in spreads of the training data', '', 'start', 'style="font-size:12.5px"');
   return { h, body: b, label: 'How far apart equally good fits land for each setting, against two random parameter sets' };
 });
 
@@ -341,7 +343,7 @@ registerChart('skew', (w, o, ctx) => {
   b += Pa(P, 'c-model a-draw', 'pathLength="1"');
   b += P.map((p, i) => Ci(p[0], p[1], 4.5, 'c-fill-model a-pop', `style="--i:${i};--d:700ms"`)).join('');
   b += T(P[0][0] + 10, P[0][1] - 14, `${rows[0][1].toFixed(1)} points at 1 week`, 't-strong a-fade', 'start', 'style="--d:900ms"');
-  b += T(P[P.length - 1][0], P[P.length - 1][1] - 16, `${rows[rows.length - 1][1].toFixed(1)} at 2 years`, 't-strong a-fade', 'end', 'style="--d:1000ms"');
+  b += T(P[P.length - 1][0], P[P.length - 1][1] + 26, `${rows[rows.length - 1][1].toFixed(1)} at 2 years`, 't-strong a-fade', 'end', 'style="--d:1000ms"');
   return { h, body: b, label: `Skew by time to expiry: ${rows[0][1].toFixed(1)} volatility points at one week falling to ${rows[rows.length - 1][1].toFixed(1)} at two years`,
     hover: { xs: P.map(p => p[0]), x0: left, x1: w - right, top, bottom: h - bottom, ys: i => [P[i][1]], tipY: i => P[i][1] - 8,
       html: i => `${rows[i][0]} days: skew <b>${rows[i][1].toFixed(2)}</b> points, at-the-money <b>${rows[i][2].toFixed(1)}%</b>` } };
@@ -362,7 +364,8 @@ registerChart('decay', (w, o, ctx) => {
   b += Pa(tsx.map(t => [xs(t), ys(Math.exp(-5 * t))]), 'c-model a-draw fast-line', 'pathLength="1" style="--d:250ms"');
   const hs = HL.slow_years, hf = HL.fast_days / 365;
   b += Ci(xs(hs), ys(0.5), 6.5, 'a-pop', 'style="fill:var(--c-alt, var(--ink));--d:1300ms"') + Ci(xs(hf), ys(0.5), 6.5, 'c-fill-model a-pop', 'style="--d:1100ms"');
-  b += T(xs(hs) + 12, ys(0.5) - 14, `slow: half gone in ${hs.toFixed(1)} years`, 't-strong a-fade', 'start', 'style="--d:1400ms"');
+  const slowLab = `slow: half gone in ${hs.toFixed(1)} years`, room = w - right - xs(hs) > slowLab.length * o.fs * 0.56 + 16;
+  b += T(room ? xs(hs) + 12 : xs(hs) - 4, ys(0.5) - 16, slowLab, 't-strong a-fade', room ? 'start' : 'end', 'style="--d:1400ms"');
   b += T(xs(hf) + 14, ys(0.5) - 14, `fast: ${HL.fast_days.toFixed(0)} days`, 't-strong a-fade', 'start', 'style="--d:1200ms"');
   return { h, body: b, label: `Share of a volatility shock left over two years: the fast factor loses half in ${HL.fast_days.toFixed(0)} days, the slow factor in ${hs.toFixed(1)} years` };
 });
@@ -508,14 +511,16 @@ registerChart('pairPart', (w, o, ctx) => {
     b += T(ea[0] + 14, ea[1] + 5, `Fit A ${(T_.a[T_.a.length - 1] * 100).toFixed(1)}%`, 't-strong a-fade', 'start', 'style="--d:1500ms"');
     b += T(eb[0] + 14, eb[1] + 5, `Fit B ${(T_.b[T_.b.length - 1] * 100).toFixed(1)}%`, 't-strong a-fade', 'start', 'style="--d:1500ms"') + T(eb[0] + 14, eb[1] + 24, 'at 2 years', 'a-fade', 'start', 'style="--d:1500ms"');
   }
-  b += `<g class="a-fade">${Ci(xs(60), top + 16, 6, 'c-dot-mk')}${T(xs(60) + 14, top + 21, 'market, at the money')}</g>`;
+  const lg = xs(39) + 24;
+  b += `<g class="a-fade">${Ci(lg + 6, top + 16, 6, 'c-dot-mk')}${T(lg + 20, top + 21, 'market, at the money')}` +
+    `${L(lg, top + 42, lg + 28, top + 42, 'c-model')}${T(lg + 38, top + 47, 'Fit A')}${L(lg + 96, top + 42, lg + 124, top + 42, 'pair-b')}${T(lg + 134, top + 47, 'Fit B')}</g>`;
   return { h, body: b, label: `At-the-money volatility by time to expiry for two equally good fits: equal on the traded 4- and 39-day expiries, ${(a1 - b1).toFixed(1)} points apart at one year`,
     hover: { xs: A.map(p => p[0]), x0: left, x1: w - right, top, bottom: h - bottom, ys: i => [A[i][1], B[i][1]], tipY: i => Math.min(A[i][1], B[i][1]) - 8,
       html: i => `${T_.days[i]} days: fit A <b>${(T_.a[i] * 100).toFixed(1)}%</b>, fit B <b>${(T_.b[i] * 100).toFixed(1)}%</b>` } };
 });
 registerChart('pairSix', (w, o, ctx) => {
   const P = ctx.P, narrow = w < 760;
-  const labelW = narrow ? 150 : 270, right = narrow ? 12 : 80, rowH = 56, tw = w - labelW - right;
+  const labelW = narrow ? 150 : 250, right = narrow ? 14 : 30, rowH = 56, tw = w - labelW - right;
   const sc = {
     kappa: [scale(0.1, 30, 0, tw, true), [[0.1, '6.9 yr'], [1, '8 months'], [10, '25 days'], [30, '8 days']], v => v],
     theta: [scale(0, 70, 0, tw), [[0, '0%'], [35, '35%'], [70, '70%']], v => Math.sqrt(Math.max(v, 0)) * 100],
@@ -536,8 +541,6 @@ registerChart('pairSix', (w, o, ctx) => {
       for (const [tv, tl] of tk) b += T(labelW + s(tv), base + 17, tl, '', 'middle', 'style="font-size:12px"');
       const vals = P.all_equivalent.map(e => conv(e[`${key}_${suf}`])).sort((a, c) => a - c);
       vals.forEach(v => { b += `<path d="${spikePath(labelW + s(clamp(v, s.d0, s.d1)), base, rowH - 26, 9)}" class="spike a-rise" style="--i:${i++}"/>`; });
-      const spread = s(clamp(vals[vals.length - 1], s.d0, s.d1)) - s(clamp(vals[0], s.d0, s.d1));
-      if (!narrow) b += T(labelW + tw + 16, base - 4, spread < tw * 0.12 ? 'pinned' : 'loose', spread < tw * 0.12 ? '' : 't-strong');
       y += rowH;
     }
     y += 16;

@@ -58,7 +58,11 @@ function modelPage(scope, ctx) {
     return px;
   }
 
+  // once the model has been asked, its numbers are live: stop entrance count-ups from writing the defaults
+  const liveNumbers = () => ['dh', 'gap'].forEach(k => bind(k).forEach(el => { el.removeAttribute('data-count'); el._cancel?.(); }));
+
   function apply(res) {
+    liveNumbers();
     const mkt = marketSide();
     bind('dh').forEach(el => retarget(el, res.price, { f: fmt.inr, pre: '₹' }));
     bind('dh-iv').forEach(el => retarget(el, res.iv, { suf: '%' }));
@@ -105,6 +109,7 @@ function modelPage(scope, ctx) {
   $$('[data-param]', scope).forEach(inp => {
     inp.addEventListener('input', () => {
       params[inp.dataset.param] = +inp.value;
+      inp.style.setProperty('--p', `${((inp.value - inp.min) / (inp.max - inp.min) * 100).toFixed(2)}%`);
       $$(`[data-out="${inp.dataset.param}"]`, scope).forEach(o => { o.textContent = (+inp.value).toFixed(+inp.dataset.dp); });
       for (const f of ['slow', 'fast']) {
         const fe = feller(params, f);
@@ -127,7 +132,7 @@ function modelPage(scope, ctx) {
   });
   // a returning visitor (or a theme change) keeps their settings: reprice them once
   marketSide();
-  if (!isDefault()) run();
+  if (!isDefault()) { liveNumbers(); run(); }
 }
 
 // ------------------------------------------------------------------ the market page
@@ -142,9 +147,13 @@ function marketPage(scope, ctx) {
     $$('[data-bind="m-last"]', scope).forEach(el => { el.textContent = inr(r[4]); });
     $$('[data-bind="m-chg"]', scope).forEach(el => { el.textContent = `${a} ${inr(Math.abs(ch))} (${Math.abs(ch / r[6] * 100).toFixed(2)}%)`; el.className = el.className.replace(/\b(up|dn)\b/g, '') + ' ' + c; });
     set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6])); set('m-volume', `${(r[5] / 1e5).toFixed(1)} lakh`);
-    $$('.b-watch tr[data-sym]', scope).forEach(tr => { tr.classList.toggle('sel', tr.dataset.sym === sym); tr.querySelector('button')?.setAttribute('aria-pressed', String(tr.dataset.sym === sym)); });
+    $$('button[data-sym]', scope).forEach(b => {
+      const on = b.dataset.sym === sym;
+      b.setAttribute('aria-pressed', String(on));
+      b.closest('tr, li')?.classList.toggle('sel', on);
+    });
   };
-  $$('.b-watch button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); }));
+  $$('button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); }));
   $$('[data-seg="range"]', scope).forEach(s => s.addEventListener('seg', e => { range = e.detail; redraw(); }));
   $$('[data-seg="mode"]', scope).forEach(s => s.addEventListener('seg', e => { mode = e.detail; redraw(); }));
 }

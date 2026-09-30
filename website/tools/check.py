@@ -10,8 +10,12 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 PAGES = sys.argv[1:] or ["index.html", "market.html", "model.html", "how-it-works.html", "finding.html", "about.html", "team.html", "references.html"]
 
 for p in PAGES:
-    dom = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--virtual-time-budget=6000", "--dump-dom", f"http://localhost:8765/{p}"],
-                         capture_output=True, text=True, timeout=90).stdout
+    r = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--virtual-time-budget=6000", "--enable-logging=stderr", "--v=0",
+                        "--dump-dom", f"http://localhost:8765/{p}"], capture_output=True, text=True, timeout=90)
+    dom = r.stdout
+    for line in r.stderr.splitlines():
+        if "CONSOLE" in line or "Uncaught" in line:
+            print("   console:", line.split("] ", 1)[-1][:300])
     ready = 'data-ready="1"' in dom
     charts = len(re.findall(r'data-chart="', dom))
     svgs = len(re.findall(r'<svg viewBox=', dom))

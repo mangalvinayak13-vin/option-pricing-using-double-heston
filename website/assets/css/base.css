@@ -73,25 +73,29 @@ table { border-collapse: collapse; }
   border-radius: 8px; letter-spacing: .01em; white-space: nowrap;
 }
 .dh-controls .ctl-label:hover { color: var(--ink); }
+/* macOS-style switch (System Settings): accent blue when on, flat track with a hairline edge and a faint inner
+   shadow, crisp white knob. Pressing turns the knob into a Liquid Glass lens. */
 .lgs {
-  position: relative; width: 58px; height: 34px; padding: 0; border: 0; border-radius: 17px; flex: none;
-  background: var(--track-off); cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-  transition: background-color .28s ease;
-  box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .06);
+  position: relative; width: 52px; height: 30px; padding: 0; border: 0; border-radius: 15px; flex: none;
+  background: #E1E1E4; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none; user-select: none;
+  transition: background-color .22s ease, box-shadow .22s ease;
+  box-shadow: inset 0 0 0 .5px rgb(0 0 0 / .14), inset 0 1px 2px rgb(0 0 0 / .08);
 }
-.lgs[aria-checked="true"] { background: #34C759; }
-html[data-mode="dark"] .lgs[aria-checked="true"] { background: #30D158; }
-.lgs:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 20px; }
+html[data-mode="dark"] .lgs { background: #3A3A3D; box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .12), inset 0 1px 2px rgb(0 0 0 / .35); }
+.lgs[aria-checked="true"], html[data-mode="dark"] .lgs[aria-checked="true"] { background: #0A7CFF;
+  box-shadow: inset 0 0 0 .5px rgb(0 40 120 / .35), inset 0 1px 2px rgb(0 30 90 / .25); }
+.lgs:focus-visible { outline: 3px solid color-mix(in srgb, #0A84FF 55%, transparent); outline-offset: 2px; border-radius: 18px; }
 .lgs .knob {
-  position: absolute; top: 2px; left: 2px; width: 30px; height: 30px; border-radius: 15px; background: #FFFFFF;
-  box-shadow: 0 3px 8px rgb(0 0 0 / .16), 0 1px 1px rgb(0 0 0 / .10), 0 0 0 .5px rgb(0 0 0 / .04);
+  position: absolute; top: 2px; left: 2px; width: 26px; height: 26px; border-radius: 13px; background: #FFFFFF;
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .12), 0 1px 2px rgb(0 0 0 / .14), 0 3px 7px rgb(0 0 0 / .12);
   transform: translateX(0); transform-origin: 50% 50%;
-  transition: transform .5s var(--spring-bouncy), width .22s var(--ease-out), background-color .2s ease, box-shadow .2s ease;
+  transition: transform .45s var(--spring-snappy), width .2s var(--ease-out), background-color .2s ease, box-shadow .2s ease;
 }
-.lgs[aria-checked="true"] .knob { transform: translateX(24px); }
-/* pressed: the knob stretches like iOS and turns into a glass lens */
+.lgs[aria-checked="true"] .knob { transform: translateX(22px); }
+/* pressed: the knob stretches and turns into a glass lens */
 .lgs.pressing .knob, .lgs.holding .knob, .lgs.menu-open .knob {
-  width: 40px; background: rgb(255 255 255 / .38);
+  width: 34px; background: rgb(255 255 255 / .38);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / .8), inset 0 -7px 10px rgb(255 255 255 / .32), inset 0 5px 8px rgb(255 255 255 / .28),
     0 8px 18px rgb(0 0 0 / .20), 0 1px 2px rgb(0 0 0 / .12);
   -webkit-backdrop-filter: blur(1.5px) saturate(1.15) brightness(1.08); backdrop-filter: blur(1.5px) saturate(1.15) brightness(1.08);
@@ -200,9 +204,10 @@ html[data-mode="dark"] .tmenu {
 @media (hover: none) { .fnav.open .fnav-l { opacity: 1 !important; transform: none !important; } }
 
 /* ------------------------------------------------------------------ ticker ------------------- */
-.tick { position: relative; overflow: hidden; white-space: nowrap; contain: content;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent); }
+.tick { position: relative; white-space: nowrap; min-width: 0; }
+.tick-view { flex: 1; min-width: 0; overflow: hidden; contain: content;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 40px, #000 calc(100% - 40px), transparent); }
 .tick-track { display: inline-flex; width: max-content; will-change: transform; animation: tick-move var(--tick-dur, 70s) linear infinite; }
 .tick-run { display: inline-flex; align-items: center; gap: var(--tick-gap, 30px); padding-right: var(--tick-gap, 30px); }
 .tick.paused .tick-track, .tick:hover .tick-track, .tick:focus-within .tick-track { animation-play-state: paused; }
@@ -251,7 +256,21 @@ html[data-mode="dark"] .tmenu {
 .select { appearance: none; -webkit-appearance: none; padding-right: 38px;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
   background-position: calc(100% - 20px) 21px, calc(100% - 15px) 21px; background-size: 5px 5px; background-repeat: no-repeat; }
-input[type="range"] { width: 100%; accent-color: var(--acc); height: 28px; }
+/* iOS-style slider: thin track filled up to the knob (--p set by the controller), white knob with depth */
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 30px; background: transparent; cursor: pointer; margin: 0; --p: 50%; }
+input[type="range"]::-webkit-slider-runnable-track { height: 5px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--sl-fill, var(--acc)) var(--p), var(--sl-track, color-mix(in srgb, var(--ink) 14%, transparent)) var(--p)); }
+input[type="range"]::-moz-range-track { height: 5px; border-radius: 3px; background: var(--sl-track, color-mix(in srgb, var(--ink) 14%, transparent)); }
+input[type="range"]::-moz-range-progress { height: 5px; border-radius: 3px; background: var(--sl-fill, var(--acc)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -10.5px; border-radius: 50%; border: 0;
+  background: var(--sl-knob, #FFFFFF); box-shadow: 0 0 0 .5px rgb(0 0 0 / .08), 0 3px 8px rgb(0 0 0 / .16), 0 1px 1px rgb(0 0 0 / .1);
+  transition: transform .35s var(--spring-bouncy); }
+input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--sl-knob, #FFFFFF);
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .08), 0 3px 8px rgb(0 0 0 / .16); }
+input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.12); }
+input[type="range"]:focus-visible { outline: none; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--focus), 0 3px 8px rgb(0 0 0 / .16); }
+input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--focus); }
 
 /* ------------------------------------------------------------------ charts ------------------ */
 .chart { position: relative; width: 100%; min-width: 0; }
@@ -329,6 +348,7 @@ a:active > .ico { transform: scale(.94); transition-duration: .1s; }
 .b-tb th { text-align: left; font-size: 14px; font-weight: 600; color: var(--muted); padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .b-tb td { padding: 11px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; color: var(--ink); }
 .b-tb .num { text-align: right; }
+.b-tb td:first-child, .b-tb th:first-child { text-align: left; }
 .b-tb tr.sel td { background: color-mix(in srgb, var(--acc) 10%, transparent); }
 .b-chain tr[data-strike] { cursor: pointer; }
 .b-chain tr[data-strike]:hover td { background: color-mix(in srgb, var(--ink) 4%, transparent); }
@@ -338,6 +358,20 @@ a:active > .ico { transform: scale(.94); transition-duration: .1s; }
 .b-watch tr[data-sym] { cursor: pointer; }
 .b-watch td { vertical-align: middle; }
 .b-spark svg { display: block; }
+.b-stocks { list-style: none; display: flex; flex-direction: column; }
+.b-stocks li { border-bottom: 1px solid var(--line); }
+.b-stocks li:last-child { border-bottom: 0; }
+.bs-row { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 11px 10px;
+  border: 0; background: none; text-align: left; border-radius: 12px; color: var(--ink); cursor: pointer; transition: background-color .15s ease; }
+button.bs-row:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.b-stocks li.sel .bs-row { background: color-mix(in srgb, var(--acc) 13%, transparent); }
+.bs-l { display: flex; flex-direction: column; min-width: 0; }
+.bs-l b { font-size: 17px; }
+.bs-l .b-sub { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bs-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.bs-r b { font-size: 17px; font-weight: 600; }
+.bs-pill { min-width: 78px; text-align: right; padding: 3px 8px; border-radius: 7px; font-size: 14px; font-weight: 600; color: #FFFFFF; }
+.bs-pill.up { background: var(--up); color: var(--on-up); } .bs-pill.dn { background: var(--down); color: #FFFFFF; }
 .b-stat { display: flex; flex-direction: column; gap: 4px; }
 .b-stat span { font-size: 14px; color: var(--muted); font-weight: 600; }
 .b-stat b { font-size: 21px; color: var(--ink); font-family: var(--font-num); }
@@ -362,7 +396,9 @@ a:active > .ico { transform: scale(.94); transition-duration: .1s; }
 .b-num span { font-size: 16.5px; line-height: 1.45; color: var(--body); }
 .b-eq { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--line); }
 .b-eq:last-child { border-bottom: 0; }
-.b-eqn { font: 500 clamp(18px, 1.7vw, 23px)/1.5 var(--font-display); color: var(--ink); overflow-x: auto; }
+.b-eqn { font-size: clamp(19px, 1.7vw, 24px); line-height: 1.5; color: var(--ink); overflow-x: auto; overflow-y: hidden; padding-block: 4px; }
+.b-eqn math { font-family: "STIX Two Math", "Latin Modern Math", "Cambria Math", math; color: var(--ink); text-align: left; margin: 0; }
+.b-eqn math[display="block"] { display: block math; }
 .b-steps { list-style: none; display: flex; flex-direction: column; gap: 22px; }
 .b-steps li { display: grid; grid-template-columns: 48px 1fr; gap: 14px; }
 .b-steps .b-n { font: 700 30px/1 var(--font-num); color: var(--acc); }
