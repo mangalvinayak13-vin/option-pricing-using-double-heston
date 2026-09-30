@@ -1,0 +1,250 @@
+{
+ "2026-07-01": {
+  "CM": "market_data_audit/stage_a/raw/nse/2026-07-01/BhavCopy_NSE_CM_0_0_0_20260701_F_0000.csv",
+  "FO": "market_data_audit/stage_a/raw/nse/2026-07-01/BhavCopy_NSE_FO_0_0_0_20260701_F_0000.csv"
+ },
+ "2026-07-02": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-02/BhavCopy_NSE_FO_0_0_0_20260702_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-02/BhavCopy_NSE_CM_0_0_0_20260702_F_0000.csv"
+ },
+ "2026-07-03": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-03/BhavCopy_NSE_CM_0_0_0_20260703_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-03/BhavCopy_NSE_FO_0_0_0_20260703_F_0000.csv"
+ },
+ "2026-07-06": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-06/BhavCopy_NSE_CM_0_0_0_20260706_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-06/BhavCopy_NSE_FO_0_0_0_20260706_F_0000.csv"
+ },
+ "2026-07-07": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-07/BhavCopy_NSE_FO_0_0_0_20260707_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-07/BhavCopy_NSE_CM_0_0_0_20260707_F_0000.csv"
+ },
+ "2026-07-08": {
+  "FO": "market_data_audit/stage_a/power_tiebreak/raw/nse/2026-07-08/BhavCopy_NSE_FO_0_0_0_20260708_F_0000.csv",
+  "CM": "market_data_audit/stage_a/power_tiebreak/raw/nse/2026-07-08/BhavCopy_NSE_CM_0_0_0_20260708_F_0000.csv"
+ },
+ "2026-07-09": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-09/BhavCopy_NSE_CM_0_0_0_20260709_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-09/BhavCopy_NSE_FO_0_0_0_20260709_F_0000.csv"
+ },
+ "2026-07-10": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-10/BhavCopy_NSE_CM_0_0_0_20260710_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-10/BhavCopy_NSE_FO_0_0_0_20260710_F_0000.csv"
+ },
+ "2026-07-13": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-13/BhavCopy_NSE_FO_0_0_0_20260713_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-13/BhavCopy_NSE_CM_0_0_0_20260713_F_0000.csv"
+ },
+ "2026-07-14": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-14/BhavCopy_NSE_FO_0_0_0_20260714_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-14/BhavCopy_NSE_CM_0_0_0_20260714_F_0000.csv"
+ },
+ "2026-07-15": {
+  "CM": "market_data_audit/stage_a/raw/nse/2026-07-15/BhavCopy_NSE_CM_0_0_0_20260715_F_0000.csv",
+  "FO": "market_data_audit/stage_a/raw/nse/2026-07-15/BhavCopy_NSE_FO_0_0_0_20260715_F_0000.csv"
+ },
+ "2026-07-16": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-16/BhavCopy_NSE_FO_0_0_0_20260716_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-16/BhavCopy_NSE_CM_0_0_0_20260716_F_0000.csv"
+ },
+ "2026-07-17": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-17/BhavCopy_NSE_CM_0_0_0_20260717_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-17/BhavCopy_NSE_FO_0_0_0_20260717_F_0000.csv"
+ },
+ "2026-07-20": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-20/BhavCopy_NSE_CM_0_0_0_20260720_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-20/BhavCopy_NSE_FO_0_0_0_20260720_F_0000.csv"
+ },
+ "2026-07-21": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-21/BhavCopy_NSE_FO_0_0_0_20260721_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-21/BhavCopy_NSE_CM_0_0_0_20260721_F_0000.csv"
+ },
+ "2026-07-22": {
+  "CM": "market_data_audit/stage_a/raw/nse/2026-07-22/BhavCopy_NSE_CM_0_0_0_20260722_F_0000.csv",
+  "FO": "market_data_audit/stage_a/raw/nse/2026-07-22/BhavCopy_NSE_FO_0_0_0_20260722_F_0000.csv"
+ },
+ "2026-07-23": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-23/BhavCopy_NSE_FO_0_0_0_20260723_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-23/BhavCopy_NSE_CM_0_0_0_20260723_F_0000.csv"
+ },
+ "2026-07-24": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-24/BhavCopy_NSE_FO_0_0_0_20260724_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-24/BhavCopy_NSE_CM_0_0_0_20260724_F_0000.csv"
+ },
+ "2026-07-27": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-27/BhavCopy_NSE_CM_0_0_0_20260727_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-27/BhavCopy_NSE_FO_0_0_0_20260727_F_0000.csv"
+ },
+ "2026-07-28": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-28/BhavCopy_NSE_CM_0_0_0_20260728_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-28/BhavCopy_NSE_FO_0_0_0_20260728_F_0000.csv"
+ },
+ "2026-07-29": {
+  "FO": "market_data_audit/stage_a/power_tiebreak/raw/nse/2026-07-29/BhavCopy_NSE_FO_0_0_0_20260729_F_0000.csv",
+  "CM": "market_data_audit/stage_a/power_tiebreak/raw/nse/2026-07-29/BhavCopy_NSE_CM_0_0_0_20260729_F_0000.csv"
+ },
+ "2026-07-30": {
+  "FO": "market_data_audit/g8/raw/nse/2026-07-30/BhavCopy_NSE_FO_0_0_0_20260730_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-07-30/BhavCopy_NSE_CM_0_0_0_20260730_F_0000.csv"
+ },
+ "2026-07-31": {
+  "CM": "market_data_audit/g8/raw/nse/2026-07-31/BhavCopy_NSE_CM_0_0_0_20260731_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-07-31/BhavCopy_NSE_FO_0_0_0_20260731_F_0000.csv"
+ },
+ "2026-08-03": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-03/BhavCopy_NSE_FO_0_0_0_20260803_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-03/BhavCopy_NSE_CM_0_0_0_20260803_F_0000.csv"
+ },
+ "2026-08-04": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-04/BhavCopy_NSE_FO_0_0_0_20260804_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-04/BhavCopy_NSE_CM_0_0_0_20260804_F_0000.csv"
+ },
+ "2026-08-05": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-05/BhavCopy_NSE_CM_0_0_0_20260805_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-05/BhavCopy_NSE_FO_0_0_0_20260805_F_0000.csv"
+ },
+ "2026-08-06": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-06/BhavCopy_NSE_FO_0_0_0_20260806_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-06/BhavCopy_NSE_CM_0_0_0_20260806_F_0000.csv"
+ },
+ "2026-08-07": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-07/BhavCopy_NSE_CM_0_0_0_20260807_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-07/BhavCopy_NSE_FO_0_0_0_20260807_F_0000.csv"
+ },
+ "2026-08-10": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-10/BhavCopy_NSE_FO_0_0_0_20260810_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-10/BhavCopy_NSE_CM_0_0_0_20260810_F_0000.csv"
+ },
+ "2026-08-11": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-11/BhavCopy_NSE_CM_0_0_0_20260811_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-11/BhavCopy_NSE_FO_0_0_0_20260811_F_0000.csv"
+ },
+ "2026-08-12": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-12/BhavCopy_NSE_FO_0_0_0_20260812_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-12/BhavCopy_NSE_CM_0_0_0_20260812_F_0000.csv"
+ },
+ "2026-08-13": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-13/BhavCopy_NSE_CM_0_0_0_20260813_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-13/BhavCopy_NSE_FO_0_0_0_20260813_F_0000.csv"
+ },
+ "2026-08-14": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-14/BhavCopy_NSE_CM_0_0_0_20260814_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-14/BhavCopy_NSE_FO_0_0_0_20260814_F_0000.csv"
+ },
+ "2026-08-17": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-17/BhavCopy_NSE_FO_0_0_0_20260817_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-17/BhavCopy_NSE_CM_0_0_0_20260817_F_0000.csv"
+ },
+ "2026-08-18": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-18/BhavCopy_NSE_FO_0_0_0_20260818_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-18/BhavCopy_NSE_CM_0_0_0_20260818_F_0000.csv"
+ },
+ "2026-08-19": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-19/BhavCopy_NSE_CM_0_0_0_20260819_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-19/BhavCopy_NSE_FO_0_0_0_20260819_F_0000.csv"
+ },
+ "2026-08-20": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-20/BhavCopy_NSE_FO_0_0_0_20260820_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-20/BhavCopy_NSE_CM_0_0_0_20260820_F_0000.csv"
+ },
+ "2026-08-21": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-21/BhavCopy_NSE_CM_0_0_0_20260821_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-21/BhavCopy_NSE_FO_0_0_0_20260821_F_0000.csv"
+ },
+ "2026-08-24": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-24/BhavCopy_NSE_CM_0_0_0_20260824_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-24/BhavCopy_NSE_FO_0_0_0_20260824_F_0000.csv"
+ },
+ "2026-08-25": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-25/BhavCopy_NSE_FO_0_0_0_20260825_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-25/BhavCopy_NSE_CM_0_0_0_20260825_F_0000.csv"
+ },
+ "2026-08-26": {
+  "CM": "market_data_audit/g8/raw/nse/2026-08-26/BhavCopy_NSE_CM_0_0_0_20260826_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-08-26/BhavCopy_NSE_FO_0_0_0_20260826_F_0000.csv"
+ },
+ "2026-08-27": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-27/BhavCopy_NSE_FO_0_0_0_20260827_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-27/BhavCopy_NSE_CM_0_0_0_20260827_F_0000.csv"
+ },
+ "2026-08-28": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-28/BhavCopy_NSE_FO_0_0_0_20260828_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-28/BhavCopy_NSE_CM_0_0_0_20260828_F_0000.csv"
+ },
+ "2026-08-31": {
+  "FO": "market_data_audit/g8/raw/nse/2026-08-31/BhavCopy_NSE_FO_0_0_0_20260831_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-08-31/BhavCopy_NSE_CM_0_0_0_20260831_F_0000.csv"
+ },
+ "2026-09-01": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-01/BhavCopy_NSE_FO_0_0_0_20260901_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-01/BhavCopy_NSE_CM_0_0_0_20260901_F_0000.csv"
+ },
+ "2026-09-02": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-02/BhavCopy_NSE_CM_0_0_0_20260902_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-02/BhavCopy_NSE_FO_0_0_0_20260902_F_0000.csv"
+ },
+ "2026-09-03": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-03/BhavCopy_NSE_FO_0_0_0_20260903_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-03/BhavCopy_NSE_CM_0_0_0_20260903_F_0000.csv"
+ },
+ "2026-09-04": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-04/BhavCopy_NSE_FO_0_0_0_20260904_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-04/BhavCopy_NSE_CM_0_0_0_20260904_F_0000.csv"
+ },
+ "2026-09-07": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-07/BhavCopy_NSE_CM_0_0_0_20260907_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-07/BhavCopy_NSE_FO_0_0_0_20260907_F_0000.csv"
+ },
+ "2026-09-08": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-08/BhavCopy_NSE_CM_0_0_0_20260908_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-08/BhavCopy_NSE_FO_0_0_0_20260908_F_0000.csv"
+ },
+ "2026-09-09": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-09/BhavCopy_NSE_FO_0_0_0_20260909_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-09/BhavCopy_NSE_CM_0_0_0_20260909_F_0000.csv"
+ },
+ "2026-09-10": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-10/BhavCopy_NSE_FO_0_0_0_20260910_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-10/BhavCopy_NSE_CM_0_0_0_20260910_F_0000.csv"
+ },
+ "2026-09-11": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-11/BhavCopy_NSE_CM_0_0_0_20260911_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-11/BhavCopy_NSE_FO_0_0_0_20260911_F_0000.csv"
+ },
+ "2026-09-15": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-15/BhavCopy_NSE_FO_0_0_0_20260915_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-15/BhavCopy_NSE_CM_0_0_0_20260915_F_0000.csv"
+ },
+ "2026-09-16": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-16/BhavCopy_NSE_CM_0_0_0_20260916_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-16/BhavCopy_NSE_FO_0_0_0_20260916_F_0000.csv"
+ },
+ "2026-09-17": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-17/BhavCopy_NSE_FO_0_0_0_20260917_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-17/BhavCopy_NSE_CM_0_0_0_20260917_F_0000.csv"
+ },
+ "2026-09-18": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-18/BhavCopy_NSE_FO_0_0_0_20260918_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-18/BhavCopy_NSE_CM_0_0_0_20260918_F_0000.csv"
+ },
+ "2026-09-21": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-21/BhavCopy_NSE_CM_0_0_0_20260921_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-21/BhavCopy_NSE_FO_0_0_0_20260921_F_0000.csv"
+ },
+ "2026-09-22": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-22/BhavCopy_NSE_FO_0_0_0_20260922_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-22/BhavCopy_NSE_CM_0_0_0_20260922_F_0000.csv"
+ },
+ "2026-09-23": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-23/BhavCopy_NSE_CM_0_0_0_20260923_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-23/BhavCopy_NSE_FO_0_0_0_20260923_F_0000.csv"
+ },
+ "2026-09-24": {
+  "CM": "market_data_audit/g8/raw/nse/2026-09-24/BhavCopy_NSE_CM_0_0_0_20260924_F_0000.csv",
+  "FO": "market_data_audit/g8/raw/nse/2026-09-24/BhavCopy_NSE_FO_0_0_0_20260924_F_0000.csv"
+ },
+ "2026-09-25": {
+  "FO": "market_data_audit/g8/raw/nse/2026-09-25/BhavCopy_NSE_FO_0_0_0_20260925_F_0000.csv",
+  "CM": "market_data_audit/g8/raw/nse/2026-09-25/BhavCopy_NSE_CM_0_0_0_20260925_F_0000.csv"
+ }
+}

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trading Desk: How it works</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>body{margin:0;background:#0B0E11}a{color:inherit;text-decoration:none}.dh{position:relative;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:'Barlow',Helvetica,sans-serif;overflow:hidden;transition:background-color .2s ease,color .2s ease}.up{color:var(--up)}.dn{color:var(--down)}.mu{color:var(--muted)}.bo{color:var(--body)}.dh.t-light{--bg:#E6E9ED;--surf:#FFFFFF;--raised:#F3F5F7;--line:#D5DAE0;--grid:#ECEFF2;--ink:#14171A;--body:#3B424A;--muted:#59616D;--acc:#5A3FE6;--on-acc:#FFFFFF;--up:#0B8A58;--down:#D1283F;--on-up:#FFFFFF;--track-off:#E3E3E6;--ferro:#0A0A0B;--ferro-hi:#A9AFB6}.dh.t-dark{--bg:#0B0E11;--surf:#12161B;--raised:#1A2027;--line:#262D36;--grid:#1C222A;--ink:#EAECEF;--body:#B7BDC6;--muted:#8A94A2;--acc:#9B87FF;--on-acc:#0B0E11;--up:#0ECB81;--down:#F6465D;--on-up:#04120B;--track-off:#39393D;--ferro:#050505;--ferro-hi:#EEF1F6}
+.gsw-wrap{position:absolute;top:8px;right:20px;z-index:30;display:flex;align-items:center;gap:10px;height:32px;
+  font-size:14px;font-weight:500;color:var(--muted)}
+.gsw{position:relative;width:52px;height:32px;padding:0;border:0;border-radius:16px;cursor:pointer;
+  background:var(--track-off);transition:background-color .2s ease}
+.gsw:focus-visible{outline:3px solid #0A84FF;outline-offset:3px}
+.t-dark .gsw{background:#30D158}.t-light .gsw[aria-checked=true]{background:#34C759}
+.gsw .knob{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:14px;background:#FFFFFF;
+  box-shadow:0 3px 8px rgba(0,0,0,.18),0 1px 1px rgba(0,0,0,.12);transition:transform .32s cubic-bezier(.3,1.4,.5,1),width .18s ease}
+.t-dark .gsw .knob{transform:translateX(20px)}
+.gsw:active .knob{width:38px;background:rgba(255,255,255,.42);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 -6px 10px rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.22);
+  backdrop-filter:blur(1px) saturate(1.15) brightness(1.08);-webkit-backdrop-filter:blur(1px) saturate(1.15) brightness(1.08)}
+.t-dark .gsw:active .knob{transform:translateX(10px)}
+@media (prefers-reduced-motion: reduce){.gsw .knob{transition:transform .2s linear}.gsw:active .knob{width:28px}}
+
+.mag{position:absolute;top:260px;z-index:25;width:84px;height:360px}
+.mag.l{left:0}.mag.r{right:0}
+.mag .mag-bar{position:absolute;top:40px;width:7px;height:280px;border-radius:4px;
+  background:linear-gradient(90deg,#3A3B3E,#8C8F95 45%,#2A2B2E);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mag.l .mag-bar{left:8px}.mag.r .mag-bar{right:8px}
+.mag .mag-bead{position:absolute;width:13px;height:13px;border-radius:7px;background:radial-gradient(circle at 35% 30%,var(--ferro-hi) 0 18%,var(--ferro) 45%);
+  box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.mag.l .mag-bead{left:5px}.mag.r .mag-bead{right:5px}
+.mag .mag-fluid{position:absolute;top:0;width:84px;height:360px;opacity:0;transform:scaleX(.2);transition:opacity .22s ease,transform .32s cubic-bezier(.2,1.2,.4,1)}
+.mag.l .mag-fluid{left:0;transform-origin:0 50%}.mag.r .mag-fluid{right:0;transform-origin:100% 50%}
+.mag .mag-links{position:absolute;top:44px;display:flex;flex-direction:column;gap:2px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease .06s;padding:10px 12px;border-radius:14px;background:var(--surf);box-shadow:0 10px 30px rgba(0,0,0,.25);
+  border:1px solid var(--line);min-width:180px}
+.mag.l .mag-links{left:92px}.mag.r .mag-links{right:92px}
+.mag .mag-links a{display:block;padding:7px 10px;border-radius:9px;font-size:15px;font-weight:500;color:var(--ink);white-space:nowrap}
+.mag .mag-links a[aria-current]{background:var(--raised);color:var(--acc)}
+.mag:hover .mag-fluid,.mag:focus-within .mag-fluid{opacity:1;transform:scaleX(1)}
+.mag:hover .mag-links,.mag:focus-within .mag-links{opacity:1;pointer-events:auto}
+.t-dark .mag-fluid{filter:drop-shadow(0 0 4px rgba(242,244,248,.28)) drop-shadow(0 0 12px rgba(242,244,248,.10))}
+@media (prefers-reduced-motion: reduce){.mag .mag-fluid{transform:none;transition:opacity .2s}}
+
+.top{height:52px;display:flex;align-items:center;gap:22px;padding:0 250px 0 112px;background:var(--surf);border-bottom:1px solid var(--line);font-size:15px}
+.top .brand{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;letter-spacing:.01em}
+.top .brand span{color:var(--acc)}
+.srch{display:flex;align-items:center;gap:8px;height:34px;width:260px;padding:0 12px;border-radius:6px;background:var(--raised);color:var(--muted);font-size:14px}
+.ix{display:flex;gap:18px;font-size:14px;color:var(--muted)}.ix b{color:var(--ink);font-weight:600}
+.st{margin-left:auto;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px}.st i{width:8px;height:8px;border-radius:4px;background:var(--muted)}
+.desk{display:grid;gap:1px;background:var(--line);padding:1px;margin-left:96px}
+.pane{background:var(--surf);min-width:0;display:flex;flex-direction:column}
+.ph{height:40px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+.ph b{color:var(--ink);font-weight:600;font-size:15px}
+.tabs{display:flex;gap:2px}.tabs span{padding:5px 10px;border-radius:5px;font-size:13px;font-weight:600;color:var(--muted)}.tabs span.on{background:var(--raised);color:var(--ink)}
+.pb{padding:16px}
+.big{font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1}
+.pgt{padding:26px 20px 22px 112px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;background:var(--bg)}
+.pgt h1{margin:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:56px;line-height:1}
+.pgt p{margin:0;font-size:18px;line-height:1.5;color:var(--body);max-width:720px}
+.p{margin:0;font-size:17px;line-height:1.58;color:var(--body)}
+.b-tick{height:36px;display:flex;align-items:center;padding:0 250px 0 112px;background:var(--bg);border-bottom:1px solid var(--line);font-size:14px;white-space:nowrap}
+.b-tick-in{flex:1;min-width:0;display:flex;gap:26px;overflow:hidden}.b-ti{display:inline-flex;gap:8px}.b-ti-lab{color:var(--muted)}
+.b-tb{width:100%;border-collapse:collapse;font-size:15px}
+.b-tb th{text-align:right;font-weight:500;font-size:13px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--line)}
+.b-tb td{white-space:nowrap;text-align:right;padding:7px 12px;border-bottom:1px solid var(--grid);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:500}
+.b-tb th:first-child,.b-tb td:first-child{text-align:left}.b-tb td b{font-family:'Barlow',sans-serif;font-size:15px}
+.b-tb tr.sel td{background:var(--raised)}.b-tb tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+.b-model{color:var(--acc)}.b-sub{color:var(--muted)}
+.b-lab{font-size:13px;font-weight:500;color:var(--muted)}
+.b-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}
+.b-form label,.b-form fieldset{display:flex;flex-direction:column;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.b-form select,.b-form input{height:40px;border-radius:6px;border:1px solid var(--line);background:var(--raised);color:var(--ink);font:500 16px 'Barlow',sans-serif;padding:0 10px}
+.b-seg{display:grid;grid-template-columns:1fr 1fr;height:40px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.b-seg span{display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--muted)}.b-seg span.on{background:var(--up);color:var(--on-up)}
+.b-btn{height:44px;border-radius:6px;border:0;background:var(--acc);color:var(--on-acc);font:700 17px 'Barlow',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 18px}
+.b-btn.sec{background:var(--raised);color:var(--ink);border:1px solid var(--line)}
+.b-form .b-btn{grid-column:1/-1}.b-form label:nth-child(1),.b-form label:nth-child(2){grid-column:1/-1}
+.b-sl{display:grid;grid-template-columns:28px 1fr 70px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--grid)}
+.b-sl b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--acc)}.b-sl label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.b-sl input{width:100%;accent-color:#9B87FF}.b-sl output{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600}
+.b-greek{display:flex;flex-direction:column;gap:4px;padding:14px 16px;background:var(--surf)}.b-greek b{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:600}
+.b-num{display:flex;flex-direction:column;gap:6px;padding:16px;background:var(--surf)}.b-num b{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:600;line-height:1;color:var(--acc)}
+.b-num span{font-size:14px;line-height:1.4;color:var(--muted)}
+.b-eq{display:flex;flex-direction:column;gap:8px;padding:16px;border-bottom:1px solid var(--grid)}
+.b-eqn{font-family:'Barlow',sans-serif;font-size:24px;font-weight:500;line-height:1.4}
+.b-steps{list-style:none;margin:0;padding:0}.b-steps li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px 16px;border-bottom:1px solid var(--grid)}
+.b-steps .b-n{font-family:'Barlow Condensed',sans-serif;font-size:30px;color:var(--acc);line-height:1}.b-steps li>span{display:flex;flex-direction:column;gap:5px}
+.b-steps li>span>b{font-size:17px}.b-steps li>span>span{font-size:15px;line-height:1.5;color:var(--body)}
+.b-lin{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line)}
+.b-lin li{background:var(--surf);padding:16px;display:flex;flex-direction:column;gap:6px}.b-lin .b-y{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:600}
+.b-lin li.now .b-y{color:var(--acc)}.b-lin li>span{display:flex;flex-direction:column;gap:2px}.b-lin li>span>span{color:var(--muted);font-size:15px}
+.b-list{margin:0;padding:6px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.5;color:var(--body)}
+.b-video{margin:0}.b-video button{width:100%;aspect-ratio:16/9;border:0;background:var(--raised);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.b-video figcaption{padding:12px 16px;font-size:14px;color:var(--muted)}
+.b-person{display:flex;flex-direction:column;gap:6px;padding:16px;background:var(--surf)}.b-person .b-ph{height:160px;background:var(--raised);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.b-person b{font-size:19px}.b-person>span:last-child{color:var(--muted);font-size:15px}
+.b-refs{background:var(--surf)}.b-refs h2{margin:0;height:40px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
+.b-refs ol{list-style:none;margin:0;padding:0}.b-refs li{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:11px 16px;border-bottom:1px solid var(--grid);font-size:15px;line-height:1.45}
+.b-refs .b-rn{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--acc)}.b-refs .b-rt{color:var(--body)}
+.b-chip{padding:5px 10px;border-radius:5px;font-size:13px;font-weight:600;color:var(--muted);border:1px solid var(--line)}.b-chip.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+.b-links{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line)}
+.b-links a{display:flex;align-items:center;gap:10px;padding:14px;background:var(--surf)}.b-links a>span{display:flex;flex-direction:column;gap:1px}
+.b-links b{font-size:15px}.b-links a>span>span{color:var(--muted);font-size:13px}
+.ft{padding:16px 20px 22px 112px;display:flex;justify-content:space-between;font-size:14px;color:var(--muted);background:var(--bg)}
+</style>
+</helmet>
+<div class="dh {{theme}}" style="width: 1440px; height: 1484px;">
+<div class="gsw-wrap"><span>Dark mode</span><button type="button" class="gsw" role="switch" aria-checked="{{dark}}" aria-label="Dark mode" onClick="{{toggle}}"><span class="knob"></span></button></div>
+<nav class="mag l" aria-label="Pages"><span class="mag-bar"></span><svg class="mag-fluid" width="84" height="360" viewBox="0 0 84 360" aria-hidden="true"><defs><linearGradient id="rMathsg" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" style="stop-color:var(--ferro)"></stop><stop offset=".55" style="stop-color:var(--ferro)"></stop><stop offset="1" style="stop-color:var(--ferro-hi);stop-opacity:.35"></stop></linearGradient></defs><g><path d="M12,44 Q16,58 19.1,66 L19.6,68.5 C22.8,73.4 27.2,80.8 31.0,82.2 C27.2,83.6 22.8,78.6 22.3,83.5 L24.3,97.2 C30.4,102.7 42.9,108.8 53.6,110.2 C42.9,111.6 30.4,108.7 26.3,114.2 L27.5,125.9 C36.1,132.1 55.0,136.7 71.4,138.1 C55.0,139.5 36.1,138.8 28.9,144.9 L29.4,154.6 C39.4,161.5 63.0,164.6 83.3,166.0 C63.0,167.4 39.4,168.8 30.0,175.6 L30.0,184.4 C39.4,191.2 63.0,192.6 83.3,194.0 C63.0,195.4 39.4,198.5 29.4,205.4 L28.9,215.1 C36.1,221.2 55.0,220.5 71.4,221.9 C55.0,223.3 36.1,227.9 27.5,234.1 L26.3,245.8 C30.4,251.3 42.9,248.4 53.6,249.8 C42.9,251.2 30.4,257.3 24.3,262.8 L22.3,276.5 C22.8,281.4 27.2,276.4 31.0,277.8 C27.2,279.2 22.8,286.6 19.6,291.5 L19.1,294 Q16,302 12,316 Z" style="fill:url(#rMathsg);stroke:var(--ferro-hi);stroke-width:1;stroke-opacity:.45"></path><path d="M19.0,71.5 C23.0,73.8 26.5,80.4 29.6,81.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,100.6 C31.0,103.2 40.9,108.4 49.6,109.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,129.7 C36.9,132.6 52.0,136.3 65.4,137.5" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,158.8 C40.5,162.0 59.2,164.2 75.8,165.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,188.6 C40.5,191.7 59.2,192.2 75.8,193.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,218.9 C36.9,221.7 52.0,220.1 65.4,221.3" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,249.2 C31.0,251.7 40.9,248.0 49.6,249.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M19.0,279.5 C23.0,281.8 26.5,276.0 29.6,277.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><ellipse cx="18" cy="150" rx="3" ry="16" style="fill:var(--ferro-hi);opacity:.5"></ellipse></g></svg><span class="mag-bead" style="top:161px"></span><div class="mag-links"><a href="Main.dc.html">Home</a><a href="Market.dc.html">Market</a><a href="Model.dc.html">The model</a><a href="Maths.dc.html" aria-current=page>How it works</a><a href="Finding.dc.html">The finding</a><a href="About.dc.html">About</a><a href="Team.dc.html">Team</a><a href="References.dc.html">References</a></div></nav>
+
+<header class="top"><a class="brand" href="Main.dc.html">DH<span>/</span>desk</a><label class="srch"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5.2" style="fill:none;stroke:var(--muted);stroke-width:1.8"></circle><path d="M11,11 L15,15" style="stroke:var(--muted);stroke-width:1.8;stroke-linecap:round"></path></svg>Search 42 stocks</label><span class="ix"><span>NIFTY <b>23,140.50</b> <span class="up">▲ 0.34%</span></span><span>BANK <b>55,580.40</b> <span class="up">▲ 0.26%</span></span></span><span class="st"><i></i>Closed, last close 25 Sep 2026</span></header>
+<div class="pgt"><h1>How it works</h1><p>Double Heston (Christoffersen, Heston and Jacobs, 2009) lets the stock's variance come from two independent sources. Each follows its own mean-reverting process with five settings, ten in all.</p></div>
+<div class="desk" style="grid-template-columns:1.3fr 1fr">
+  <section class="pane" style=""><div class="ph"><b>Equations</b><span class="b-sub">ten settings, two factors</span></div><div class="b-eq"><span class="b-lab">The price moves with two variances</span><div class="b-eqn">dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂</div></div><div class="b-eq"><span class="b-lab">Each variance pulls back to its own level</span><div class="b-eqn">dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2</div></div><div class="b-eq"><span class="b-lab">Independent factors multiply</span><div class="b-eqn">φ(u) = φ₁(u) · φ₂(u)</div></div><div class="b-eq"><span class="b-lab">The price is one integral (Gil-Pelaez)</span><div class="b-eqn">C = e^(−rT) [ F·P₁ − K·P₂ ],   Pⱼ = ½ + (1/π) ∫₀^∞ Re[ e^(−iu·ln(K/F)) φⱼ(u) / (iu) ] du</div></div><div class="b-eq"><span class="b-lab">A factor never touches zero when</span><div class="b-eqn">2κᵢθᵢ &gt; ξᵢ²</div></div></section>
+  <section class="pane" style=""><div class="ph"><b>Step by step</b></div><ol class="b-steps"><li><b class=b-n>1</b><span><b>Two variances, not one</b><span>The stock's variance is v₁ + v₂. Each factor pulls back toward its long-run level θ at speed κ, is shaken by ξ, and moves with the price at correlation ρ. A negative ρ means falls come with rising volatility: that tilts the smile.</span></span></li><li><b class=b-n>2</b><span><b>Independent factors multiply</b><span>Because the two factors are independent, the model's characteristic function is the product of each factor's own. That's what keeps pricing fast.</span></span></li><li><b class=b-n>3</b><span><b>Price by one integral</b><span>The option price comes from inverting the characteristic function (Gil-Pelaez). The code uses the 'little trap' form (Albrecher et al., 2007), which avoids a branch-cut error in the 1993 formula at long maturities.</span></span></li><li><b class=b-n>4</b><span><b>Check by simulation</b><span>Monte Carlo prices the same option by simulating 20,000 paths with full-truncation Euler steps and antithetic pairs. The two methods agree within the simulation's standard error.</span></span></li><li><b class=b-n>5</b><span><b>The Feller condition</b><span>If 2κθ &gt; ξ², a factor's variance never reaches zero. Real markets often break it; full truncation keeps the simulation valid when it does.</span></span></li></ol></section>
+</div>
+<div class="desk" style="grid-template-columns:1fr 1fr">
+  <section class="pane" style=""><div class="ph"><b>The bend at the starting settings</b></div><div class=pb><svg width="600" height="360" viewBox="0 0 600 360" role="img" aria-label="Implied volatility by strike at 30 days: flat 20% for one fixed volatility; Double Heston falls from 26.2% at strike 80 to 15.5% at strike 120" style="display:block;max-width:100%;height:auto;overflow:visible"><line x1="48.0" y1="283.5" x2="590.0" y2="283.5" style="stroke:var(--grid);stroke-width:1"></line><text x="38.0" y="287.5" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">16%</text><line x1="48.0" y1="190.4" x2="590.0" y2="190.4" style="stroke:var(--grid);stroke-width:1"></line><text x="38.0" y="194.4" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">20%</text><line x1="48.0" y1="97.4" x2="590.0" y2="97.4" style="stroke:var(--grid);stroke-width:1"></line><text x="38.0" y="101.4" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">24%</text><line x1="48.0" y1="330.0" x2="590.0" y2="330.0" style="stroke:var(--line);stroke-width:1"></line><text x="48.0" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">80%</text><text x="183.5" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">90%</text><text x="319.0" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">100%</text><text x="454.5" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">110%</text><text x="590.0" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">120%</text><line x1="48.0" y1="190.4" x2="590.0" y2="190.4" style="stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 6"></line><text x="590.0" y="182.4" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">One fixed volatility, 20%</text><polyline points="48.0,46.1 81.9,64.1 115.8,82.2 149.6,100.4 183.5,118.8 217.4,137.3 251.2,155.9 285.1,174.7 319.0,193.6 352.9,212.3 386.8,230.5 420.6,247.5 454.5,262.7 488.4,275.2 522.2,284.5 556.1,290.8 590.0,294.6" style="fill:none;stroke:var(--acc);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round"></polyline><circle cx="48.0" cy="46.1" r="5" style="fill:var(--acc)"></circle><circle cx="590.0" cy="294.6" r="5" style="fill:var(--acc)"></circle><text x="48.0" y="25.1" text-anchor="start" style="fill:var(--ink);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700">Double Heston, 26.2%</text><text x="590.0" y="327.1" text-anchor="end" style="fill:var(--ink);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700">15.5%</text><line x1="319.0" y1="16.0" x2="319.0" y2="330.0" style="stroke:var(--line);stroke-width:1;stroke-dasharray:2 4"></line><text x="325.0" y="322.0" text-anchor="start" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">today's price</text></svg></div></section>
+  <section class="pane" style=""><div class="ph"><b>Skew by time to expiry</b></div><div class=pb><svg width="600" height="360" viewBox="0 0 600 360" role="img" aria-label="Skew by time to expiry, falling from 3.4 volatility points at one week to 1.2 at two years" style="display:block;max-width:100%;height:auto;overflow:visible"><line x1="34.0" y1="330.0" x2="590.0" y2="330.0" style="stroke:var(--grid);stroke-width:1"></line><text x="24.0" y="334.0" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">0</text><line x1="34.0" y1="251.5" x2="590.0" y2="251.5" style="stroke:var(--grid);stroke-width:1"></line><text x="24.0" y="255.5" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">1</text><line x1="34.0" y1="173.0" x2="590.0" y2="173.0" style="stroke:var(--grid);stroke-width:1"></line><text x="24.0" y="177.0" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">2</text><line x1="34.0" y1="94.5" x2="590.0" y2="94.5" style="stroke:var(--grid);stroke-width:1"></line><text x="24.0" y="98.5" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">3</text><line x1="34.0" y1="16.0" x2="590.0" y2="16.0" style="stroke:var(--grid);stroke-width:1"></line><text x="24.0" y="20.0" text-anchor="end" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">4</text><line x1="34.0" y1="330.0" x2="590.0" y2="330.0" style="stroke:var(--line);stroke-width:1"></line><text x="34.0" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">1 wk</text><text x="208.1" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">1 mo</text><text x="339.6" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">3 mo</text><text x="507.1" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">1 yr</text><text x="590.0" y="350.0" text-anchor="middle" style="fill:var(--muted);font-family:'Barlow',sans-serif;font-size:13px;font-weight:400">2 yr</text><polyline points="34.0,63.6 116.9,68.3 208.1,78.5 291.0,96.1 339.6,111.5 422.5,147.3 507.1,192.4 553.9,217.4 590.0,235.3" style="fill:none;stroke:var(--acc);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round"></polyline><circle cx="34.0" cy="63.6" r="3.5" style="fill:var(--acc)"></circle><circle cx="116.9" cy="68.3" r="3.5" style="fill:var(--acc)"></circle><circle cx="208.1" cy="78.5" r="3.5" style="fill:var(--acc)"></circle><circle cx="291.0" cy="96.1" r="3.5" style="fill:var(--acc)"></circle><circle cx="339.6" cy="111.5" r="3.5" style="fill:var(--acc)"></circle><circle cx="422.5" cy="147.3" r="3.5" style="fill:var(--acc)"></circle><circle cx="507.1" cy="192.4" r="3.5" style="fill:var(--acc)"></circle><circle cx="553.9" cy="217.4" r="3.5" style="fill:var(--acc)"></circle><circle cx="590.0" cy="235.3" r="3.5" style="fill:var(--acc)"></circle><text x="34.0" y="36.2" text-anchor="start" style="fill:var(--ink);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700">3.4 points at 1 week</text><text x="590.0" y="278.4" text-anchor="end" style="fill:var(--ink);font-family:'Barlow',sans-serif;font-size:13px;font-weight:700">1.2 at 2 years</text></svg><p class="p" style="margin-top:10px;font-size:15px">Fast factor half-life about 7 weeks; slow factor 1.4 years.</p></div></section>
+</div>
+<div class="desk" style="grid-template-columns:1fr"><section class="pane" style=""><div class="ph"><b>Lineage</b></div><ol class="b-lin"><li><b class="b-y">1973</b><span><b>Black–Scholes</b><span>one fixed volatility, 1 setting</span></span></li><li><b class="b-y">1993</b><span><b>Heston</b><span>volatility that moves, 5 settings</span></span></li><li class=now><b class="b-y">2009</b><span><b>Double Heston</b><span>two moving factors, 10 settings</span></span></li></ol></section></div>
+<footer class="ft"><span>Not trading advice. Prices are NSE closing prices; live Upstox prices replace them during market hours.</span><span>github.com/mangalvinayak13-vin/option-pricing-using-double-heston</span></footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":1484}}'>
+class Component extends DCLogic {
+renderVals() {
+const s = this.state || {};
+const dark = s.dark !== undefined ? s.dark : (this.props.dark ?? true);
+return { theme: dark ? 't-dark' : 't-light', dark: dark, toggle: () => this.setState({ dark: !dark }) };
+}
+}
+</script>
+</body>
+</html>

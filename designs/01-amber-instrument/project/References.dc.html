@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Amber Instrument: References</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;900&display=swap">
+<style>body{margin:0;background:#0F100E}a{color:inherit;text-decoration:none}.dh{position:relative;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:'Schibsted Grotesk',Helvetica,sans-serif;overflow:hidden;transition:background-color .2s ease,color .2s ease}.up{color:var(--up)}.dn{color:var(--down)}.mu{color:var(--muted)}.bo{color:var(--body)}.dh.t-light{--bg:#F3F2EE;--surf:#FFFFFF;--raised:#ECEAE3;--line:#D6D3C9;--grid:#E6E3DB;--ink:#16170F;--body:#3E3D36;--muted:#67665E;--acc:#9E6108;--on-acc:#FFFFFF;--up:#14804F;--down:#C9303F;--on-up:#FFFFFF;--track-off:#E3E3E6;--ferro:#0B0B0C;--ferro-hi:#A7ADB5}.dh.t-dark{--bg:#0F100E;--surf:#151612;--raised:#1C1D19;--line:#2C2D28;--grid:#1F201C;--ink:#EDEAE1;--body:#BDBAB1;--muted:#95928A;--acc:#F0B24A;--on-acc:#17140C;--up:#2EBD85;--down:#F6465D;--on-up:#06120C;--track-off:#39393D;--ferro:#050505;--ferro-hi:#F2F4F8}
+.gsw-wrap{position:absolute;top:8px;right:20px;z-index:30;display:flex;align-items:center;gap:10px;height:32px;
+  font-size:14px;font-weight:500;color:var(--muted)}
+.gsw{position:relative;width:52px;height:32px;padding:0;border:0;border-radius:16px;cursor:pointer;
+  background:var(--track-off);transition:background-color .2s ease}
+.gsw:focus-visible{outline:3px solid #0A84FF;outline-offset:3px}
+.t-dark .gsw{background:#30D158}.t-light .gsw[aria-checked=true]{background:#34C759}
+.gsw .knob{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:14px;background:#FFFFFF;
+  box-shadow:0 3px 8px rgba(0,0,0,.18),0 1px 1px rgba(0,0,0,.12);transition:transform .32s cubic-bezier(.3,1.4,.5,1),width .18s ease}
+.t-dark .gsw .knob{transform:translateX(20px)}
+.gsw:active .knob{width:38px;background:rgba(255,255,255,.42);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 -6px 10px rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.22);
+  backdrop-filter:blur(1px) saturate(1.15) brightness(1.08);-webkit-backdrop-filter:blur(1px) saturate(1.15) brightness(1.08)}
+.t-dark .gsw:active .knob{transform:translateX(10px)}
+@media (prefers-reduced-motion: reduce){.gsw .knob{transition:transform .2s linear}.gsw:active .knob{width:28px}}
+
+.mag{position:absolute;top:260px;z-index:25;width:84px;height:360px}
+.mag.l{left:0}.mag.r{right:0}
+.mag .mag-bar{position:absolute;top:40px;width:7px;height:280px;border-radius:4px;
+  background:linear-gradient(90deg,#3A3B3E,#8C8F95 45%,#2A2B2E);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mag.l .mag-bar{left:8px}.mag.r .mag-bar{right:8px}
+.mag .mag-bead{position:absolute;width:13px;height:13px;border-radius:7px;background:radial-gradient(circle at 35% 30%,var(--ferro-hi) 0 18%,var(--ferro) 45%);
+  box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.mag.l .mag-bead{left:5px}.mag.r .mag-bead{right:5px}
+.mag .mag-fluid{position:absolute;top:0;width:84px;height:360px;opacity:0;transform:scaleX(.2);transition:opacity .22s ease,transform .32s cubic-bezier(.2,1.2,.4,1)}
+.mag.l .mag-fluid{left:0;transform-origin:0 50%}.mag.r .mag-fluid{right:0;transform-origin:100% 50%}
+.mag .mag-links{position:absolute;top:44px;display:flex;flex-direction:column;gap:2px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease .06s;padding:10px 12px;border-radius:14px;background:var(--surf);box-shadow:0 10px 30px rgba(0,0,0,.25);
+  border:1px solid var(--line);min-width:180px}
+.mag.l .mag-links{left:92px}.mag.r .mag-links{right:92px}
+.mag .mag-links a{display:block;padding:7px 10px;border-radius:9px;font-size:15px;font-weight:500;color:var(--ink);white-space:nowrap}
+.mag .mag-links a[aria-current]{background:var(--raised);color:var(--acc)}
+.mag:hover .mag-fluid,.mag:focus-within .mag-fluid{opacity:1;transform:scaleX(1)}
+.mag:hover .mag-links,.mag:focus-within .mag-links{opacity:1;pointer-events:auto}
+.t-dark .mag-fluid{filter:drop-shadow(0 0 4px rgba(242,244,248,.28)) drop-shadow(0 0 12px rgba(242,244,248,.10))}
+@media (prefers-reduced-motion: reduce){.mag .mag-fluid{transform:none;transition:opacity .2s}}
+
+.bar{height:48px;display:flex;align-items:center;gap:28px;padding:0 250px 0 128px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+.brand{font-weight:700;color:var(--ink);font-size:16px;letter-spacing:-.01em}
+.chip{display:inline-flex;align-items:center;gap:8px}.chip i{width:9px;height:9px;border:1.6px solid var(--muted);box-sizing:border-box;display:inline-block}
+.tick{height:48px;display:flex;align-items:center;padding:0 250px 0 128px;background:var(--surf);border-bottom:1px solid var(--line);font-size:15px;white-space:nowrap}
+.tick-in{flex:1;min-width:0;display:flex;align-items:center;gap:34px;overflow:hidden;mask-image:linear-gradient(90deg,#000 88%,transparent);-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.tick b{font-weight:700}.tick span{display:inline-flex;gap:9px}
+.pg{padding:64px 80px 104px 128px;display:flex;flex-direction:column;gap:72px}
+.g{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px}
+.lbl{font-size:14px;font-weight:700;color:var(--muted)}
+.panel{border:1px solid var(--line);background:var(--surf);min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.pb{padding:22px}
+.t1{margin:0;font-size:60px;line-height:1.02;font-weight:700;letter-spacing:-.035em}
+.t2{margin:0;font-size:34px;line-height:1.1;font-weight:700;letter-spacing:-.025em}
+.lead{margin:0;font-size:20px;line-height:1.55;color:var(--body);max-width:760px}
+.p{margin:0;font-size:18px;line-height:1.6;color:var(--body)}
+.btn{display:inline-flex;align-items:center;height:50px;padding:0 20px;border:1.5px solid var(--line);font-size:17px;font-weight:700;color:var(--ink);background:transparent;font-family:inherit}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.big{font-weight:900;letter-spacing:-.04em;line-height:.95}
+.prompt{color:var(--acc)}
+.tb{width:100%;border-collapse:collapse;font-size:16px}
+.tb th{font-size:13px;font-weight:700;color:var(--muted);text-align:right;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tb td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--grid)}
+.tb th:first-child,.tb td:first-child{text-align:left}
+.tb tr.sel td{background:var(--raised);font-weight:700}
+.seg{display:inline-flex;border:1.5px solid var(--line)}.seg span{padding:7px 14px;font-size:14px;font-weight:700;color:var(--muted)}
+.seg span.on{background:var(--raised);color:var(--acc)}
+.sl{display:grid;grid-template-columns:34px 1fr 76px;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--grid)}
+.sl b{font-size:18px;color:var(--acc)}.sl label{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.sl input{width:100%;accent-color:#F0B24A}.sl output{text-align:right;font-size:17px;font-weight:700}
+.eq{font-size:26px;line-height:1.5;font-family:'Schibsted Grotesk',sans-serif;color:var(--ink);padding:22px 26px;border-left:3px solid var(--acc);background:var(--raised)}
+.ft{border-top:1px solid var(--line);padding:26px 80px 40px 128px;display:flex;justify-content:space-between;font-size:15px;color:var(--muted)}
+.lnk{font-weight:700;color:var(--acc);font-size:17px}
+.idx{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.idx a{display:flex;align-items:center;gap:14px;padding:18px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.idx b{font-size:17px}.idx span{font-size:14px;color:var(--muted)}
+</style>
+</helmet>
+<div class="dh {{theme}}" style="width: 1440px; height: 2115px;">
+<div class="gsw-wrap"><span>Dark mode</span><button type="button" class="gsw" role="switch" aria-checked="{{dark}}" aria-label="Dark mode" onClick="{{toggle}}"><span class="knob"></span></button></div>
+<nav class="mag l" aria-label="Pages"><span class="mag-bar"></span><svg class="mag-fluid" width="84" height="360" viewBox="0 0 84 360" aria-hidden="true"><defs><linearGradient id="rReferencesg" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" style="stop-color:var(--ferro)"></stop><stop offset=".55" style="stop-color:var(--ferro)"></stop><stop offset="1" style="stop-color:var(--ferro-hi);stop-opacity:.35"></stop></linearGradient></defs><g><path d="M12,44 Q16,58 19.1,66 L19.6,68.5 C22.8,73.4 27.2,80.8 31.0,82.2 C27.2,83.6 22.8,78.6 22.3,83.5 L24.3,97.2 C30.4,102.7 42.9,108.8 53.6,110.2 C42.9,111.6 30.4,108.7 26.3,114.2 L27.5,125.9 C36.1,132.1 55.0,136.7 71.4,138.1 C55.0,139.5 36.1,138.8 28.9,144.9 L29.4,154.6 C39.4,161.5 63.0,164.6 83.3,166.0 C63.0,167.4 39.4,168.8 30.0,175.6 L30.0,184.4 C39.4,191.2 63.0,192.6 83.3,194.0 C63.0,195.4 39.4,198.5 29.4,205.4 L28.9,215.1 C36.1,221.2 55.0,220.5 71.4,221.9 C55.0,223.3 36.1,227.9 27.5,234.1 L26.3,245.8 C30.4,251.3 42.9,248.4 53.6,249.8 C42.9,251.2 30.4,257.3 24.3,262.8 L22.3,276.5 C22.8,281.4 27.2,276.4 31.0,277.8 C27.2,279.2 22.8,286.6 19.6,291.5 L19.1,294 Q16,302 12,316 Z" style="fill:url(#rReferencesg);stroke:var(--ferro-hi);stroke-width:1;stroke-opacity:.45"></path><path d="M19.0,71.5 C23.0,73.8 26.5,80.4 29.6,81.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,100.6 C31.0,103.2 40.9,108.4 49.6,109.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,129.7 C36.9,132.6 52.0,136.3 65.4,137.5" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,158.8 C40.5,162.0 59.2,164.2 75.8,165.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,188.6 C40.5,191.7 59.2,192.2 75.8,193.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,218.9 C36.9,221.7 52.0,220.1 65.4,221.3" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,249.2 C31.0,251.7 40.9,248.0 49.6,249.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M19.0,279.5 C23.0,281.8 26.5,276.0 29.6,277.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><ellipse cx="18" cy="150" rx="3" ry="16" style="fill:var(--ferro-hi);opacity:.5"></ellipse></g></svg><span class="mag-bead" style="top:316px"></span><div class="mag-links"><a href="Main.dc.html">Home</a><a href="Market.dc.html">Market</a><a href="Model.dc.html">The model</a><a href="Maths.dc.html">How it works</a><a href="Finding.dc.html">The finding</a><a href="About.dc.html">About</a><a href="Team.dc.html">Team</a><a href="References.dc.html" aria-current=page>References</a></div></nav>
+
+<div class="bar"><a href="Main.dc.html" class="brand">rw/ws instrument</a><span class="chip"><i></i>Market closed. Last close 25 Sep 2026, 15:30 IST</span></div>
+<div class="pg">
+  <div style="display:flex;flex-direction:column;gap:14px"><span class="lbl">Page 8 of 8</span><h1 class="t1">References</h1><p class="lead">The papers behind the model and the methods, and where the data comes from.</p></div>
+  <section class="panel"><div class="ph"><span class="lbl">Models</span></div><ol style="list-style:none;margin:0;padding:4px 22px 10px"><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[1]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Black, F. and Scholes, M. (1973)</b><span class="p" style="font-size:17px">The pricing of options and corporate liabilities. <span class="mu">Journal of Political Economy 81(3).</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[2]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Heston, S. L. (1993)</b><span class="p" style="font-size:17px">A closed-form solution for options with stochastic volatility with applications to bond and currency options. <span class="mu">Review of Financial Studies 6(2).</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[3]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Christoffersen, P., Heston, S. and Jacobs, K. (2009)</b><span class="p" style="font-size:17px">The shape and term structure of the index option smirk: why multifactor stochastic volatility models work so well. <span class="mu">Management Science 55(12).</span></span></span></li></ol></section><section class="panel"><div class="ph"><span class="lbl">Numerical methods</span></div><ol style="list-style:none;margin:0;padding:4px 22px 10px"><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[4]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Gil-Pelaez, J. (1951)</b><span class="p" style="font-size:17px">Note on the inversion theorem. <span class="mu">Biometrika 38.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[5]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Feller, W. (1951)</b><span class="p" style="font-size:17px">Two singular diffusion problems. <span class="mu">Annals of Mathematics 54.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[6]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Albrecher, H., Mayer, P., Schoutens, W. and Tistaert, J. (2007)</b><span class="p" style="font-size:17px">The little Heston trap. <span class="mu">Wilmott Magazine.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[7]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Lord, R., Koekkoek, R. and van Dijk, D. (2010)</b><span class="p" style="font-size:17px">A comparison of biased simulation schemes for stochastic volatility models. <span class="mu">Quantitative Finance 10(2).</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[8]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Glasserman, P. (2003)</b><span class="p" style="font-size:17px">Monte Carlo Methods in Financial Engineering. <span class="mu">Springer.</span></span></span></li></ol></section><section class="panel"><div class="ph"><span class="lbl">History</span></div><ol style="list-style:none;margin:0;padding:4px 22px 10px"><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[9]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Bachelier, L. (1900)</b><span class="p" style="font-size:17px">Théorie de la spéculation. <span class="mu">Annales scientifiques de l'École normale supérieure 17.</span></span></span></li></ol></section><section class="panel"><div class="ph"><span class="lbl">Data and software</span></div><ol style="list-style:none;margin:0;padding:4px 22px 10px"><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[10]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">National Stock Exchange of India</b><span class="p" style="font-size:17px">Bhavcopy end-of-day files, cash market and F&amp;O, July to September 2026. <span class="mu">nseindia.com.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[11]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Reserve Bank of India</b><span class="p" style="font-size:17px">91-day Treasury bill yields. <span class="mu">rbi.org.in.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[12]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">Upstox</b><span class="p" style="font-size:17px">Market data API (quotes, candles, option chains). <span class="mu">upstox.com/developer.</span></span></span></li><li style="display:grid;grid-template-columns:52px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--grid)"><span class="lbl" style="color:var(--acc);font-size:16px">[13]</span><span style="display:flex;flex-direction:column;gap:4px"><b style="font-size:18px">NumPy, SciPy, pandas</b><span class="p" style="font-size:17px">Numerical and data libraries used by the pricer and the research. <span class="mu">numpy.org, scipy.org, pandas.pydata.org.</span></span></span></li></ol></section>
+</div>
+<footer class="ft"><span>Not trading advice. Prices are NSE closing prices; live Upstox prices replace them during market hours.</span><span>github.com/mangalvinayak13-vin/option-pricing-using-double-heston</span></footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":2115}}'>
+class Component extends DCLogic {
+renderVals() {
+const s = this.state || {};
+const dark = s.dark !== undefined ? s.dark : (this.props.dark ?? true);
+return { theme: dark ? 't-dark' : 't-light', dark: dark, toggle: () => this.setState({ dark: !dark }) };
+}
+}
+</script>
+</body>
+</html>
