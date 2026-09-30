@@ -48,6 +48,7 @@ warnings.filterwarnings("ignore")
 from mentor_dh_pinn import params_v2 as P
 from src.double_heston import price_double_heston_surface
 from src.r2_representation.contract import CANONICAL_SLOT_KEYS, R2_EXPIRY_RANKS
+from src.rank_conditioning import rate_and_carry_for_rank
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -111,8 +112,9 @@ def reprice_surface(vector: np.ndarray, spot: float, maturities, rates, carries,
         keys = [CANONICAL_SLOT_KEYS[i] for i in idx]
         strikes = np.array([actual_strikes[i] for i in idx], float)
         mats = np.full(len(keys), maturities[rank - 1], float)
+        rate, carry = rate_and_carry_for_rank(rank, rates, carries)
         out[np.asarray(idx, int)] = price_double_heston_surface(
-            spot, strikes, mats, rates[rank - 1], carries[rank - 1],
+            spot, strikes, mats, rate, carry,
             [k.option_type for k in keys], vector, node_count=node_count,
         )
     return out / spot

@@ -5,8 +5,8 @@
   "surfaces_built": 12480,
   "tickers_with_any_surface": 210,
   "rejected": 120,
-  "median_repricing_relative": 0.12405821540116013,
+  "median_repricing_relative": 0.10346904331413284,
   "all_parameters_valid": true,
   "held_out_share": 0.9170673076923077,
-  "runtime_minutes": 81.91174685160318
+  "runtime_minutes": 66.52748591502508
 }

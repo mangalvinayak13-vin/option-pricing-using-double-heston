@@ -36,62 +36,22 @@ for p in (str(PROJECT_ROOT / "src"), str(PROJECT_ROOT)):
 
 warnings.filterwarnings("ignore")
 
+import math
+import run_option_backtest as OB
 from mentor_dh_pinn import params_v2 as P
 from src.double_heston import price_double_heston_surface
+from src.plausible_bounds import training_parameter_stats, penalty_residuals
 from src.r2_representation.contract import CANONICAL_SLOT_KEYS, R2_EXPIRY_RANKS
+from src.rank_conditioning import rate_and_carry_for_rank
 from src import g8_evaluation as G8
+from src.mask_aware import build_mlp, training_statistics
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 SHORT = ["kappa_s", "theta_s", "sigma_s", "rho_s", "v0_s",
          "kappa_f", "theta_f", "sigma_f", "rho_f", "v0_f"]
-LATENT_BOX = 8.0
-REAL_COVERAGE = [11, 12, 18, 18, 19]
-
-
-def build_mlp(input_dim, hidden=(384, 384, 384), output_dim=10):
-    layers, prev = [], input_dim
-    for h in hidden:
-        layers += [nn.Linear(prev, h), nn.ReLU(), nn.Dropout(0.1)]
-        prev = h
-    layers.append(nn.Linear(prev, output_dim))
-    return nn.Sequential(*layers)
-
-
-def training_statistics(seed: int = 0):
-    """Reproduce the exact normalization the mask-aware model was trained under.
-
-    run_real_market_eval.py derives these from the dataset and a seeded mask draw
-    rather than saving them, so they are rebuilt here with the same seed. If they
-    drifted, every G8 prediction would be silently wrong, so the mask draw and
-    ordering below must stay identical to that script.
-    """
-    rng = np.random.default_rng(seed)
-    prices, cond, params = [], [], []
-    with open(PROJECT_ROOT / "data" / "final_r2_clean_10000" / "surfaces.jsonl") as f:
-        for line in f:
-            rec = json.loads(line)
-            if len(rec["prices"]) != 20:
-                continue
-            mats = sorted(set(rec["maturities"]))
-            prices.append(rec["prices"])
-            cond.append([mats[0], mats[1], rec["rates"][0], rec["carries"][0]])
-            p = rec["metadata"]["parameters_canonical_order"]
-            params.append([p[n] for n in P.CANONICAL])
-    prices, cond, params = np.array(prices), np.array(cond), np.array(params)
-    z = np.stack([P.encode(r) for r in params])
-
-    masks = np.ones((len(prices), 20), dtype=bool)
-    incomplete = rng.random(len(prices)) < 0.5
-    for i in np.flatnonzero(incomplete):
-        keep = rng.choice(REAL_COVERAGE)
-        masks[i, rng.choice(20, size=20 - keep, replace=False)] = False
-
-    X = np.concatenate([prices * masks, masks.astype(float), cond], axis=1)
-    x_mu, x_sd = X.mean(0), np.where(X.std(0) > 0, X.std(0), 1.0)
-    t_mu, t_sd = z.mean(0), np.where(z.std(0) > 0, z.std(0), 1.0)
-    return x_mu, x_sd, t_mu, t_sd, X.shape[1]
+LATENT_BOX = 12.0
 
 
 def reprice(vector, spot, maturities, rates, carries, strikes):
@@ -102,21 +62,37 @@ def reprice(vector, spot, maturities, rates, carries, strikes):
         if not idx:
             continue
         keys = [CANONICAL_SLOT_KEYS[i] for i in idx]
+        rate, carry = rate_and_carry_for_rank(rank, rates, carries)
         out[np.asarray(idx, int)] = price_double_heston_surface(
             spot, np.array([strikes[i] for i in idx], float),
             np.full(len(keys), maturities[rank - 1], float),
-            rates[rank - 1], carries[rank - 1],
+            rate, carry,
             [k.option_type for k in keys], vector, node_count=64,
         )
     return out / spot
 
 
 def best_possible_fit(market, mask, spot, maturities, rates, carries, strikes, rng,
-                      starts=12):
-    """Least-squares floor: the closest any Double Heston fit gets to this surface."""
+                      surface, starts=12):
+    """Least-squares floor: the closest any Double Heston fit gets to this surface.
+
+    Bounded with a physical-parameter penalty rather than a flat latent box (see
+    src/plausible_bounds.py): a flat +/-8 box lets the coupled kappa_fast term run to
+    millions, and real, partial, noisy surfaces have flat-enough directions that the
+    optimiser actually does run there.
+
+    Also seeded with a guaranteed start at the point where Double Heston degenerates
+    to a flat Black-Scholes volatility. Double Heston nests Black-Scholes exactly, so
+    refining from that corner can never end up worse than the flat fit -- but bounding
+    alone was not enough: 12 normal(0,1) starts clustered near the origin can simply
+    miss that specific corner and never discover it, and without this seed a flat
+    volatility still beat the reported "floor" on most real dates, which is otherwise
+    impossible for a true optimum.
+    """
+    spread, phys_lo, phys_hi = training_parameter_stats(margin=2.0)
     lo, hi = np.full(10, -LATENT_BOX), np.full(10, LATENT_BOX)
 
-    def residuals(z):
+    def price_residuals(z):
         try:
             got = reprice(np.asarray(P.to_array(P.decode(z)), float),
                           spot, maturities, rates, carries, strikes)[mask] - market[mask]
@@ -124,19 +100,33 @@ def best_possible_fit(market, mask, spot, maturities, rates, carries, strikes, r
         except Exception:
             return np.full(int(mask.sum()), 1e3)
 
+    def residuals(z):
+        vector = np.asarray(P.to_array(P.decode(z)), float)
+        penalty = penalty_residuals(vector, phys_lo, phys_hi, spread)
+        return np.concatenate([price_residuals(z), penalty])
+
+    sigma_flat = OB.flat_vol_fit(OB.surface_arrays(surface))
+    corner = np.zeros(10)
+    corner[2] = corner[4] = math.log(sigma_flat ** 2)
+    corner[6] = corner[7] = -3.0
+    starts_z0 = [np.clip(corner, lo, hi)] + [
+        np.clip(rng.normal(0, 1, 10), -LATENT_BOX + 1, LATENT_BOX - 1)
+        for _ in range(starts)
+    ]
+
     best_cost, best_z = np.inf, None
-    for _ in range(starts):
-        z0 = np.clip(rng.normal(0, 1, 10), -LATENT_BOX + 1, LATENT_BOX - 1)
+    for z0 in starts_z0:
         try:
             sol = least_squares(residuals, z0, bounds=(lo, hi), method="trf", max_nfev=2000)
         except Exception:
             continue
-        if sol.cost < best_cost:
-            best_cost, best_z = sol.cost, sol.x
+        price_only_cost = float(np.sum(price_residuals(sol.x) ** 2))
+        if price_only_cost < best_cost:
+            best_cost, best_z = price_only_cost, sol.x
 
     if best_z is None:
         return np.nan
-    return float(np.sqrt(np.mean(residuals(best_z) ** 2)))
+    return float(np.sqrt(np.mean(price_residuals(best_z) ** 2)))
 
 
 def main():
@@ -145,6 +135,8 @@ def main():
         PROJECT_ROOT / "outputs" / "real_eval" /
         "MaskAware_Model_2_canonical_latent_checkpoint.pt"))
     ap.add_argument("--output-dir", default=str(PROJECT_ROOT / "outputs" / "g8"))
+    ap.add_argument("--all-dates", action="store_true",
+                    help="Use every vetted candidate date instead of the original 8 Wednesdays")
     args = ap.parse_args()
 
     out_dir = Path(args.output_dir)
@@ -162,8 +154,23 @@ def main():
 
     from src.constraints import validate_parameters
 
+    # The headline G8 figures (8 dates, +10.1pp median gap) were produced on the original
+    # eight Wednesdays. When the candidate window was widened to every weekday, this loop
+    # silently switched to all of them, so re-running would have changed the headline
+    # without anyone asking. Default to the original set; widening is now opt-in and
+    # written to a separate file so it can never overwrite the headline.
+    if args.all_dates:
+        selection = PROJECT_ROOT / "outputs" / "g8" / "g8_date_selection.json"
+        dates = json.loads(selection.read_text())["usable"] if selection.exists() \
+            else list(G8.G8_CANDIDATE_DATES)
+        result_name = "g8_evaluation_all_dates.json"
+    else:
+        dates = list(G8.G8_WEDNESDAY_SUBSET)
+        result_name = "g8_evaluation.json"
+    logger.info("evaluating %d dates -> %s", len(dates), result_name)
+
     rows = []
-    for date_id in G8.G8_CANDIDATE_DATES:
+    for date_id in dates:
         try:
             s = G8.build_g8_surface(date_id)
         except Exception as exc:
@@ -192,7 +199,7 @@ def main():
         net_rmse = float(np.sqrt(np.mean((net[mk] - market[mk]) ** 2)))
         scale = float(np.mean(np.abs(market[mk])))
         floor = best_possible_fit(market, mk, s.spot, mats, s.rates, s.carries,
-                                  strikes, rng)
+                                  strikes, rng, s)
 
         rows.append({
             "date_id": date_id,
@@ -230,7 +237,7 @@ def main():
             "the forward is futures-implied."
         ),
     }
-    (out_dir / "g8_evaluation.json").write_text(json.dumps(report, indent=2))
+    (out_dir / result_name).write_text(json.dumps(report, indent=2))
 
     logger.info("")
     logger.info("G8 HELD-OUT EVALUATION on %d dates", len(rows))

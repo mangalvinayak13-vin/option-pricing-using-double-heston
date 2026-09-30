@@ -41,7 +41,9 @@ import logging
 import sys
 import time
 import warnings
+import zlib
 from itertools import combinations
+from multiprocessing import Pool
 from pathlib import Path
 
 import numpy as np
@@ -57,7 +59,9 @@ warnings.filterwarnings("ignore")
 
 from mentor_dh_pinn import params_v2 as P
 from src.double_heston import price_double_heston_surface
+from src.plausible_bounds import training_parameter_stats, penalty_residuals, near_bound_parameters
 from src.r2_representation.contract import CANONICAL_SLOT_KEYS, R2_EXPIRY_RANKS
+from src.rank_conditioning import rate_and_carry_for_rank
 from src.g2_r2r3 import frozen, market
 from src import g8_evaluation as G8
 
@@ -66,41 +70,13 @@ logger = logging.getLogger(__name__)
 
 SHORT = ["kappa_s", "theta_s", "sigma_s", "rho_s", "v0_s",
          "kappa_f", "theta_f", "sigma_f", "rho_f", "v0_f"]
-# The search box is derived per coordinate from the training set in
-# training_reference(); there is deliberately no flat global bound here.
+# Wide numeric safety rail for trf; the physical penalty in analyse_surface is what
+# actually contains the search (see src/plausible_bounds.py for why a flat box alone
+# does not).
+NUMERIC_BOX = 14.0
 
-
-def training_reference(margin: float = 0.10) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Parameter spread, and a latent search box, both taken from the training set.
-
-    Returns (spread, lower, upper).
-
-    The spread is the yardstick for dispersion, so "how far apart" reads in the same
-    units as the skill figures used everywhere else.
-
-    The box matters more than it looks. A flat +/-8 box on every latent coordinate
-    permits kappa up to exp(8) = 2981, while the largest kappa_fast anywhere in the
-    10,000 training surfaces is 10. Unbounded, the optimiser duly finds
-    price-equivalent solutions out at absurd parameter values, and dispersion comes
-    back in the hundreds -- technically a demonstration of ambiguity, but an
-    uninterpretable one that a reviewer would rightly dismiss as an artefact of
-    letting the search leave the plausible region.
-
-    Bounding to the training range (plus `margin` of it on each side) makes the
-    claim both readable and much stronger: even restricted to parameter sets the
-    model was actually trained on, the surface still admits many price-equivalent
-    solutions far apart from one another.
-    """
-    vals = []
-    with open(PROJECT_ROOT / "data" / "final_r2_clean_10000" / "surfaces.jsonl") as f:
-        for line in f:
-            p = json.loads(line)["metadata"]["parameters_canonical_order"]
-            vals.append([p[n] for n in P.CANONICAL])
-    arr = np.asarray(vals, float)
-    z = np.stack([P.encode(row) for row in arr])
-    lo, hi = z.min(axis=0), z.max(axis=0)
-    pad = (hi - lo) * margin
-    return arr.std(axis=0), lo - pad, hi + pad
+# (superseded: a flat latent-space box used to live here; see src/plausible_bounds.py
+# for why a physical-parameter penalty replaced it.)
 
 
 def reprice(vector, spot, maturities, rates, carries, strikes):
@@ -111,21 +87,32 @@ def reprice(vector, spot, maturities, rates, carries, strikes):
         if not idx:
             continue
         keys = [CANONICAL_SLOT_KEYS[i] for i in idx]
+        rate, carry = rate_and_carry_for_rank(rank, rates, carries)
         out[np.asarray(idx, int)] = price_double_heston_surface(
             spot, np.array([strikes[i] for i in idx], float),
             np.full(len(keys), maturities[rank - 1], float),
-            rates[rank - 1], carries[rank - 1],
+            rate, carry,
             [k.option_type for k in keys], vector, node_count=64,
         )
     return out / spot
 
 
-def analyse_surface(surface, strikes, mask, spread, lo, hi, starts, tolerance, rng):
-    """Fit from many starts; measure the spread of the price-equivalent solutions."""
+def analyse_surface(surface, strikes, mask, spread, phys_lo, phys_hi, box_lo, box_hi,
+                    starts, tolerance, rng):
+    """Fit from many starts; measure the spread of the price-equivalent solutions.
+
+    Bounded with a physical-parameter penalty (src/plausible_bounds.py), not a flat
+    latent box. A flat box lets the coupled kappa_fast term run to values in the
+    thousands on real, partial, noisy surfaces that have a genuinely flat direction in
+    that coordinate; the reported dispersion then measures the box's shape rather than
+    the market's. box_lo/box_hi is only a generous numeric safety rail so `trf` never
+    has to handle an unbounded problem; phys_lo/phys_hi is what actually contains the
+    search.
+    """
     observed = np.asarray(surface.prices, float)
     mats = sorted(set(surface.maturities))
 
-    def residuals(z):
+    def price_residuals(z):
         try:
             got = reprice(np.asarray(P.to_array(P.decode(z)), float), surface.spot,
                           mats, surface.rates, surface.carries, strikes)
@@ -134,17 +121,22 @@ def analyse_surface(surface, strikes, mask, spread, lo, hi, starts, tolerance, r
         except Exception:
             return np.full(int(mask.sum()), 1e3)
 
+    def residuals(z):
+        vector = np.asarray(P.to_array(P.decode(z)), float)
+        penalty = penalty_residuals(vector, phys_lo, phys_hi, spread)
+        return np.concatenate([price_residuals(z), penalty])
+
     solutions, rmses = [], []
     for _ in range(starts):
-        # Start uniformly inside the plausible box rather than from a fixed-width
-        # gaussian, so the starts actually sample the region being searched.
-        z0 = rng.uniform(lo, hi)
+        # Start uniformly inside the plausible region, not the wide numeric box, so
+        # starts actually sample where the physical penalty keeps the search.
+        z0 = rng.uniform(np.clip(phys_lo, box_lo, box_hi), np.clip(phys_hi, box_lo, box_hi))
         try:
-            sol = least_squares(residuals, z0, bounds=(lo, hi),
+            sol = least_squares(residuals, z0, bounds=(box_lo, box_hi),
                                 method="trf", max_nfev=1200)
         except Exception:
             continue
-        rmse = float(np.sqrt(np.mean(residuals(sol.x) ** 2)))
+        rmse = float(np.sqrt(np.mean(price_residuals(sol.x) ** 2)))
         if not np.isfinite(rmse) or rmse > 1e2:
             continue
         solutions.append(np.asarray(P.to_array(P.decode(sol.x)), float))
@@ -154,9 +146,11 @@ def analyse_surface(surface, strikes, mask, spread, lo, hi, starts, tolerance, r
         return None
 
     solutions, rmses = np.array(solutions), np.array(rmses)
-    best = float(rmses.min())
+    best_idx = int(np.argmin(rmses))
+    best = float(rmses[best_idx])
     keep = rmses <= best * (1.0 + tolerance)
     equivalent = solutions[keep]
+    near_bound = near_bound_parameters(solutions[best_idx], phys_lo, phys_hi)
 
     if len(equivalent) < 2:
         return {
@@ -166,20 +160,71 @@ def analyse_surface(surface, strikes, mask, spread, lo, hi, starts, tolerance, r
             "median_pairwise_dispersion": 0.0,
             "max_pairwise_dispersion": 0.0,
             "price_spread_within_equivalent": 0.0,
+            "params_near_bound": ";".join(near_bound),
         }
 
     scaled = equivalent / spread          # standardise so scales are comparable
     dists = [float(np.linalg.norm(a - b) / np.sqrt(10))
              for a, b in combinations(scaled, 2)]
 
+    # Per-parameter dispersion, not just one aggregate Euclidean number. kappa_fast is
+    # near-bound on almost every real surface tried so far -- an aggregate distance
+    # would fold that single dominant coordinate together with the other nine and hide
+    # which parameter is actually driving the "ambiguity" figure.
+    per_param = {n: float(np.median([abs(a - b) for a, b in combinations(scaled[:, i], 2)]))
+                for i, n in enumerate(SHORT)}
+
     return {
         "starts_converged": int(len(solutions)),
         "best_price_rmse": best,
         "price_equivalent_count": int(keep.sum()),
         "median_pairwise_dispersion": float(np.median(dists)),
+        **{f"disp_{n}": v for n, v in per_param.items()},
         "max_pairwise_dispersion": float(np.max(dists)),
+        "params_near_bound": ";".join(near_bound),
         "price_spread_within_equivalent": float(rmses[keep].max() - rmses[keep].min()),
     }
+
+
+_STATE: dict = {}
+
+
+def _init(spread, phys_lo, phys_hi, box_lo, box_hi, dates, starts, tolerance):
+    G8.register_g8_dates()
+    _STATE.update(spread=spread, phys_lo=phys_lo, phys_hi=phys_hi, box_lo=box_lo,
+                  box_hi=box_hi, dates=dates, starts=starts, tolerance=tolerance)
+
+
+def process_ticker(ticker):
+    """All dates for one ticker. Runs in a worker process; one rng per (ticker, date)
+    seeded off both so results are reproducible regardless of worker scheduling."""
+    market.TICKER = ticker
+    rows = []
+    for date_id in _STATE["dates"]:
+        try:
+            report = market.audit_date(date_id)
+            if not report.get("constructible", False):
+                continue
+            surface = G8.build_g8_surface(date_id, report)
+        except Exception:
+            continue
+
+        strikes = np.array(
+            [v if v is not None else np.nan
+             for v in surface.metadata["provenance"]["actual_strikes"]], float)
+        mask = np.asarray(surface.mask, bool) & np.isfinite(strikes)
+        if mask.sum() < 8:
+            continue
+
+        rng = np.random.default_rng(zlib.crc32(f"{ticker}|{date_id}".encode()))
+        result = analyse_surface(surface, strikes, mask, _STATE["spread"], _STATE["phys_lo"],
+                                 _STATE["phys_hi"], _STATE["box_lo"], _STATE["box_hi"],
+                                 _STATE["starts"], _STATE["tolerance"], rng)
+        if result is None:
+            continue
+        rows.append({"ticker": ticker, "date_id": date_id,
+                     "usable_slots": int(mask.sum()), **result})
+    return ticker, rows
 
 
 def main():
@@ -191,13 +236,14 @@ def main():
                     help="Most-active underlyings to cover (0 = all)")
     ap.add_argument("--dates", nargs="*", default=None)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--output-dir", default=str(PROJECT_ROOT / "outputs" / "ambiguity"))
     args = ap.parse_args()
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    rng = np.random.default_rng(args.seed)
-    spread, box_lo, box_hi = training_reference()
+    spread, phys_lo, phys_hi = training_parameter_stats(margin=2.0)
+    box_lo, box_hi = np.full(10, -NUMERIC_BOX), np.full(10, NUMERIC_BOX)
 
     G8.register_g8_dates()
     dates = args.dates or (list(frozen.MARKET_DATES) + list(G8.G8_CANDIDATE_DATES))
@@ -208,46 +254,27 @@ def main():
              .sort_values(ascending=False).index.tolist())
     tickers = order[:args.tickers] if args.tickers else order
 
-    logger.info("%d tickers x %d dates, %d starts each, tolerance %.0f%%",
-                len(tickers), len(dates), args.starts, args.tolerance * 100)
+    logger.info("%d tickers x %d dates, %d starts each, tolerance %.0f%%, %d workers",
+                len(tickers), len(dates), args.starts, args.tolerance * 100, args.workers)
 
-    original = market.TICKER
+    out_csv = out_dir / "ambiguity_surfaces.csv"
     rows = []
     started = time.time()
-    try:
-        for date_id in dates:
-            for ticker in tickers:
-                market.TICKER = ticker
-                try:
-                    report = market.audit_date(date_id)
-                    if not report.get("constructible", False):
-                        continue
-                    surface = G8.build_g8_surface(date_id, report)
-                except Exception:
-                    continue
-
-                strikes = np.array(
-                    [v if v is not None else np.nan
-                     for v in surface.metadata["provenance"]["actual_strikes"]], float)
-                mask = np.asarray(surface.mask, bool) & np.isfinite(strikes)
-                if mask.sum() < 8:
-                    continue
-
-                result = analyse_surface(surface, strikes, mask, spread, box_lo, box_hi,
-                                         args.starts, args.tolerance, rng)
-                if result is None:
-                    continue
-                rows.append({"ticker": ticker, "date_id": date_id,
-                             "usable_slots": int(mask.sum()), **result})
-
-            pd.DataFrame(rows).to_csv(out_dir / "ambiguity_surfaces.csv", index=False)
-            logger.info("%s done -- %d surfaces analysed, %.1f min elapsed",
-                        date_id, len(rows), (time.time() - started) / 60)
-    finally:
-        market.TICKER = original
+    header = True
+    with Pool(args.workers, initializer=_init,
+              initargs=(spread, phys_lo, phys_hi, box_lo, box_hi, dates, args.starts,
+                        args.tolerance)) as pool:
+        for i, (ticker, ticker_rows) in enumerate(pool.imap_unordered(process_ticker, tickers), 1):
+            if ticker_rows:
+                pd.DataFrame(ticker_rows).to_csv(out_csv, mode="a", header=header, index=False)
+                header = False
+                rows.extend(ticker_rows)
+            elapsed = (time.time() - started) / 60
+            logger.info("  %d/%d  %-12s %2d surfaces  (%d total, %.1f min, ~%.1f min left)",
+                        i, len(tickers), ticker, len(ticker_rows), len(rows), elapsed,
+                        elapsed / i * (len(tickers) - i))
 
     frame = pd.DataFrame(rows)
-    frame.to_csv(out_dir / "ambiguity_surfaces.csv", index=False)
 
     multi = frame[frame["price_equivalent_count"] >= 2]
     summary = {
@@ -262,6 +289,8 @@ def main():
         "median_max_dispersion": float(multi["max_pairwise_dispersion"].median())
                                  if len(multi) else None,
         "median_best_price_rmse": float(frame["best_price_rmse"].median()),
+        "share_with_any_param_near_bound": float(
+            (frame["params_near_bound"].fillna("") != "").mean()),
         "interpretation": (
             "Dispersion is in units of the training distribution's own parameter "
             "spread. Near 0 means the surface pins the parameters; near or above 1 "

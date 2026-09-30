@@ -43,24 +43,16 @@ warnings.filterwarnings("ignore")
 from mentor_dh_pinn import params_v2 as P
 from src.double_heston import price_double_heston_surface
 from src.r2_representation.contract import CANONICAL_SLOT_KEYS, R2_EXPIRY_RANKS
+from src.rank_conditioning import rate_and_carry_for_rank
 from src.g2_r2r3 import frozen, market
 from src import g8_evaluation as G8
+from src.mask_aware import build_mlp, training_statistics
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 SHORT = ["kappa_s", "theta_s", "sigma_s", "rho_s", "v0_s",
          "kappa_f", "theta_f", "sigma_f", "rho_f", "v0_f"]
-REAL_COVERAGE = [11, 12, 18, 18, 19]
-
-
-def build_mlp(input_dim, hidden=(384, 384, 384), output_dim=10):
-    layers, prev = [], input_dim
-    for h in hidden:
-        layers += [nn.Linear(prev, h), nn.ReLU(), nn.Dropout(0.1)]
-        prev = h
-    layers.append(nn.Linear(prev, output_dim))
-    return nn.Sequential(*layers)
 
 
 def universe(date_id: str) -> list[str]:
@@ -78,33 +70,6 @@ def universe(date_id: str) -> list[str]:
     return list(activity.index)
 
 
-def training_statistics(seed: int = 0):
-    """Rebuild the mask-aware model's normalisation, identical to run_real_market_eval."""
-    rng = np.random.default_rng(seed)
-    prices, cond, params = [], [], []
-    with open(PROJECT_ROOT / "data" / "final_r2_clean_10000" / "surfaces.jsonl") as f:
-        for line in f:
-            rec = json.loads(line)
-            if len(rec["prices"]) != 20:
-                continue
-            mats = sorted(set(rec["maturities"]))
-            prices.append(rec["prices"])
-            cond.append([mats[0], mats[1], rec["rates"][0], rec["carries"][0]])
-            p = rec["metadata"]["parameters_canonical_order"]
-            params.append([p[n] for n in P.CANONICAL])
-    prices, cond, params = np.array(prices), np.array(cond), np.array(params)
-    z = np.stack([P.encode(r) for r in params])
-
-    masks = np.ones((len(prices), 20), dtype=bool)
-    for i in np.flatnonzero(rng.random(len(prices)) < 0.5):
-        keep = rng.choice(REAL_COVERAGE)
-        masks[i, rng.choice(20, size=20 - keep, replace=False)] = False
-
-    X = np.concatenate([prices * masks, masks.astype(float), cond], axis=1)
-    return (X.mean(0), np.where(X.std(0) > 0, X.std(0), 1.0),
-            z.mean(0), np.where(z.std(0) > 0, z.std(0), 1.0), X.shape[1])
-
-
 def reprice(vector, spot, maturities, rates, carries, strikes):
     out = np.full(len(CANONICAL_SLOT_KEYS), np.nan)
     for rank in R2_EXPIRY_RANKS:
@@ -113,10 +78,11 @@ def reprice(vector, spot, maturities, rates, carries, strikes):
         if not idx:
             continue
         keys = [CANONICAL_SLOT_KEYS[i] for i in idx]
+        rate, carry = rate_and_carry_for_rank(rank, rates, carries)
         out[np.asarray(idx, int)] = price_double_heston_surface(
             spot, np.array([strikes[i] for i in idx], float),
             np.full(len(keys), maturities[rank - 1], float),
-            rates[rank - 1], carries[rank - 1],
+            rate, carry,
             [k.option_type for k in keys], vector, node_count=64,
         )
     return out / spot

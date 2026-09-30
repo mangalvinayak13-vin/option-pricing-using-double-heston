@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import sys
 import warnings
 from pathlib import Path
@@ -34,15 +35,28 @@ for p in (str(PROJECT_ROOT / "src"), str(PROJECT_ROOT)):
 
 warnings.filterwarnings("ignore")
 
+import run_option_backtest as OB
 from mentor_dh_pinn import params_v2 as P
 from src.double_heston import price_double_heston_surface
+from src.plausible_bounds import training_parameter_stats, penalty_residuals
 from src.r2_representation.contract import CANONICAL_SLOT_KEYS, R2_EXPIRY_RANKS
+from src.rank_conditioning import rate_and_carry_for_rank
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 SHORT = ["kappa_s", "theta_s", "sigma_s", "rho_s", "v0_s",
          "kappa_f", "theta_f", "sigma_f", "rho_f", "v0_f"]
+
+# scipy's "lm" method -- the original choice here -- silently ignores `bounds`, so this
+# fit was running fully unconstrained. On a clean, noiseless synthetic surface that
+# rarely bites; on a real, partial, noisy one an under-constrained direction (kappa_fast
+# in particular, a product of two latent coordinates) can run to an arbitrarily large
+# value that costs the fit almost nothing in price error but is physically meaningless.
+# "trf" is used instead because it is the one scipy method that respects `bounds`, and
+# the physical penalty keeps the optimiser inside a plausible region without hard-
+# stopping it at an arbitrary edge.
+LATENT_BOX = 12.0
 
 
 def reprice(z, spot, maturities, rates, carries, actual_strikes):
@@ -63,8 +77,9 @@ def reprice(z, spot, maturities, rates, carries, actual_strikes):
         keys = [CANONICAL_SLOT_KEYS[i] for i in idx]
         strikes = np.array([actual_strikes[i] for i in idx], float)
         mats = np.full(len(keys), maturities[rank - 1], float)
+        rate, carry = rate_and_carry_for_rank(rank, rates, carries)
         out[np.asarray(idx, int)] = price_double_heston_surface(
-            spot, strikes, mats, rates[rank - 1], carries[rank - 1],
+            spot, strikes, mats, rate, carry,
             [k.option_type for k in keys], vector, node_count=64,
         )
     return out / spot
@@ -91,6 +106,8 @@ def main():
     from src.constraints import validate_parameters
 
     rng = np.random.default_rng(0)
+    spread, phys_lo, phys_hi = training_parameter_stats(margin=2.0)
+    lo, hi = np.full(10, -LATENT_BOX), np.full(10, LATENT_BOX)
     results = []
 
     for date_id in frozen.MARKET_DATES:
@@ -102,28 +119,51 @@ def main():
 
         # A slot is only comparable if it is unmasked AND we recovered its traded strike.
         mk = mk & np.isfinite(strikes)
+        n_price = int(mk.sum())
 
-        def residuals(z):
+        def price_residuals(z):
             try:
                 return reprice(z, s.spot, mats, s.rates, s.carries, strikes)[mk] - market[mk]
             except Exception:
-                return np.full(int(mk.sum()), 1e3)
+                return np.full(n_price, 1e3)
+
+        def residuals(z):
+            vector = np.asarray(P.to_array(P.decode(z)), float)
+            penalty = penalty_residuals(vector, phys_lo, phys_hi, spread)
+            return np.concatenate([price_residuals(z), penalty])
+
+        # A guaranteed start at the point where Double Heston degenerates to a flat
+        # Black-Scholes volatility. Double Heston nests Black-Scholes exactly (both
+        # vol-of-variance terms to zero), so refining from here can never end up worse
+        # than the flat fit -- but 12 normal(0,1) starts clustered near the origin can
+        # simply miss that specific corner and never discover it. Without this start,
+        # a flat Black-Scholes volatility beat the reported "floor" on 10 of 13 real
+        # dates, which is otherwise impossible for a true optimum.
+        arrays = OB.surface_arrays(s)
+        sigma_flat = OB.flat_vol_fit(arrays)
+        corner = np.zeros(10)
+        corner[2] = corner[4] = math.log(sigma_flat ** 2)
+        corner[6] = corner[7] = -3.0
+        starts = [np.clip(corner, lo, hi)] + [
+            np.clip(rng.normal(0, 1, 10), lo + 1, hi - 1) for _ in range(12)
+        ]
 
         best_cost, best_z = np.inf, None
-        for _ in range(12):                        # generous multi-start
+        for z0 in starts:
             try:
-                sol = least_squares(residuals, rng.normal(0, 1, 10),
-                                    method="lm", max_nfev=4000)
+                sol = least_squares(residuals, z0, bounds=(lo, hi),
+                                    method="trf", max_nfev=4000)
             except Exception:
                 continue
-            if sol.cost < best_cost:
-                best_cost, best_z = sol.cost, sol.x
+            price_only_cost = float(np.sum(price_residuals(sol.x) ** 2))
+            if price_only_cost < best_cost:
+                best_cost, best_z = price_only_cost, sol.x
 
         if best_z is None:
             logger.warning("%s: all starts failed", date_id)
             continue
 
-        err = residuals(best_z)
+        err = price_residuals(best_z)
         rmse = float(np.sqrt(np.mean(err ** 2)))
         rel = rmse / float(np.mean(np.abs(market[mk])))
         vector = np.asarray(P.to_array(P.decode(best_z)), float)
