@@ -128,3 +128,6 @@ outputs/regular_pinn_recovery/residual_test/**/*.safetensors
 !experiments/portable_dual_pinn_v1/pilot/*.npz
 !experiments/portable_dual_pinn_v1/extended_stratified/*.pt
 !experiments/portable_dual_pinn_v1/extended_stratified/*.npz
+
+# Local staging for the design canvas artifact (not project source)
+.design_canvas/
