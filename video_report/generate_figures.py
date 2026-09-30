@@ -100,7 +100,7 @@ ax.plot(t, np.sqrt(v1_hist) * 100, lw=2.2, color="#c98500", label="Fast factor (
 ax.plot(t, np.sqrt(v2_hist) * 100, lw=2.6, color="#2a78d6", label="Slow factor (annualised vol %)")
 ax.set_xlabel("Trading days")
 ax.set_ylabel("Instantaneous volatility (%)")
-ax.set_title("The fast factor spikes and reverts quickly; the slow factor drifts")
+ax.set_title("The fast factor keeps being pulled back; the slow one wanders for months")
 ax.legend(fontsize=10.5)
 fig.tight_layout()
 fig.savefig(OUT / "03_variance_paths.png", bbox_inches="tight")
@@ -108,15 +108,19 @@ plt.close(fig)
 
 # --- Figure 4: real-market ambiguity, from the project's own research results ------
 amb = pd.read_csv(ROOT / "outputs" / "ambiguity" / "ambiguity_surfaces.csv")
+# Same population as the headline figure in ambiguity_summary.json: surfaces with more
+# than one price-equivalent fit (the rest have no pairwise distance and are stored as 0).
+amb = amb[amb["price_equivalent_count"] > 1]
 fig, ax = plt.subplots(figsize=(8.5, 4.8))
-ax.hist(amb["median_pairwise_dispersion"], bins=40, color="#c98500", edgecolor="white", linewidth=0.4)
-ax.axvline(1.0, color="#8b0000", lw=2, ls="--", label="dispersion = 1 (as scattered as unrelated stocks)")
+counts, _, _ = ax.hist(amb["median_pairwise_dispersion"], bins=40, color="#c98500", edgecolor="white", linewidth=0.4)
+ax.set_ylim(0, counts.max() * 1.35)
+ax.axvline(1.0, color="#8b0000", lw=2, ls="--", label="1.0 = as scattered as unrelated stocks")
 ax.axvline(amb["median_pairwise_dispersion"].median(), color="#2a78d6", lw=2,
            label=f"median = {amb['median_pairwise_dispersion'].median():.2f}")
 ax.set_xlabel("Pairwise dispersion among price-equivalent fits\n(units of the training set's own parameter spread)")
-ax.set_ylabel("Number of real option surfaces")
-ax.set_title("On 2,400 real NSE surfaces, equally-good fits land further apart\nthan two unrelated stocks would")
-ax.legend(fontsize=10)
+ax.set_ylabel(f"Real option surfaces (n = {len(amb):,})")
+ax.set_title("On real NSE surfaces, equally good fits land further apart\nthan two unrelated stocks would")
+ax.legend(fontsize=10, loc="upper left", framealpha=0.95)
 fig.tight_layout()
 fig.savefig(OUT / "04_real_market_ambiguity.png", bbox_inches="tight")
 plt.close(fig)
