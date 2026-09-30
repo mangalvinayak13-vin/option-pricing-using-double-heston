@@ -18,7 +18,9 @@ export function initControls({ onTheme }) {
       aria-haspopup="menu" aria-controls="dh-tmenu" aria-expanded="false" aria-describedby="dh-sw-hint"
       title="Click for light or dark. Hold, right-click or press the down arrow for themes."><span class="knob"></span></button>
     <span class="vh" id="dh-sw-hint">Hold, right-click or press the down arrow to choose a theme.</span>`;
-  document.body.appendChild(wrap);
+  // right after the skip link, so keyboard users reach the switch first, not last
+  const skip = document.querySelector('.skip');
+  if (skip) skip.after(wrap); else document.body.prepend(wrap);
 
   const menu = document.createElement('div');
   menu.className = 'tmenu';

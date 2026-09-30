@@ -10,9 +10,28 @@ import { stockLine } from './blocks.js';
 
 export function mountControllers(scope, ctx) {
   segs(scope);
+  videoSlots(scope, ctx);
   if (scope.querySelector('[data-ctl="model-form"], [data-param]')) modelPage(scope, ctx);
   if (scope.querySelector('[data-chart="candles"]')) marketPage(scope, ctx);
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
+}
+
+// the explainer video: loads only when someone presses play; until a file is set, the slot says so
+function videoSlots(scope, ctx) {
+  $$('[data-video]', scope).forEach(btn => btn.addEventListener('click', () => {
+    const src = ctx.C.VIDEO_SRC;
+    const fig = btn.closest('figure');
+    if (!src) {
+      const cap = fig?.querySelector('figcaption');
+      if (cap) { cap.textContent = 'The video hasn\'t been added yet. Put the file in website/assets/video/ and set VIDEO_SRC in website/tools/content.py.'; cap.setAttribute('role', 'status'); }
+      return;
+    }
+    const v = document.createElement('video');
+    v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true;
+    v.className = 'video-slot'; v.setAttribute('aria-label', 'Project explainer video');
+    btn.replaceWith(v);
+    v.focus();
+  }));
 }
 
 // segmented controls: move the thumb under the pressed button (transform only)

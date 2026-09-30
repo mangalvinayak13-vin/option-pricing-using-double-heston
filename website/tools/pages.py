@@ -10,7 +10,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parents[1]
 THEMES = ["springboard", "glass", "ferro", "amber", "instrument", "trading"]
-DEFAULT_THEME = "glass"  # first-time visitors: the theme the presentation opens with
+DEFAULT_THEME = "ferro"  # first-time visitors: the theme the presentation opens with (see MORNING_REPORT.md)
 PAGES = json.loads((HERE / "assets" / "data" / "content.json").read_text())["PAGES"]
 DESC = {
     "home": "Does letting volatility move price options better? A B.Tech physics project on Double Heston, NSE options and an honest answer.",

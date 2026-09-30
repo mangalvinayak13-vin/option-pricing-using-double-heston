@@ -187,6 +187,9 @@ def rel_line():
 # ------------------------------------------------------------------ about ----------------
 ABOUT_HEAD = "A B.Tech physics project about one question and an honest answer."
 VIDEO_CAPTION = "A narrated overview of the model and the finding, made from the project report. [Video to be added]"
+# The explainer video: put the file in website/assets/video/ and set its path here, e.g. "assets/video/explainer.mp4",
+# then run python3 website/tools/export.py. Empty means not added yet (the slot says so; nothing is fetched).
+VIDEO_SRC = ""
 METHOD = [
     "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
     f"Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. "

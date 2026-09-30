@@ -26,7 +26,9 @@ export function createDashNav({ pages, current, side = 'l' }) {
     html += `<a class="mdash-a" href="${p.file}" data-k="${k}"${p.id === current ? ' aria-current="page"' : ''}><span class="mdash-l">${esc(p.label)}</span></a>`;
   });
   nav.innerHTML = html;
-  document.body.appendChild(nav);
+  // before the page content (after the switch), so the page list comes early in keyboard order
+  const anchorEl = document.querySelector(".dh-controls") || document.querySelector(".skip");
+  if (anchorEl) anchorEl.after(nav); else document.body.prepend(nav);
   const ac = new AbortController();
   const sig = { signal: ac.signal };
 

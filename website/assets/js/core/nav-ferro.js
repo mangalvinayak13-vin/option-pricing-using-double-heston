@@ -15,7 +15,9 @@ export function createFerroNav({ pages, current }) {
   nav.innerHTML = `<div class="fnav-panel" aria-hidden="true"></div><canvas aria-hidden="true"></canvas><span class="fnav-rail" aria-hidden="true"></span>
     <span class="fnav-bead" aria-hidden="true"></span>` +
     pages.map((p, k) => `<a class="fnav-a" href="${p.file}"${k === cur ? ' aria-current="page"' : ''}><span class="fnav-l">${esc(p.label)}</span></a>`).join('');
-  document.body.appendChild(nav);
+  // before the page content (after the switch), so the page list comes early in keyboard order
+  const anchorEl = document.querySelector(".dh-controls") || document.querySelector(".skip");
+  if (anchorEl) anchorEl.after(nav); else document.body.prepend(nav);
   const ac = new AbortController();
   const sig = { signal: ac.signal };
 

@@ -11,7 +11,7 @@ export const THEMES = [
   { id: 'trading', name: 'Trading', sub: 'Broker terminal', sw: ['#0B0E11', '#4C8DF6'] },
 ];
 export const THEME_IDS = THEMES.map(t => t.id);
-export const DEFAULT_THEME = document.documentElement.dataset.defaultTheme || 'glass';
+export const DEFAULT_THEME = document.documentElement.dataset.defaultTheme || 'ferro';
 
 const root = document.documentElement;
 const listeners = new Set();

@@ -691,5 +691,6 @@
  "TWIST": "Ask it which of its ten settings produced the bend, though, and the prices can't tell you.",
  "TWO_CLOCKS": "Each factor is a volatility that gets knocked around and drifts back to normal. One drifts back slowly, one quickly, which lets the model shape short- and long-dated options differently.",
  "UNIVERSE": "NIFTY 50, NIFTY BANK and the 40 most traded F&O stocks: every stock we show an implied volatility for.",
- "VIDEO_CAPTION": "A narrated overview of the model and the finding, made from the project report. [Video to be added]"
+ "VIDEO_CAPTION": "A narrated overview of the model and the finding, made from the project report. [Video to be added]",
+ "VIDEO_SRC": ""
 }
