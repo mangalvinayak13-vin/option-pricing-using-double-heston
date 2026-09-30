@@ -19,8 +19,8 @@
     {
       "date_id": "2026-07-01",
       "usable_slots": 11,
-      "repricing_rmse_normalized": 0.00480101870058247,
-      "repricing_rmse_relative": 0.15843361711922152,
+      "repricing_rmse_normalized": 0.004822523540629181,
+      "repricing_rmse_relative": 0.159143276840763,
       "priced": true,
       "parameters_valid": true,
       "parameters": {
@@ -39,8 +39,8 @@
     {
       "date_id": "2026-07-08",
       "usable_slots": 18,
-      "repricing_rmse_normalized": 0.005787917186830065,
-      "repricing_rmse_relative": 0.17511902152257214,
+      "repricing_rmse_normalized": 0.00567117758038582,
+      "repricing_rmse_relative": 0.17158695204169502,
       "priced": true,
       "parameters_valid": true,
       "parameters": {
@@ -59,8 +59,8 @@
     {
       "date_id": "2026-07-15",
       "usable_slots": 19,
-      "repricing_rmse_normalized": 0.002908363856617082,
-      "repricing_rmse_relative": 0.09316233432800858,
+      "repricing_rmse_normalized": 0.002442111435302527,
+      "repricing_rmse_relative": 0.07822707653455117,
       "priced": true,
       "parameters_valid": true,
       "parameters": {
@@ -79,8 +79,8 @@
     {
       "date_id": "2026-07-22",
       "usable_slots": 18,
-      "repricing_rmse_normalized": 0.00308003027207096,
-      "repricing_rmse_relative": 0.12065762798196637,
+      "repricing_rmse_normalized": 0.0017620825208340073,
+      "repricing_rmse_relative": 0.06902811936629463,
       "priced": true,
       "parameters_valid": true,
       "parameters": {
@@ -99,8 +99,8 @@
     {
       "date_id": "2026-07-29",
       "usable_slots": 12,
-      "repricing_rmse_normalized": 0.004505145922499288,
-      "repricing_rmse_relative": 0.1355984774920925,
+      "repricing_rmse_normalized": 0.0042972851911925805,
+      "repricing_rmse_relative": 0.12934216544794316,
       "priced": true,
       "parameters_valid": true,
       "parameters": {

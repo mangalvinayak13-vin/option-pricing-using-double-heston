@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-29T19:32:17.631060",
+  "generated_at": "2026-09-30T11:40:36.437349",
   "models": {
     "Model_1_direct": {
       "mean_skill": 0.7962356403882125,
@@ -195,41 +195,41 @@
       {
         "date_id": "2026-07-01",
         "usable_slots": 11,
-        "network_relative": 0.15843361711922152,
+        "network_relative": 0.159143276840763,
         "best_fit_relative": 0.048238099788140094,
-        "gap_pp": 11.019551733108143,
+        "gap_pp": 11.09051770526229,
         "parameters_valid": true
       },
       {
         "date_id": "2026-07-08",
         "usable_slots": 18,
-        "network_relative": 0.17511902152257214,
+        "network_relative": 0.17158695204169502,
         "best_fit_relative": 0.11498252976044056,
-        "gap_pp": 6.013649176213158,
+        "gap_pp": 5.660442228125446,
         "parameters_valid": true
       },
       {
         "date_id": "2026-07-15",
         "usable_slots": 19,
-        "network_relative": 0.09316233432800858,
+        "network_relative": 0.07822707653455117,
         "best_fit_relative": 0.048204612449026504,
-        "gap_pp": 4.495772187898208,
+        "gap_pp": 3.002246408552467,
         "parameters_valid": true
       },
       {
         "date_id": "2026-07-22",
         "usable_slots": 18,
-        "network_relative": 0.12065762798196637,
+        "network_relative": 0.06902811936629463,
         "best_fit_relative": 0.020418504820486297,
-        "gap_pp": 10.023912316148008,
+        "gap_pp": 4.860961454580834,
         "parameters_valid": true
       },
       {
         "date_id": "2026-07-29",
         "usable_slots": 12,
-        "network_relative": 0.1355984774920925,
+        "network_relative": 0.12934216544794316,
         "best_fit_relative": 0.014416521669214949,
-        "gap_pp": 12.118195582287756,
+        "gap_pp": 11.49256437787282,
         "parameters_valid": true
       }
     ],
