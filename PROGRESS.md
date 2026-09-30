@@ -15,7 +15,7 @@ NIGHT_PLAN.md has the architecture.
 | Amber | done, checked | `738d70b`; query prompt with readouts, channel panels |
 | Instrument | done, checked | Committed with `6fbc57d`; oscilloscope screens with phosphor traces |
 | Trading | done, checked | `fd9b8c7`; azure accent replaces purple |
-| Polish and morning report | in progress | |
+| Polish and morning report | done | `c65f690`, `6cebb3f`; Ferro is the default; keyboard order; video slot; overflow check; MORNING_REPORT.md |
 
 ## Your requests during the night
 
