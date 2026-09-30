@@ -1,2 +1,4 @@
-/* amber theme: being built tonight */
-.dr-sec{padding-block:40px;display:flex;flex-direction:column;gap:20px}.dr h1{font-size:var(--fs-h1)}.dr-lede{font-size:var(--fs-lede)}.dr-2{display:grid;grid-template-columns:1fr 1fr;gap:40px}.dr-5{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}.dr-row{display:flex;gap:12px}.dr .b-tick{padding:10px 220px 10px 24px;border-bottom:1px solid var(--line)}
+/* amber theme: being built tonight (temporary layout until then) */
+.dr-sec{padding-block:40px 10px;display:flex;flex-direction:column;gap:16px}.dr h1{font-size:var(--fs-h1)}.dr h2{font-size:var(--fs-h2)}.dr-lede{font-size:var(--fs-lede);max-width:64ch}
+.dr-grid{display:flex;flex-direction:column;gap:22px;padding-block:10px}.dr-panel{display:flex;flex-direction:column;gap:12px;padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--surf)}.dr-panel h3{font-size:19px}
+.dr .b-tick{padding:10px 220px 10px 24px;border-bottom:1px solid var(--line)}.dr .b-links{margin-block:40px}

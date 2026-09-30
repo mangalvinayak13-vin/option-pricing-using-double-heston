@@ -201,9 +201,8 @@ LIMITS = [
     "End-of-day research data has closing prices only, no bid–ask quotes.",
     "Only 11 to 19 of the 20 target option slots are quoted on a typical day.",
 ]
-ALSO = ("Also explored: whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like "
+ALSO = ("Whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like "
         "last month, tested walk-forward over 60 stocks and ten years.")
-REPO = "github.com/mangalvinayak13-vin/option-pricing-using-double-heston"
 
 # ------------------------------------------------------------------ team -----------------
 TEAM_HEAD = "The team"

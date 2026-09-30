@@ -1,6 +1,6 @@
 {
  "ABOUT_HEAD": "A B.Tech physics project about one question and an honest answer.",
- "ALSO": "Also explored: whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.",
+ "ALSO": "Whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.",
  "A_LONG": "Real option prices bend: protection against a fall usually costs more than a bet on a rise. Double Heston bends the same way, and on all 2,400 real NSE option surfaces we tested, its best fit beat one fixed volatility.",
  "A_SHORT": "For fitting today's prices, yes.",
  "BACKTEST": "Across 210 stocks and 60 days, prices from the network's settings lost to a single flat volatility on every one of the 210 stocks.",
@@ -538,7 +538,6 @@
   1219.2
  ],
  "REL_LINE": "RELIANCE, day by day: its best Double Heston fit beat a flat volatility on every one of its 60 days (median price error 0.11% of the share price, against 0.13%). On the same days the equally good fits sat a median 4.3 apart.",
- "REPO": "github.com/mangalvinayak13-vin/option-pricing-using-double-heston",
  "SHARE": 0.99125,
  "SITE_NAME": "Double Heston",
  "SKEW_NOTE": "The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets further away.",

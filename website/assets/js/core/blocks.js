@@ -192,21 +192,26 @@ export function teamCards(ctx, cls = 'b-person', { tint } = {}) {
   return ctx.C.TEAM.map(([n, r]) => `<div class="${cls}"><span class="b-ph">${icon('team', { size: 64, tint: tint || 'teal' })}</span><b>${esc(n)}</b><span class="b-sub">${esc(r)}</span></div>`).join('');
 }
 
-export function refs(ctx, cls = 'b-refs', numbered = true) {
+// references, numbered continuously across groups; { group: k } renders one group (numbers still global)
+export function refs(ctx, cls = 'b-refs', numbered = true, { group, heading = true } = {}) {
   let n = 0;
-  return ctx.C.REFS.map(([g, items]) => `<section class="${cls}"><h2>${esc(g)}</h2><ol>${items.map(([a, t, s]) => {
-    n++;
-    return `<li>${numbered ? `<span class="b-rn num">[${n}]</span>` : ''}<span><b>${esc(a)}</b> <span class="b-rt">${esc(t)}</span> <span class="b-sub">${esc(s)}</span></span></li>`;
-  }).join('')}</ol></section>`).join('');
+  return ctx.C.REFS.map(([g, items], k) => {
+    if (group != null && k !== group) { n += items.length; return ''; }
+    return `<section class="${cls}">${heading ? `<h2>${esc(g)}</h2>` : ''}<ol>${items.map(([a, t, s]) => {
+      n++;
+      return `<li>${numbered ? `<span class="b-rn num">[${n}]</span>` : ''}<span><b>${esc(a)}</b> <span class="b-rt">${esc(t)}</span> <span class="b-sub">${esc(s)}</span></span></li>`;
+    }).join('')}</ol></section>`;
+  }).join('');
 }
 
-export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, skip = true, desc = true } = {}) {
-  return `<nav class="${cls}" aria-label="All pages">${ctx.C.PAGES.filter(p => !skip || p[0] !== ctx.page).map(([id, file, label, d]) =>
-    `<a href="${file}" class="press">${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span><b>${esc(label)}</b>${desc ? `<span>${esc(d)}</span>` : ''}</span></a>`).join('')}</nav>`;
+// every theme links to all eight pages here, the current one marked (same links in every theme)
+export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, desc = true } = {}) {
+  return `<nav class="${cls}" aria-label="All pages">${ctx.C.PAGES.map(([id, file, label, d]) =>
+    `<a href="${file}" class="press"${id === ctx.page ? ' aria-current="page"' : ''}>${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span><b>${esc(label)}</b>${desc ? `<span>${esc(d)}</span>` : ''}</span></a>`).join('')}</nav>`;
 }
 
 export function footer(ctx, cls = 'b-foot') {
-  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; during market hours the site would show live Upstox prices in the same places.</span><a href="https://${esc(ctx.C.REPO)}" rel="noopener">${esc(ctx.C.REPO)}</a></footer>`;
+  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; during market hours the site would show live Upstox prices in the same places.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
 }
 
 export function stockPicker(ctx) {
