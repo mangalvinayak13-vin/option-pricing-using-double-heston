@@ -125,6 +125,12 @@ try {
   const idle = await fps(1000);
   check('frame rate at rest (ticker running)', idle.fps >= 55, JSON.stringify(idle));
 
+  // scrolling through the page (charts revealing, glass tiles, parallax)
+  const scrollF = fps(1600);
+  for (let k = 0; k < 24; k++) { await send('Input.dispatchMouseEvent', { type: 'mouseWheel', x: 700, y: 450, deltaX: 0, deltaY: 120 }); await sleep(60); }
+  const sf = await scrollF;
+  check('frame rate while scrolling', sf.fps >= 55, JSON.stringify(sf));
+
   const errs = events.filter(e => (e.method === 'Runtime.exceptionThrown') || (e.method === 'Runtime.consoleAPICalled' && e.params.type === 'error') ||
     (e.method === 'Log.entryAdded' && e.params.entry.level === 'error'));
   check('no console errors', errs.length === 0, errs.map(e => JSON.stringify(e.params).slice(0, 240)).join(' | '));

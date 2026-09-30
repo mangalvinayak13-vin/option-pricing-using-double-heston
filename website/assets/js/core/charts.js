@@ -38,7 +38,8 @@ export function renderChart(el, ctx, first, extra) {
   if (!fn) return;
   const w = Math.max(260, Math.round(el.clientWidth || el.parentElement.clientWidth || 600));
   el._w = w;
-  const o = Object.assign({}, el.dataset.o ? JSON.parse(el.dataset.o) : {}, el._opts || {}, extra || {});
+  // theme presentation options (e.g. a glow) first; the page's own options and live state win
+  const o = Object.assign({}, ctx.chartOpts?.[el.dataset.chart] || {}, el.dataset.o ? JSON.parse(el.dataset.o) : {}, el._opts || {}, extra || {});
   o.h = +(el.dataset.h || o.h || 360);
   if (w < 560) o.h = Math.round(o.h * clamp(w / 560, 0.72, 1));
   o.fs = FS();
@@ -106,6 +107,11 @@ registerChart('smileBend', (w, o, ctx) => {
   b += T(w - right, ys(20) - 10, o.flatLabel || 'One fixed volatility (Black–Scholes), 20%', 't-ink', 'end');
   const P = pts.map(([k, v]) => [xs(k), ys(v)]);
   const flat = pts.map(([k]) => [xs(k), ys(20)]);
+  if (o.glow) {
+    const fid = uid('glow');
+    b += `<defs><filter id="${fid}" x="-20%" y="-60%" width="140%" height="220%"><feGaussianBlur stdDeviation="${o.glow}"/></filter></defs>`;
+    b += `<path d="${dPath(P)}" class="c-model bend-glow" filter="url(#${fid})" style="stroke-width:${o.glow * 1.6};opacity:.55"/>`;
+  }
   b += `<path d="${dPath(P)}" class="c-model bend-line" style="stroke-width:${o.lw || 'var(--c-lw, 3.5)'}"/>`;
   b += `<g class="bend-labels">` +
     Ci(P[0][0], P[0][1], 6, 'c-fill-model a-pop', 'style="--d:900ms"') + Ci(P[P.length - 1][0], P[P.length - 1][1], 6, 'c-fill-model a-pop', 'style="--d:1000ms"') +
@@ -118,10 +124,15 @@ registerChart('smileBend', (w, o, ctx) => {
     hover: { xs: P.map(p => p[0]), x0: left, x1: w - right, top, bottom: h - bottom, ys: i => [P[i][1]], tipY: i => P[i][1] - 6,
       html: i => `Strike <b>${pts[i][0]}%</b>: Double Heston <b>${pts[i][1].toFixed(1)}%</b>, flat <b>20.0%</b>` },
     after(svg, animate) {
-      const path = svg.querySelector('.bend-line');
       if (!animate) return;
-      path.setAttribute('d', dPath(flat));
-      setTimeout(() => morphPath(path, flat, P, 1500, t => ease.spring(t, 0.58, 7.5)), 350);
+      const line = svg.querySelector('.bend-line'), glow = svg.querySelector('.bend-glow');
+      line.setAttribute('d', dPath(flat));
+      setTimeout(() => morphPath(line, flat, P, 1500, t => ease.spring(t, 0.58, 7.5)), 350);
+      // the blurred glow is expensive to redraw every frame: it appears once the line has settled
+      if (glow) {
+        glow.style.opacity = '0';
+        setTimeout(() => { glow.style.transition = 'opacity .8s ease'; glow.style.opacity = '.55'; }, 1900);
+      }
     },
   };
 });
@@ -274,7 +285,7 @@ registerChart('paramBars', (w, o, ctx) => {
   let rows = [...ctx.D.per_param].sort((a, b) => b.fits - a.fits);
   if (o.only) rows = rows.filter(r => o.only.includes(r.name));
   const narrow = w < 640;
-  const rowH = o.rowH || 38, labelW = narrow ? Math.min(o.labelW || 150, 150) : (o.labelW || 290), top = narrow ? 64 : 42;
+  const rowH = o.rowH || 38, labelW = narrow ? Math.min(o.labelW || 150, 150) : Math.max(o.labelW || 290, 290), top = narrow ? 64 : 42;
   const h = top + rowH * rows.length + 40;
   const xs = scale(0, 6, labelW, w - 52);
   const lx = narrow ? 0 : labelW, ly2 = narrow ? 44 : 19, lx2 = narrow ? 0 : labelW + 200;

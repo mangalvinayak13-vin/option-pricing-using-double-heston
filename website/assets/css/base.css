@@ -377,8 +377,8 @@ a:active > .ico { transform: scale(.94); transition-duration: .1s; }
 .s-greeks .b-greek:last-child { border-bottom: 0; }
 .s-greeks .b-lab { color: var(--ink); font-size: 17px; }
 .s-greeks b { grid-row: span 2; align-self: center; font-size: 26px; }
-.s-lin { grid-template-columns: 1fr; gap: 20px; }
-.s-lin .b-y { font-size: 38px; }
+.b-lin.s-lin { grid-template-columns: 1fr; gap: 20px; }
+.b-lin.s-lin .b-y { font-size: 38px; }
 .s-refs li { grid-template-columns: 44px 1fr; }
 .s-refs ol { margin-bottom: 0; }
 @media (max-width: 900px) { .s-nums { grid-template-columns: 1fr; } .s-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

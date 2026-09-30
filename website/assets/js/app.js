@@ -42,6 +42,7 @@ async function render(id) {
   cleanups = [];
   const label = ctx.pages.find(p => p.id === page)?.label || 'Home';
   document.title = page === 'home' ? 'Double Heston' : `${label} | Double Heston`;
+  ctx.chartOpts = T.chartOpts || {};
   app.innerHTML = T.page(page, ctx);
   const kind = T.nav?.kind || 'dashes', side = T.nav?.side || 'l';
   if (!nav || nav.kind !== kind || nav.side !== side) {
