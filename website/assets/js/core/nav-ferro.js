@@ -29,8 +29,9 @@ export function createFerroNav({ pages, current }) {
 
   function readColors() {
     const cs = getComputedStyle(document.documentElement);
-    colors = { fluid: cs.getPropertyValue('--ferro').trim() || '#0a0a0b', hi: cs.getPropertyValue('--ferro-hi').trim() || '#c8ccd2',
-      dark: document.documentElement.dataset.mode === 'dark' };
+    const dark = document.documentElement.dataset.mode === 'dark';
+    // on a black page, pure black fluid would vanish: dark mode uses graphite so the body still reads
+    colors = { fluid: dark ? '#1C1D21' : (cs.getPropertyValue('--ferro').trim() || '#0a0a0b'), hi: cs.getPropertyValue('--ferro-hi').trim() || '#c8ccd2', dark };
   }
   function layout() {
     H = nav.offsetHeight;
@@ -87,6 +88,25 @@ export function createFerroNav({ pages, current }) {
     ctx.fillStyle = grad;
     ctx.globalAlpha = clamp(mound * 1.6, 0, 1);
     ctx.fill();
+    // depth: shade each spike like a cone lit from above (bright upper flank, dark lower edge)
+    ctx.globalAlpha = clamp(mound * 1.4, 0, 1);
+    for (const s of sites) {
+      if (s.h < 6) continue;
+      const yc = s.y + s.lean, root = rx - 3 - (4 + mound * 14 * Math.exp(-((s.y - PAD - cyNow) ** 2) / (2 * 120 * 120)));
+      ctx.beginPath();
+      ctx.moveTo(root + 2, yc - 11);
+      for (let k = -11; k <= 11; k += 1) ctx.lineTo(root - s.h * (1 - Math.abs(k) / 11) ** 2.4, yc + k);
+      ctx.lineTo(root + 2, yc + 11);
+      ctx.closePath();
+      const sh = ctx.createLinearGradient(0, yc - 8, 0, yc + 8);
+      sh.addColorStop(0, 'rgba(255,255,255,0)');
+      sh.addColorStop(0.3, colors.dark ? 'rgba(210,216,224,0.40)' : 'rgba(170,176,186,0.45)');
+      sh.addColorStop(0.5, 'rgba(255,255,255,0.03)');
+      sh.addColorStop(0.8, 'rgba(0,0,0,0.35)');
+      sh.addColorStop(1, 'rgba(0,0,0,0.45)');
+      ctx.fillStyle = sh;
+      ctx.fill();
+    }
     // glossy rim and specular streaks on each spike's upper flank
     ctx.lineJoin = 'round';
     ctx.strokeStyle = colors.hi;
@@ -126,7 +146,7 @@ export function createFerroNav({ pages, current }) {
     for (const s of sites) {
       const dy = (cy + PAD) - s.y;
       const g = Math.exp(-(dy * dy) / (2 * SIGMA * SIGMA));
-      const th = P * 74 * g ** 1.3 * (0.85 + 0.15 * Math.cos(s.y * 0.7));
+      const th = P * 78 * g ** 1.3 * (0.85 + 0.15 * Math.cos(s.y * 0.7));
       const tl = clamp(dy * 0.28 * g * P * (60 / dxAbs), -9, 9);
       if (reduced) { s.h = th; s.lean = tl; s.v = s.vl = 0; }
       else {

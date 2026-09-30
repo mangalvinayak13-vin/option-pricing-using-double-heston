@@ -11,6 +11,7 @@ html[data-theme="ferro"] {
   --liq-top: #3B3F45; --liq-bot: #070708; --pair-b: #7C838C;
   --water: rgb(150 185 210 / .38); --water-line: rgb(90 135 170 / .95);
   --plate: linear-gradient(180deg, #FBFCFD 0%, #E4E7EB 46%, #C9CFD7 100%);
+  --ferro-sheen: #6B7079;
   --ctl-top: 12px; --btn-r: 6px;
 }
 html[data-theme="ferro"][data-mode="dark"] {
@@ -22,6 +23,7 @@ html[data-theme="ferro"][data-mode="dark"] {
   --liq-top: #2B2D31; --liq-bot: #000000; --pair-b: #C9CBCF;
   --water: rgb(120 160 190 / .22); --water-line: rgb(150 190 220 / .8);
   --plate: linear-gradient(180deg, #26282C 0%, #16171A 55%, #0B0C0E 100%);
+  --ferro-sheen: #8A9099;
 }
 
 [data-theme="ferro"] .fe-tick { height: 44px; display: flex; align-items: center; padding: 0 200px 0 max(24px, var(--gutter));
@@ -77,10 +79,10 @@ html.motion[data-theme="ferro"] .fe-plate.is-in > :nth-child(5) { transition-del
 [data-theme="ferro"] .fe-acc .s-fine { color: color-mix(in srgb, var(--bg) 75%, transparent); }
 html.motion[data-theme="ferro"] .fe-row[data-anim] { opacity: 0; transform: translateY(18px); }
 html.motion[data-theme="ferro"] .fe-row.is-in { opacity: 1; transform: none; transition: opacity .6s ease calc(var(--i, 0) * 40ms), transform .9s var(--spring-soft) calc(var(--i, 0) * 40ms); }
-[data-theme="ferro"] .fe-ridge { padding-block: 10px; }
-[data-theme="ferro"] .fe-ridge svg { width: 100%; height: 46px; display: block; }
-[data-theme="ferro"] .fe-ridge path { fill: var(--ferro); stroke: var(--ferro-hi); stroke-opacity: .45; stroke-width: 1; }
-html[data-mode="dark"][data-theme="ferro"] .fe-ridge path { fill: #000; stroke-opacity: .7; }
+/* quiet divider: hairlines either side of a small bead of ferrofluid */
+[data-theme="ferro"] .fe-ridge { display: flex; align-items: flex-end; gap: 0; padding-block: 18px; opacity: .8; }
+[data-theme="ferro"] .fe-ridge-line { flex: 1; height: 1px; margin-bottom: 8px; background: var(--line); }
+[data-theme="ferro"] .fe-ridge svg { flex: none; display: block; margin-inline: -60px; }
 [data-theme="ferro"] .fe-end { display: flex; flex-direction: column; gap: 36px; padding-top: 20px; }
 
 /* content details */
@@ -104,6 +106,8 @@ html[data-mode="dark"][data-theme="ferro"] .fe-ridge path { fill: #000; stroke-o
 /* factor pools */
 [data-theme="ferro"] .fe-pools { height: auto; display: grid; grid-template-columns: 1fr; gap: 14px; }
 [data-theme="ferro"] .fp { position: relative; height: 170px; border-radius: 8px; overflow: hidden; background: var(--plate); box-shadow: inset 0 1px 0 rgb(255 255 255 / .5), 0 0 0 1px var(--line); }
+html[data-mode="dark"][data-theme="ferro"] .fp { background: linear-gradient(180deg, #4A4E55 0%, #2A2C30 60%, #1B1C1F 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .12), 0 0 0 1px #2A2C30; }
+html[data-mode="dark"][data-theme="ferro"] .fp-l { color: #F2F2F2; }
 [data-theme="ferro"] .fp-model { height: 150px; margin-bottom: 6px; }
 [data-theme="ferro"] .fp canvas { position: absolute; inset: 0; }
 [data-theme="ferro"] .fp-l { position: absolute; left: 14px; top: 11px; z-index: 1; font: 600 14px/1 var(--font-body); color: var(--ink); }

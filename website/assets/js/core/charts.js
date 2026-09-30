@@ -461,6 +461,23 @@ const COLS = [
   ['v0', "Today's level", v => Math.sqrt(Math.max(v, 0)) / 0.3, v => `${(Math.sqrt(Math.max(v, 0)) * 100).toFixed(1)}% vol`],
 ];
 export function halfLife(k) { const d = Math.log(2) / k * 365; return d >= 300 ? `${(d / 365).toFixed(1)} yr` : `${d.toFixed(0)} days`; }
+// ferrofluid spikes with depth (Ferro): cone shading lit from the left, a darker right edge, a
+// specular streak down the lit flank, a bright tip and a soft contact shadow. defs3d() once per svg.
+export function defs3d(id) {
+  return `<defs><linearGradient id="${id}b" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" style="stop-color:var(--ferro)"/><stop offset=".26" style="stop-color:var(--ferro-sheen, #6B7079)"/>
+      <stop offset=".44" style="stop-color:var(--ferro)"/><stop offset=".86" style="stop-color:var(--ferro)"/><stop offset="1" style="stop-color:#000"/></linearGradient>
+    <linearGradient id="${id}s" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:#fff;stop-opacity:.9"/><stop offset="1" style="stop-color:#fff;stop-opacity:0"/></linearGradient>
+    <radialGradient id="${id}c"><stop offset="0" style="stop-color:#000;stop-opacity:.35"/><stop offset="1" style="stop-color:#000;stop-opacity:0"/></radialGradient></defs>`;
+}
+export function spike3d(id, cx, base, h, hw, extra = '') {
+  h = Math.max(h, 4);
+  const top = base - h;
+  const shade = h > 10 ? `<path d="M${f1(cx - 1.4)},${f1(top + 4)} Q${f1(cx - hw * 0.2)},${f1(base - h * 0.45)} ${f1(cx - hw * 0.58)},${f1(base - 2)}" style="fill:none;stroke:url(#${id}s);stroke-width:1.6;stroke-linecap:round;opacity:.85"/>` +
+    `<circle cx="${f1(cx - 0.5)}" cy="${f1(top + 2.5)}" r="1.3" style="fill:#fff;opacity:.8"/>` : '';
+  return `<g class="spike3d" ${extra}><ellipse cx="${f1(cx)}" cy="${f1(base + 1)}" rx="${f1(hw * 1.25)}" ry="3.2" style="fill:url(#${id}c)"/>` +
+    `<path d="${spikePath(cx, base, h, hw)}" style="fill:url(#${id}b);stroke:var(--ferro-hi);stroke-opacity:.35;stroke-width:.8"/>${shade}</g>`;
+}
 export function spikePath(cx, base, h, hw) {
   h = Math.max(h, 4);
   return `M${f1(cx - hw)},${f1(base)} C${f1(cx - hw * 0.35)},${f1(base - 2)} ${f1(cx - 3)},${f1(base - h * 0.62)} ${f1(cx)},${f1(base - h)} C${f1(cx + 3)},${f1(base - h * 0.62)} ${f1(cx + hw * 0.35)},${f1(base - 2)} ${f1(cx + hw)},${f1(base)} Z`;
@@ -471,7 +488,8 @@ registerChart('pairMagnets', (w, o, ctx) => {
   const labelW = narrow ? 0 : 150, cw = (w - labelW) / 10, rowH = 156, top = 70;
   const fits = [['Fit A', P.a, P.a_rmse * P.spot], ['Fit B', P.b, P.b_rmse * P.spot]];
   const h = top + fits.length * rowH + (narrow ? fits.length * 30 : 0);
-  let b = '';
+  const sid = uid('sp');
+  let b = o.spike3d ? defs3d(sid) : '';
   [['Slow factor', 0], ['Fast factor', 5]].forEach(([lab, x0]) => {
     const gx = labelW + x0 * cw;
     b += T(gx + 8, 16, lab, 't-strong') + L(gx + 8, 25, gx + 5 * cw - 8, 25, 'axis', 'style="stroke:var(--ink);stroke-width:1.5"');
@@ -495,7 +513,8 @@ registerChart('pairMagnets', (w, o, ctx) => {
       const v = fit[name];
       const cx = labelW + i * cw + cw / 2;
       const sh = clamp(hf(v), 0, 1) * (rowH - 56);
-      b += `<path d="${spikePath(cx, base, sh, cw * 0.34)}" class="spike a-rise" style="--i:${r * 10 + i};--d:${r * 250}ms"/>`;
+      b += o.spike3d ? spike3d(sid, cx, base, sh, cw * 0.34, `class="a-rise" style="--i:${r * 10 + i};--d:${r * 250}ms"`)
+        : `<path d="${spikePath(cx, base, sh, cw * 0.34)}" class="spike a-rise" style="--i:${r * 10 + i};--d:${r * 250}ms"/>`;
       const star = Math.abs(v - hiB[name]) < 1e-3 * Math.max(1, Math.abs(hiB[name])) ? '*' : '';
       b += T(cx, base + 21, vf(v) + star, 't-ink', 'middle', `style="font-weight:600;font-size:${narrow ? 11 : 13}px"`);
     }
@@ -542,7 +561,8 @@ registerChart('pairSix', (w, o, ctx) => {
     v0: [scale(0, 30, 0, tw), [[0, '0%'], [15, '15%'], [30, '30%']], v => Math.sqrt(Math.max(v, 0)) * 100],
   };
   const nm = { kappa: 'Speed back to normal', theta: 'Long-run level', sigma: 'Volatility of volatility', rho: 'Link to price moves', v0: "Today's level" };
-  let b = '', y = 0, i = 0;
+  const sid = uid('sp');
+  let b = o.spike3d ? defs3d(sid) : '', y = 0, i = 0;
   for (const [g, suf] of [['Slow factor', 's'], ['Fast factor', 'f']]) {
     b += T(0, y + 22, g, 't-strong', 'start', 'style="font-size:16px"');
     y += 34;
@@ -553,7 +573,10 @@ registerChart('pairSix', (w, o, ctx) => {
       b += L(labelW, base, labelW + tw, base, 'axis');
       for (const [tv, tl] of tk) b += T(labelW + s(tv), base + 17, tl, '', 'middle', 'style="font-size:12px"');
       const vals = P.all_equivalent.map(e => conv(e[`${key}_${suf}`])).sort((a, c) => a - c);
-      vals.forEach(v => { b += `<path d="${spikePath(labelW + s(clamp(v, s.d0, s.d1)), base, rowH - 26, 9)}" class="spike a-rise" style="--i:${i++}"/>`; });
+      vals.forEach(v => {
+        const x = labelW + s(clamp(v, s.d0, s.d1));
+        b += o.spike3d ? spike3d(sid, x, base, rowH - 26, 9, `class="a-rise" style="--i:${i++}"`) : `<path d="${spikePath(x, base, rowH - 26, 9)}" class="spike a-rise" style="--i:${i++}"/>`;
+      });
       y += rowH;
     }
     y += 16;

@@ -63,13 +63,45 @@ export function ferroPool(host, { params, label, seed = 3, speed = 0.12 } = {}) 
       g.globalAlpha = f; g.fillStyle = gf; g.fill();
     }
     g.globalAlpha = 1;
+    // depth: shade every spike like a cone lit from the upper left (bright flank, dark right edge),
+    // plus a faint reflection of the plate along the fluid's surface
+    if (f > 0.15) {
+      const hw = span / N * 0.5;
+      for (let j = 0; j < N; j++) {
+        const amp = Math.min(3, Math.max(0, v[j]) / p.theta) * 26 * kxi * f;
+        if (amp < 5) continue;
+        const xj = x0 + (j + 0.5) / N * span, yb = base - 16;
+        g.beginPath();
+        g.moveTo(xj - hw, yb + 1);
+        for (let k = -hw; k <= hw; k += 1.5) g.lineTo(xj + k, yb - amp * (1 - Math.abs(k) / hw) ** 2.3);
+        g.lineTo(xj + hw, yb + 1);
+        g.closePath();
+        const sh = g.createLinearGradient(xj - hw * 0.7, 0, xj + hw * 0.7, 0);
+        sh.addColorStop(0, 'rgba(255,255,255,0)');
+        sh.addColorStop(0.3, col.dark ? 'rgba(210,216,224,0.42)' : 'rgba(170,176,186,0.42)');
+        sh.addColorStop(0.46, 'rgba(255,255,255,0.03)');
+        sh.addColorStop(0.72, 'rgba(0,0,0,0.30)');
+        sh.addColorStop(1, 'rgba(0,0,0,0.45)');
+        g.fillStyle = sh;
+        g.globalAlpha = f;
+        g.fill();
+      }
+      const refl = g.createLinearGradient(0, base - 22, 0, base - 8);
+      refl.addColorStop(0, 'rgba(255,255,255,0)');
+      refl.addColorStop(0.5, col.dark ? 'rgba(200,210,220,0.10)' : 'rgba(200,206,214,0.20)');
+      refl.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = refl;
+      g.globalAlpha = f;
+      g.fillRect(x0, base - 22, span, 14);
+      g.globalAlpha = 1;
+    }
     // surface line: a bright water line, then a glossy rim on the ferrofluid
     g.beginPath();
     edge.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
     g.lineWidth = f < 1 ? 1.6 : 1.1;
     g.strokeStyle = f < 0.5 ? col.waterLine : col.hi;
-    g.globalAlpha = f < 0.5 ? 1 - f : (col.dark ? 0.95 : 0.7) * f;
-    if (col.dark && f > 0.5) { g.shadowColor = col.hi; g.shadowBlur = 6; }
+    g.globalAlpha = f < 0.5 ? 1 - f : (col.dark ? 0.5 : 0.7) * f;
+    if (col.dark && f > 0.5) { g.shadowColor = col.hi; g.shadowBlur = 2.5; }
     g.stroke();
     g.shadowBlur = 0;
     // specular streaks on each spike's left flank

@@ -184,18 +184,18 @@ html[data-mode="dark"] .tmenu {
 
 /* ------------------------------------------------------------------ ferrofluid nav ----------- */
 .fnav { position: fixed; z-index: 80; top: 50%; right: 0; width: 72px; height: var(--fn-h, 460px); transform: translateY(-50%); touch-action: manipulation; }
-.fnav canvas { position: absolute; top: -40px; right: 0; width: 200px; height: calc(100% + 80px); pointer-events: none; }
+.fnav canvas { position: absolute; top: -40px; right: 0; width: 200px; max-width: none; height: calc(100% + 80px); pointer-events: none; }
 .fnav .fnav-rail { position: absolute; right: 14px; top: 0; bottom: 0; width: 6px; border-radius: 3px;
   background: linear-gradient(90deg, #2E3034, #9CA2AA 45%, #25272A); box-shadow: 0 0 0 .5px rgb(0 0 0 / .3), 0 2px 6px rgb(0 0 0 / .2); }
 .fnav .fnav-bead { position: absolute; right: 10px; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, var(--ferro-hi) 0 16%, var(--ferro) 48%); box-shadow: 0 2px 5px rgb(0 0 0 / .4);
   transition: top .6s var(--spring-bouncy); }
 .fnav .fnav-a { position: absolute; right: 0; height: 36px; margin-top: -18px; width: 72px; display: flex; align-items: center; justify-content: flex-end; border-radius: 10px; }
-.fnav.open .fnav-a { width: 280px; }
-.fnav .fnav-l { position: absolute; right: 96px; white-space: nowrap; font: 600 16px/1 var(--font-body); color: var(--ink); opacity: 0;
+.fnav.open .fnav-a { width: 320px; }
+.fnav .fnav-l { position: absolute; right: 128px; white-space: nowrap; font: 600 16px/1 var(--font-body); color: var(--ink); opacity: 0;
   transform: translateX(8px); will-change: transform, opacity; pointer-events: none; }
 .fnav .fnav-a[aria-current="page"] .fnav-l { font-weight: 800; }
-.fnav .fnav-panel { position: absolute; top: -16px; bottom: -16px; right: 84px; width: 200px; border-radius: 18px; pointer-events: none;
+.fnav .fnav-panel { position: absolute; top: -16px; bottom: -16px; right: 114px; width: 190px; border-radius: 18px; pointer-events: none;
   background: color-mix(in srgb, var(--bg) 74%, transparent); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 14%, transparent), var(--sh-3); opacity: 0; transform: translateX(10px) scale(.98);
   transform-origin: 100% 50%; transition: opacity .2s ease, transform .45s var(--spring-snappy); will-change: opacity, transform; }

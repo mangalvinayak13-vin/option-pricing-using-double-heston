@@ -4,23 +4,25 @@
 // Content comes from core/pages.js, the same sections every theme shows.
 import * as B from '../core/blocks.js';
 import { icon } from '../core/icons.js';
-import { esc } from '../core/util.js';
+import { esc, uid } from '../core/util.js';
 import { renderPage } from '../core/layout.js';
 import { ferroPool } from '../core/ferro-pool.js';
 import { FACTORS } from '../core/factors.js';
 import { store } from '../core/state.js';
 import { DEFAULT_PARAMS } from '../core/model.js';
 
-function ridge(w = 1200, n = 30) {
-  const step = w / n;
-  let d = `M0,46`;
-  for (let i = 0; i < n; i++) {
-    const cx = step * (i + 0.5), q = Math.abs(i - n / 2) / (n / 2), hgt = 8 + 28 * (1 - q ** 1.5);
-    d += ` L${(cx - step * 0.42).toFixed(1)},44 C${(cx - step * 0.16).toFixed(1)},40 ${(cx - 3).toFixed(1)},${(44 - hgt * 0.7).toFixed(1)} ${cx.toFixed(1)},${(44 - hgt).toFixed(1)}` +
-      ` C${(cx + 3).toFixed(1)},${(44 - hgt * 0.7).toFixed(1)} ${(cx + step * 0.16).toFixed(1)},40 ${(cx + step * 0.42).toFixed(1)},44`;
+// a quiet divider: a hairline with a small bead of ferrofluid in the middle, shaded like the spikes
+function ridge() {
+  const W = 240, base = 22, peaks = [[96, 5], [108, 9], [120, 13], [132, 9], [144, 5]];
+  let d = `M60,${base}`;
+  for (const [cx, h] of peaks) {
+    d += ` L${cx - 7},${base} C${cx - 3},${base - 1} ${cx - 1.6},${base - h * 0.62} ${cx},${base - h} C${cx + 1.6},${base - h * 0.62} ${cx + 3},${base - 1} ${cx + 7},${base}`;
   }
-  d += ` L${w},46 Z`;
-  return `<div class="fe-ridge wrap" aria-hidden="true"><svg viewBox="0 0 ${w} 46" preserveAspectRatio="none"><path d="${d}"/></svg></div>`;
+  d += ` L180,${base} Q120,${base + 5} 60,${base} Z`;
+  const id = uid('ferg');
+  return `<div class="fe-ridge wrap" aria-hidden="true"><span class="fe-ridge-line"></span><svg viewBox="0 0 ${W} 30" width="${W}" height="30">
+    <defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" style="stop-color:var(--ferro)"/><stop offset=".38" style="stop-color:var(--ferro-sheen)"/><stop offset=".55" style="stop-color:var(--ferro)"/><stop offset="1" style="stop-color:var(--ferro)"/></linearGradient></defs>
+    <path d="${d}" style="fill:url(#${id})"/></svg><span class="fe-ridge-line"></span></div>`;
 }
 
 const ico = k => (k ? icon(k, { size: 38, tint: 'chrome' }) : '');
@@ -80,6 +82,6 @@ function mount(app) {
 
 export default {
   nav: { kind: 'ferro' },
-  chartOpts: { smileBend: { lw: 5 } },
+  chartOpts: { smileBend: { lw: 5 }, pairMagnets: { spike3d: true }, pairSix: { spike3d: true } },
   page, mount,
 };
