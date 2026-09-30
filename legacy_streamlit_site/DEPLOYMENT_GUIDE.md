@@ -151,22 +151,24 @@ strike**:
 
 | Date | Slots | Network | Best possible DH fit | Gap |
 |---|---|---|---|---|
-| 2026-07-01 | 11/20 | 15.8% | 4.8% | +11.0pp |
-| 2026-07-08 | 18/20 | 17.5% | 11.5% | +6.0pp |
-| 2026-07-15 | 19/20 | 9.3% | 4.8% | +4.5pp |
-| 2026-07-22 | 18/20 | 12.1% | 2.0% | +10.0pp |
-| 2026-07-29 | 12/20 | 13.6% | 1.4% | +12.1pp |
+| 2026-07-01 | 11/20 | 15.9% | 4.8% | +11.1pp |
+| 2026-07-08 | 18/20 | 17.2% | 11.5% | +5.7pp |
+| 2026-07-15 | 19/20 | 7.8% | 4.8% | +3.0pp |
+| 2026-07-22 | 18/20 | 6.9% | 2.0% | +4.9pp |
+| 2026-07-29 | 12/20 | 12.9% | 1.4% | +11.5pp |
 
 "Best possible fit" is a 12-start least-squares fit to that same surface — the floor any
 method could reach.
 
 **"Transfer quality tracks slot coverage" did not replicate.** With the corrected
-rate/carry conditioning (see below), the 18–19-slot dates now show gaps of 4.5–10.0
-points, not the tight 1.8–5.6 range this table originally suggested, and the later
-G8 held-out evaluation confirms there is no such relationship (Spearman rho = 0.000,
-p = 1.00) — the earlier pattern was an artefact of reading five points. Double
-Heston fits these real surfaces to 1.4–11.5%, so the model class is workable on
-NTPC; the remaining error is synthetic-to-real transfer, not model inadequacy.
+rate/carry conditioning (see below), the 18–19-slot dates show gaps of 3.0–5.7
+points and the 11–12-slot dates 11.1–11.5 points -- close to the direction the
+original table suggested, but the later G8 held-out evaluation (eight further
+dates, not just these five) confirms there is no real relationship (Spearman
+rho = 0.000, p = 1.00) -- the pattern here is too small a sample to trust on its
+own. Double Heston fits these real surfaces to 1.4–11.5%, so the model class is
+workable on NTPC; the remaining error is synthetic-to-real transfer, not model
+inadequacy.
 
 **Only repricing is measurable on real data.** NTPC's true parameters are unknown, so
 parameter recovery is undefined there. Given the central finding, a good repricing number
