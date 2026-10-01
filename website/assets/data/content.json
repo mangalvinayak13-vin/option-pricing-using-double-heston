@@ -246,7 +246,7 @@
   ],
   "pinnAnn": [
    "Option price surface at today's volatility: ANN, PINN and the exact pricer",
-   "Height is the call price as a share of the strike; across is the share price as a share of the strike, and depth is time to expiry. Coloured surfaces are each network; the grey mesh is the exact pricer. Drag to turn."
+   "Height is the call price as a share of the strike; across is the share price as a share of the strike, and depth is time to expiry. The solid surface is the network's price and the grey grid is the exact Double Heston price, so wherever they part, the network is wrong. Error shows only that gap, on the same scale for both. The slider replays training. Drag to turn."
   ],
   "journey": [
    "A random walk, drawn as the timeline unfolds",
@@ -673,7 +673,21 @@
    "smaller pricing-equation error for the PINN"
   ]
  ],
+ "PA_REPLAY": "Replay the training and the difference grows. The ANN's impossible prices fell to 93 by step 800, then climbed back to 187 as it fitted its 48 prices ever more tightly. The PINN's fell to zero: the equation kept it honest where it had no data.",
  "PA_RESULT": "On 2,000 fresh points the PINN's error was 0.8% of the average price, against 5.7% for the ANN, and it broke the pricing equation 35 times less. Where it had no data, the ANN guessed: on the slice above it priced 187 of 1,271 points below zero by more than 0.2% of the strike, which no option can be worth. The PINN priced none.",
+ "PA_STEPS": [
+  50,
+  100,
+  200,
+  400,
+  800,
+  1500,
+  2500,
+  4000,
+  6000,
+  8000,
+  10000
+ ],
  "PA_TEST": {
   "points": 2000,
   "ann_rmse": 0.0064888728565509835,

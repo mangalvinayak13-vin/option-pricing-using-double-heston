@@ -62,6 +62,7 @@ for (const [name, theme, mode, page, sec, act] of SHOTS) {
     for (let y = 430; y <= 520; y += 6) { await mouse('mouseMoved', right ? 1414 : 26, y); await sleep(16); }
     await sleep(700);
   }
+  if (typeof act === 'string' && act.startsWith('js:')) { await ev(act.slice(3)); await sleep(900); }  // ad-hoc: run page code first
   const r = await send('Page.captureScreenshot', { format: 'png' });
   writeFileSync(new URL(`${name}.png`, OUT), Buffer.from(r.result.data, 'base64'));
   console.log('saved', name);

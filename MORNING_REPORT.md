@@ -1,6 +1,20 @@
 # Morning report: the Double Heston website
 
-## Third pass: results in one place, Market off the tabs (latest)
+## Fourth pass: the PINN-against-ANN 3D view now shows training (latest)
+
+- **Training replay.** `website/tools/pinn_vs_ann.py` now records both networks' surfaces at 11 points during training (steps 50 to 10,000) in `pinn_vs_ann_steps.json`. A slider and a "Replay training" button play them back, gliding between checkpoints. Each view shows that frame's error on the slice and its count of impossible prices.
+  - I re-ran it with the same seed, and the final numbers are identical to before (0.8%, 5.7%, 35×, 187 vs 0).
+  - What it shows: the ANN's impossible prices fall to 93 by step 800, then climb back to 187 as it keeps fitting its 48 prices more tightly. The PINN's go to zero. The page now says this in one sentence.
+- **Price | Error switch.** Error plots network minus exact price on one fixed scale for both networks, over a grey grid at zero. The ANN's error is a wavy sheet; the PINN's is nearly flat.
+- **Caption fixed.** It said "coloured surfaces … grey mesh", which was wrong in Ferro, where the surface is black. It now says the solid surface is the network's price and the grey grid is the exact price.
+- **Checks:**
+  - parity OK;
+  - console clean;
+  - interaction tests pass in all six themes; one Amber scroll frame-rate check dipped once to 51 fps and passed on three re-runs;
+  - no overflow at 390 px;
+  - snapshots 03 and 08 refreshed.
+
+## Third pass: results in one place, Market off the tabs
 
 You said results were spread across the site, and asked to remove the Market tab and reach it from a small button on the model page.
 

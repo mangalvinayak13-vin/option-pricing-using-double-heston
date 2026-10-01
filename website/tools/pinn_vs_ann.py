@@ -13,7 +13,12 @@ Pricing equation (c = C/K, tau = time to expiry):
   c_tau = 1/2 (v1+v2) s^2 c_ss + (r-q) s c_s - r c
           + sum_i [ k_i (th_i - v_i) c_vi + 1/2 xi_i^2 v_i c_vivi + rho_i xi_i v_i s c_svi ]
 
-python3 website/tools/pinn_vs_ann.py      -> website/assets/data/pinn_vs_ann.json  (~3 min on an M-series CPU)
+It also keeps each network's slice at 12 points during training (pinn_vs_ann_steps.json), so the home
+page can replay the two learning side by side. Recording only evaluates the networks; it changes
+nothing in training, so the final numbers are the same as without it.
+
+python3 website/tools/pinn_vs_ann.py      -> website/assets/data/pinn_vs_ann.json and pinn_vs_ann_steps.json
+                                             (~3 min on an M-series CPU)
 """
 from __future__ import annotations
 
@@ -38,6 +43,8 @@ P = dict(v0_1=0.02, kappa1=0.5, theta1=0.02, xi1=0.3, rho1=-0.7, v0_2=0.02, kapp
 LO = np.array([0.70, 0.004, 0.004, 0.03])
 HI = np.array([1.30, 0.060, 0.060, 1.00])
 SEED, N_DATA, N_COLL, N_IC = 7, 48, 4096, 512
+CHECKPOINTS = [0, 50, 100, 200, 400, 800, 1500, 2500, 4000, 6000, 8000, 10000]  # training steps done
+NEG = -0.002  # a price below zero by more than 0.2% of the strike: impossible (same line as the 3D view)
 
 
 def exact(s, v1, v2, tau):
@@ -80,9 +87,11 @@ def residual(net, x):
     return ct - rhs
 
 
-def train(physics: bool, xd, yd, xc, xic, yic, steps=10000):
+def train(physics: bool, xd, yd, xc, xic, yic, steps=10000, record=None):
     torch.manual_seed(SEED)
     net = Net()
+    if record and 0 in CHECKPOINTS:
+        record(0, net)
     opt = torch.optim.Adam(net.parameters(), lr=3e-3)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, steps, eta_min=1e-4)
     scale = float(yd.std())
@@ -94,6 +103,8 @@ def train(physics: bool, xd, yd, xc, xic, yic, steps=10000):
         loss.backward()
         opt.step()
         sched.step()
+        if record and it + 1 in CHECKPOINTS:
+            record(it + 1, net)
         if it % 2500 == 0 or it == steps - 1:
             print(f"  {'PINN' if physics else 'ANN '} step {it:5d} loss {loss.item():.3e}")
     return net
@@ -109,8 +120,25 @@ def main():
     yic = np.maximum(xic[:, 0] - 1.0, 0.0)
     T = lambda a: torch.tensor(a)
     print(f"data ready ({N_DATA} exact prices) in {time.time() - t0:.1f}s")
-    ann = train(False, T(xd), T(yd), None, None, None)
-    pinn = train(True, T(xd), T(yd), T(xc), T(xic), T(yic))
+
+    # the slice drawn in 3D: today's variances (computed first so training can be recorded on it)
+    ss = np.round(np.linspace(0.75, 1.25, 41), 4)
+    ts = np.round(np.linspace(0.04, 1.0, 31), 4)
+    ex = np.array([exact(ss, 0.02, 0.02, t) for t in ts])                       # (31, 41)
+    grid = np.array([[s, 0.02, 0.02, t] for t in ts for s in ss])
+    frames = {"ann": [], "pinn": []}
+
+    def recorder(name):
+        def rec(step, net):
+            with torch.no_grad():
+                g = net(T(grid)).numpy().reshape(len(ts), len(ss))
+            frames[name].append({"step": step, "grid": g.round(5).tolist(),
+                                 "rmse_rel": float(np.sqrt(np.mean((g - ex) ** 2)) / float(np.mean(np.abs(ex)))),
+                                 "impossible": int((g < NEG).sum())})
+        return rec
+
+    ann = train(False, T(xd), T(yd), None, None, None, record=recorder("ann"))
+    pinn = train(True, T(xd), T(yd), T(xc), T(xic), T(yic), record=recorder("pinn"))
 
     # fresh test points across all four inputs
     xt = sample(np.random.default_rng(99), 2000)
@@ -120,11 +148,6 @@ def main():
     rmse = lambda a: float(np.sqrt(np.mean((a - yt) ** 2)))
     ra, rp = residual(ann, T(xt)).detach().numpy(), residual(pinn, T(xt)).detach().numpy()
 
-    # the slice drawn in 3D: today's variances
-    ss = np.round(np.linspace(0.75, 1.25, 41), 4)
-    ts = np.round(np.linspace(0.04, 1.0, 31), 4)
-    ex = np.array([exact(ss, 0.02, 0.02, t) for t in ts])                       # (31, 41)
-    grid = np.array([[s, 0.02, 0.02, t] for t in ts for s in ss])
     with torch.no_grad():
         ga = ann(T(grid)).numpy().reshape(len(ts), len(ss))
         gp = pinn(T(grid)).numpy().reshape(len(ts), len(ss))
@@ -147,6 +170,9 @@ def main():
         "seconds": round(time.time() - t0, 1),
     }
     (HERE / "assets" / "data" / "pinn_vs_ann.json").write_text(json.dumps(out))
+    steps = {"checkpoints": CHECKPOINTS, "ann": frames["ann"], "pinn": frames["pinn"],
+             "note": "each network's price surface on the 3D slice after that many training steps"}
+    (HERE / "assets" / "data" / "pinn_vs_ann_steps.json").write_text(json.dumps(steps, separators=(",", ":")))
     print(json.dumps({k: out[k] for k in ("test", "seconds")}, indent=1))
     print("slice rmse", out["slice"]["ann_rmse"], out["slice"]["pinn_rmse"], out["slice"]["ann_violations"], out["slice"]["pinn_violations"])
 

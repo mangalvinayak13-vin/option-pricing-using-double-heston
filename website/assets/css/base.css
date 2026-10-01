@@ -391,6 +391,14 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .pa3d-key i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: 0; }
 .pa3d-k-net { background: var(--c-model, var(--acc)); } .pa3d-k-exact { background: transparent; box-shadow: inset 0 0 0 1.5px var(--muted); }
 .pa3d-k-neg { background: var(--down); }
+/* the 3D comparison's controls: what to show, and the training replay */
+.pa3d-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-bottom: 14px; }
+.pa3d-play { padding: 7px 14px; font-size: 14px; }
+.pa3d-play[aria-pressed="true"] { box-shadow: inset 0 0 0 1.5px var(--c-model, var(--acc)); }
+.pa3d-step { display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px; min-width: 0; font-size: 14px; color: var(--muted); }
+.pa3d-step b { color: var(--ink); }
+.pa3d-step input:disabled { opacity: .45; }
+.pa3d-r { position: absolute; left: 14px; right: 14px; bottom: 10px; z-index: 1; font-size: 13px; color: var(--body); pointer-events: none; }
 @media (max-width: 760px) { .pa3d { grid-template-columns: 1fr; } }
 
 /* the page dock: above the footer text, in the page (never fixed over the Mac's own Dock) */

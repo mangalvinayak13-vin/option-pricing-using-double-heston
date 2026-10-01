@@ -411,6 +411,13 @@ PA_RESULT = (f"On 2,000 fresh points the PINN's error was {PA_TEST['pinn_rel_rms
              f"strike, which no option can be worth. The PINN priced {'none' if _NEG('pinn') == 0 else _NEG('pinn')}.")
 PA_NOTE = ("A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, "
            "same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.")
+_PS = json.loads((_DATA_DIR / "pinn_vs_ann_steps.json").read_text())
+PA_STEPS = [c for c in _PS["checkpoints"] if c > 0]  # replay frames; step 0 is the same random start for both, far off the scale
+_imp = {n: {f["step"]: f["impossible"] for f in _PS[n]} for n in ("ann", "pinn")}
+_ann_low = min(PA_STEPS, key=lambda c: _imp["ann"][c])
+PA_REPLAY = (f"Replay the training and the difference grows. The ANN's impossible prices fell to {_imp['ann'][_ann_low]} by step "
+             f"{_ann_low:,}, then climbed back to {_imp['ann'][PA_STEPS[-1]]} as it fitted its 48 prices ever more tightly. "
+             f"The PINN's fell to {_imp['pinn'][PA_STEPS[-1]] or 'zero'}: the equation kept it honest where it had no data.")
 PA_NUMS = [(f"{PA_TEST['pinn_rel_rmse'] * 100:.1f}%", "PINN error, share of the average price"),
            (f"{PA_TEST['ann_rel_rmse'] * 100:.1f}%", "ANN error on the same points"),
            (f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f}×", "smaller pricing-equation error for the PINN")]
@@ -493,7 +500,7 @@ CHART_NOTES = {
     "factorTrace": ("The two variance factors, simulated live",
                     "The model's own variance equation at its starting settings, run forward as you watch, shown as volatility in percent. The fast factor jitters and snaps back; the slow one drifts."),
     "pinnAnn": ("Option price surface at today's volatility: ANN, PINN and the exact pricer",
-                "Height is the call price as a share of the strike; across is the share price as a share of the strike, and depth is time to expiry. Coloured surfaces are each network; the grey mesh is the exact pricer. Drag to turn."),
+                "Height is the call price as a share of the strike; across is the share price as a share of the strike, and depth is time to expiry. The solid surface is the network's price and the grey grid is the exact Double Heston price, so wherever they part, the network is wrong. Error shows only that gap, on the same scale for both. The slider replays training. Drag to turn."),
     "journey": ("A random walk, drawn as the timeline unfolds",
                 "A simulated Brownian path: each step is a random kick, the motion Einstein explained and finance borrowed."),
 }

@@ -36,13 +36,17 @@ function done(ctx) {
 function pinnAnn(ctx) {
   const C = ctx.C, [t, cap] = C.CHART_NOTES.pinnAnn;
   return `<figure class="fig"><figcaption class="fig-t">${esc(t)}</figcaption>
+    <div class="pa3d-ctl">${B.seg('pa-view', [['price', 'Price'], ['error', 'Error']], 'price', 'What the surfaces show')}
+      <button class="btn ghost pa3d-play" type="button" data-pa-play>Replay training</button>
+      <label class="pa3d-step"><span>After <b class="num" data-pa-steplabel>${C.PA_STEPS.at(-1).toLocaleString('en-IN')}</b> training steps</span>
+        <input type="range" min="0" max="${C.PA_STEPS.length - 1}" step="any" value="${C.PA_STEPS.length - 1}" data-pa-step aria-label="Training steps" style="--p:100%"></label></div>
     <div class="pa3d" data-pa3d tabindex="0" aria-label="${esc(t)}. Use the left and right arrow keys to turn the surfaces.">
-      <div class="pa3d-cell"><span class="pa3d-l"><b>ANN</b> learned from 48 prices only</span><canvas data-net="ann" aria-hidden="true"></canvas></div>
-      <div class="pa3d-cell"><span class="pa3d-l"><b>PINN</b> the same 48 prices, plus the pricing equation</span><canvas data-net="pinn" aria-hidden="true"></canvas></div>
+      <div class="pa3d-cell"><span class="pa3d-l"><b>ANN</b> learned from 48 prices only</span><canvas data-net="ann" aria-hidden="true"></canvas><span class="pa3d-r num" data-pa-read="ann" aria-live="polite"></span></div>
+      <div class="pa3d-cell"><span class="pa3d-l"><b>PINN</b> the same 48 prices, plus the pricing equation</span><canvas data-net="pinn" aria-hidden="true"></canvas><span class="pa3d-r num" data-pa-read="pinn" aria-live="polite"></span></div>
     </div>
-    <div class="pa3d-key"><span><i class="pa3d-k-net"></i>network's price surface</span><span><i class="pa3d-k-exact"></i>exact Double Heston price</span><span><i class="pa3d-k-neg"></i>price below zero by more than 0.2% of the strike (impossible)</span></div>
+    <div class="pa3d-key"><span><i class="pa3d-k-net"></i><span data-pa-keynet>network's price</span></span><span><i class="pa3d-k-exact"></i><span data-pa-keyexact>exact Double Heston price</span></span><span><i class="pa3d-k-neg"></i>price below zero by more than 0.2% of the strike (impossible)</span></div>
     <p class="fig-cap">${esc(cap)}</p></figure>
-    <div class="s-nums">${B.nums(C.PA_NUMS)}</div><p class="s-lead">${esc(C.PA_RESULT)}</p><p class="s-fine">${esc(C.PA_NOTE)}</p>`;
+    <div class="s-nums">${B.nums(C.PA_NUMS)}</div><p class="s-lead">${esc(C.PA_RESULT)} ${esc(C.PA_REPLAY)}</p><p class="s-fine">${esc(C.PA_NOTE)}</p>`;
 }
 
 function dataTable(ctx) {
