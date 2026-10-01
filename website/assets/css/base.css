@@ -401,8 +401,8 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 @media (max-width: 760px) { .pa3d { grid-template-columns: 1fr; } }
 
 /* the page dock: above the footer text, in the page (never fixed over the Mac's own Dock) */
-.b-dock { display: flex; justify-content: center; padding-block: 40px 30px; }
-.b-dock-in { display: flex; align-items: flex-end; gap: 14px; padding: 12px 16px; border-radius: 28px; max-width: 100%; overflow-x: auto; scrollbar-width: none;
+.b-dock { display: flex; justify-content: center; padding-block: 72px 30px; }  /* room above for a magnified icon and its label */
+.b-dock-in { display: flex; align-items: flex-end; gap: 14px; padding: 12px 16px; border-radius: 28px; max-width: 100%; flex-wrap: wrap; justify-content: center; overflow: visible;  /* never clip a magnified icon */
   background: color-mix(in srgb, var(--surf) 62%, transparent); -webkit-backdrop-filter: blur(24px) saturate(1.7); backdrop-filter: blur(24px) saturate(1.7);
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 12%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent), var(--sh-3); }
 .b-dock-i { position: relative; display: block; flex: none; transform-origin: 50% 100%; will-change: transform; border-radius: 14px; transition: transform .25s var(--ease-out); }
@@ -412,7 +412,8 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
   opacity: 0; transition: opacity .15s ease, transform .3s var(--spring-snappy); }
 .b-dock-i:hover .b-dock-l, .b-dock-i:focus-visible .b-dock-l { opacity: 1; transform: translateX(-50%); }
 .b-dock-i:hover > .ico, .b-dock-i:focus-visible > .ico { transform: none; }
-@media (max-width: 720px) { .b-dock-in { gap: 8px; } .b-dock-in .ico { width: 44px !important; height: 44px !important; } }
+@media (max-width: 720px) { .b-dock-in { gap: 8px; padding: 10px 12px; } .b-dock-in .ico { width: 44px !important; height: 44px !important; } }
+@media (max-width: 420px) { .b-dock-in { gap: 6px; } .b-dock-in .ico { width: 40px !important; height: 40px !important; } }
 
 /* ------------------------------------------------------------------ section content (pages.js) -- */
 .s-lead { font-size: var(--fs-body); line-height: 1.58; color: var(--body); max-width: 72ch; }
