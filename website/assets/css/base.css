@@ -647,8 +647,6 @@ html:is([data-page="maths"], [data-page="results"]) body { isolation: isolate; }
 .b-results .xp > summary { font-size: 13.5px; padding: 4px 11px; }
 .b-results .xp-body { padding: 14px 18px; }
 
-/* ------------------------------------------------------------------ the hero's opening line ----------------- */
-.s-pre { margin: 0 0 14px; font: 700 clamp(19px, 2vw, 27px)/1.2 var(--font-display); letter-spacing: -.01em; color: inherit; text-wrap: balance; }
 
 /* ------------------------------------------------------------------ formula cards and the ten settings ------ */
 .b-f { display: grid; gap: 16px; }

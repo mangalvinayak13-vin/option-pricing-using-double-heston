@@ -369,7 +369,9 @@ FACTORS = (f"Each factor gets knocked about and drifts back to its long-run leve
 
 # ------------------------------------------------------------------ home: from Einstein's random walk to Wall Street
 JOURNEY_HEAD = "Twelve steps from a jiggling grain to option prices"
-HERO_PRE = "From a speck of pollen to Wall Street"
+HERO_TITLE = ("From a speck of pollen", "to Wall Street")  # Home's headline, in the two parts every theme sets
+HERO_KEYS = ("from", "to")  # Amber's readout labels for those two parts
+A_NO = "Reading its settings? No."
 JOURNEY_LEDE = ("Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became "
                 "the way finance describes prices, and this project carries that line forward to today's NSE options.")
 JOURNEY = [  # (year, who, what happened)

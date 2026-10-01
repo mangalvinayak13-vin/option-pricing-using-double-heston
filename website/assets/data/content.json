@@ -3,6 +3,7 @@
  "ALSO": "Whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.",
  "ANN_TEXT": "Our ANN (a standard artificial neural network) learns to read the ten settings from prices purely from examples. It produced the settings behind the 210-stock studies on this site.",
  "A_LONG": "Real option prices bend: protection against a fall usually costs more than a bet on a rise. Double Heston bends the same way, and on all 2,400 real NSE option surfaces we tested, its best fit beat one fixed volatility.",
+ "A_NO": "Reading its settings? No.",
  "A_SHORT": "For fitting today's prices, yes.",
  "BACKTEST": "With the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better than a same-day Black–Scholes fit on 4.8% of 12,265 stock-days (589 of them). Carried to the next day, its settings beat Black–Scholes carried forward on 19.1%.",
  "BEAT_BS_NUM": "4.8%",
@@ -679,7 +680,14 @@
   ]
  ],
  "HELDOUT": "On 8 later dates it never saw, our ANN repriced options with a median error of 17.4%, against 4.3% for the best possible fit: a gap of 10.8 points.",
- "HERO_PRE": "From a speck of pollen to Wall Street",
+ "HERO_KEYS": [
+  "from",
+  "to"
+ ],
+ "HERO_TITLE": [
+  "From a speck of pollen",
+  "to Wall Street"
+ ],
  "JOURNEY": [
   [
    "1827",

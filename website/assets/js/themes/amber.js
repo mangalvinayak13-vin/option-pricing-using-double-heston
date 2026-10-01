@@ -16,8 +16,8 @@ const renderers = ctx => {
     hero: s => `<section class="am-hero wrap" data-sec="${s.key}" data-anim>
       <p class="am-prompt"><span class="am-dollar" aria-hidden="true">$</span> ${esc(s.q)}<span class="am-caret" aria-hidden="true"></span></p>
       <div class="am-readouts">
-        <div class="am-ro"><span class="am-ro-k">[fit]</span><b>${esc(s.title)}</b></div>
-        <div class="am-ro am-ro-2"><span class="am-ro-k">[read]</span><b>${esc(s.title2)}</b></div>
+        <div class="am-ro"><span class="am-ro-k">[${esc(s.keys?.[0] || "fit")}]</span><b>${esc(s.title)}</b></div>
+        <div class="am-ro am-ro-2"><span class="am-ro-k">[${esc(s.keys?.[1] || "read")}]</span><b>${esc(s.title2)}</b></div>
       </div>
       <p class="am-lede">${esc(s.lead)}</p>
       <div class="am-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div></section>`,

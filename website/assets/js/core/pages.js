@@ -76,7 +76,9 @@ export function sections(page, ctx) {
     // lives on the Results page, prices live on Market and Price an option, the maths on How it works.
     case 'home':
       return [
-        { key: 'hero', kind: 'hero', pre: C.HERO_PRE, q: C.Q, title: C.A_SHORT, title2: 'Reading its settings? No.', lead: `${C.A_LONG} ${C.TWIST}`,
+        // the headline is the story; the answer to the question opens the paragraph under it
+        { key: 'hero', kind: 'hero', q: C.Q, title: C.HERO_TITLE[0], title2: C.HERO_TITLE[1], keys: C.HERO_KEYS,
+          lead: `${C.A_SHORT} ${C.A_NO} ${C.A_LONG} ${C.TWIST}`,
           ctas: [['model.html', C.CTA.model], ['results.html', C.CTA.finding]] },
         { key: 'journey', title: C.JOURNEY_HEAD, ico: 'references', size: 'full', lead: C.JOURNEY_LEDE, body: journey(ctx) },
         { key: 'done', title: C.DONE_HEAD, ico: 'maths', size: 'full', body: done(ctx) },
