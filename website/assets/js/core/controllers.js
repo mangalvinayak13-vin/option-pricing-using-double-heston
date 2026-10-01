@@ -13,6 +13,7 @@ export function mountControllers(scope, ctx) {
   const stops = [];
   segs(scope);
   videoSlots(scope, ctx);
+  stops.push(explainHover(scope));
   if (scope.querySelector('[data-ctl="model-form"], [data-param]')) modelPage(scope, ctx);
   if (scope.querySelector('[data-chart="candles"]')) marketPage(scope, ctx);
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
@@ -91,6 +92,24 @@ function dockMagnify(dock) {
   dock.addEventListener('pointermove', move);
   dock.addEventListener('pointerleave', leave);
   return { stop() { dock.removeEventListener('pointermove', move); dock.removeEventListener('pointerleave', leave); } };
+}
+
+// "Explain simply" dropdowns: open on hover for a real mouse (pointer: fine, hover: hover), with a
+// short close delay so crossing from the summary into the body doesn't snap it shut. Touch stays
+// tap-to-open -- there's no hover to speak of there, and the <details> element's own click toggle
+// keeps working everywhere regardless (keyboard included), this only adds the hover affordance.
+function explainHover(scope) {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return null;
+  const stops = [];
+  $$('.xp', scope).forEach(el => {
+    let closeTimer = 0;
+    const open = () => { clearTimeout(closeTimer); el.open = true; };
+    const close = () => { closeTimer = setTimeout(() => { el.open = false; }, 200); };
+    el.addEventListener('pointerenter', open);
+    el.addEventListener('pointerleave', close);
+    stops.push(() => { el.removeEventListener('pointerenter', open); el.removeEventListener('pointerleave', close); clearTimeout(closeTimer); });
+  });
+  return stops.length ? { stop: () => stops.forEach(f => f()) } : null;
 }
 
 // the explainer video: loads only when someone presses play; until a file is set, the slot says so
