@@ -106,7 +106,7 @@ html[data-mode="dark"][data-theme="springboard"] .sb-w-acc { background: linear-
 [data-theme="springboard"] .b-sh-last { font: 700 34px/1 var(--font-num); color: var(--ink); }
 [data-theme="springboard"] .b-sh-chg { font-size: 17px; font-weight: 600; }
 [data-theme="springboard"] .s-ctrls { display: flex; flex-wrap: wrap; gap: 12px; }
-[data-theme="springboard"] .s-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; padding-top: 6px; border-top: .5px solid var(--line); }
+[data-theme="springboard"] .s-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr)); gap: 10px 14px; padding-top: 6px; border-top: .5px solid var(--line); }
 [data-theme="springboard"] .s-scroll { max-height: 610px; overflow: auto; margin-inline: -10px; overscroll-behavior: contain; }
 [data-theme="springboard"] .s-scroll-x { overflow-x: auto; }
 [data-theme="springboard"] .b-watch th, [data-theme="springboard"] .b-watch td { padding: 10px 10px; }
@@ -154,7 +154,6 @@ html[data-mode="light"][data-theme="springboard"] .sb-dock { background: rgb(255
   [data-theme="springboard"] .sb-s3 { grid-column: span 6; } [data-theme="springboard"] .sb-s4, [data-theme="springboard"] .sb-s5,
   [data-theme="springboard"] .sb-s7, [data-theme="springboard"] .sb-s8 { grid-column: span 12; }
   [data-theme="springboard"] .sb-appgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  [data-theme="springboard"] .s-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
   [data-theme="springboard"] .sb-grid { gap: 14px; }

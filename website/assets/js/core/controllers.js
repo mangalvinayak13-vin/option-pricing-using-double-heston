@@ -18,7 +18,58 @@ export function mountControllers(scope, ctx) {
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
   $$('[data-pa3d]', scope).forEach(el => stops.push(createPA3D(el, ctx.PA)));
   $$('.b-dock-in', scope).forEach(d => stops.push(dockMagnify(d)));
+  stops.push(liveQuotes(scope, ctx));
   return () => stops.forEach(s => s && s.stop && s.stop());
+}
+
+// ------------------------------------------------------------------ live equity prices (Upstox)
+// The ticker (every page) and the Market page's watchlist/header/stats poll /api/live and overlay
+// it on the static NSE-close numbers already rendered server-side. Any failure (no token, offline,
+// rate limit) leaves those static numbers exactly as they were -- never a blank or a "NaN".
+function liveQuotes(scope, ctx) {
+  if (!$('.tick-i[data-sym]', scope) && !scope.querySelector('[data-chart="candles"]')) return null;
+  const C = ctx.C;
+  const istTime = iso => new Date(iso).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const setChg = (el, pct) => {
+    const [a, c] = arrow(pct);
+    el.textContent = `${a} ${Math.abs(pct).toFixed(2)}%`;
+    el.className = el.className.replace(/\b(up|dn)\b/g, '').trim() + ' ' + c;
+  };
+  const apply = live => {
+    const q = live.quotes || {};
+    $$('[data-sym]', scope).forEach(row => {
+      const v = q[row.dataset.sym];
+      if (!v || v.last == null) return;
+      const priceEl = row.querySelector('[data-bind="price"]'), chgEl = row.querySelector('[data-bind="chg"]');
+      if (priceEl) priceEl.textContent = inr(v.last);
+      if (chgEl && v.pct != null) setChg(chgEl, v.pct);
+    });
+    const sym = store.get('market.sym', 'RELIANCE'), v = q[sym];
+    if (v && v.last != null) {
+      $$('[data-bind="m-last"], [data-bind="m-close"]', scope).forEach(el => { el.textContent = inr(v.last); });
+      $$('[data-bind="m-chg"]', scope).forEach(el => {
+        const [a, c] = arrow(v.pct ?? 0);
+        el.textContent = `${a} ${inr(Math.abs(v.chg ?? 0))} (${Math.abs(v.pct ?? 0).toFixed(2)}%)`;
+        el.className = el.className.replace(/\b(up|dn)\b/g, '').trim() + ' ' + c;
+      });
+      if (v.open != null) $$('[data-bind="m-open"]', scope).forEach(el => { el.textContent = inr(v.open); });
+      if (v.high != null) $$('[data-bind="m-high"]', scope).forEach(el => { el.textContent = inr(v.high); });
+      if (v.low != null) $$('[data-bind="m-low"]', scope).forEach(el => { el.textContent = inr(v.low); });
+      if (v.prev_close != null) $$('[data-bind="m-prev-close"]', scope).forEach(el => { el.textContent = inr(v.prev_close); });
+      if (v.volume != null) $$('[data-bind="m-volume"]', scope).forEach(el => { el.textContent = `${inr(v.volume / 1e5, 1)} lakh`; });
+    }
+    $$('[data-bind="live-status"]', scope).forEach(el => {
+      if (live.status !== 'live' || !Object.keys(q).length) { el.textContent = C.LIVE_FALLBACK; return; }
+      el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
+    });
+  };
+  let stopped = false, timer = 0;
+  const poll = async () => {
+    try { const r = await fetch('/api/live'); if (r.ok && !stopped) apply(await r.json()); } catch { /* keep the static numbers */ }
+    if (!stopped) timer = setTimeout(poll, 8000);
+  };
+  timer = setTimeout(poll, 60);
+  return { stop() { stopped = true; clearTimeout(timer); } };
 }
 
 // the page dock magnifies under the cursor like the macOS Dock (transform only; rAF-throttled)

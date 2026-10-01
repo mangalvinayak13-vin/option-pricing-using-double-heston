@@ -15,7 +15,7 @@ export function ticker(ctx) {
   const stocks = ctx.D.watch.filter(v => ctx.D.equity[v.sym] && ctx.C.NAMES[v.sym] !== 'Index').sort((a, b) => (b.vol || 0) - (a.vol || 0)).slice(0, 24);
   const items = stocks.map(v => {
     const [a, c] = arrow(v.pct);
-    return `<span class="tick-i"><b>${esc(v.sym)}</b><span class="num">${inr(v.last)}</span><span class="${c} num">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
+    return `<span class="tick-i" data-sym="${esc(v.sym)}"><b>${esc(v.sym)}</b><span class="num" data-bind="price">${inr(v.last)}</span><span class="${c} num" data-bind="chg">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
   });
   const run = items.join('<span class="tick-sep" aria-hidden="true"></span>') + '<span class="tick-sep" aria-hidden="true"></span>';
   return `<div class="tick b-tick" role="region" aria-label="Equity closing prices on ${esc(C.LAST_DAY)}, scrolling">
@@ -36,8 +36,8 @@ export function watchTable(ctx, { syms, spark = [84, 26], names = true, cols = [
     const v = w(ctx, s);
     const [a, c] = arrow(v.pct);
     const pick = ctx.D.equity[s] ? `data-sym="${s}"` : '';
-    return `<tr ${pick} class="${s === sel ? 'sel' : ''}"><td>${pick ? `<button type="button" class="b-sym" ${pick} aria-pressed="${s === sel}">` : '<span class="b-sym">'}<b>${esc(s)}</b>${names ? `<span class="b-sub">${esc(C.NAMES[s] || '')}</span>` : ''}${pick ? '</button>' : '</span>'}</td>` +
-      `<td class="b-spark">${sparkline(v.closes, spark[0], spark[1])}</td><td class="num">${inr(v.last)}</td><td class="num ${c}">${a} ${Math.abs(v.pct).toFixed(2)}%</td></tr>`;
+    return `<tr data-sym="${s}" class="${s === sel ? 'sel' : ''}"><td>${pick ? `<button type="button" class="b-sym" ${pick} aria-pressed="${s === sel}">` : '<span class="b-sym">'}<b>${esc(s)}</b>${names ? `<span class="b-sub">${esc(C.NAMES[s] || '')}</span>` : ''}${pick ? '</button>' : '</span>'}</td>` +
+      `<td class="b-spark">${sparkline(v.closes, spark[0], spark[1])}</td><td class="num" data-bind="price">${inr(v.last)}</td><td class="num ${c}" data-bind="chg">${a} ${Math.abs(v.pct).toFixed(2)}%</td></tr>`;
   });
   return `<table class="b-tb b-watch" data-ctl="watch"><caption class="vh">Closing prices, ${esc(C.LAST_DAY)}. Pick a stock or index to chart it.</caption><thead><tr>${cols.map((h, i) => `<th scope="col"${i ? ' class="num"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
 }
@@ -49,8 +49,8 @@ export function stocksList(ctx, { syms, spark = [64, 26] } = {}) {
   return `<ul class="b-stocks" aria-label="Closing prices, ${esc(C.LAST_DAY)}. Pick a stock or index to chart it.">${list.map(s => {
     const v = w(ctx, s), [a, c] = arrow(v.pct), pick = !!ctx.D.equity[s];
     const inner = `<span class="bs-l"><b>${esc(s)}</b><span class="b-sub">${esc(C.NAMES[s] || '')}</span></span>${sparkline(v.closes, spark[0], spark[1])}
-      <span class="bs-r"><b class="num">${inr(v.last)}</b><span class="bs-pill ${c} num">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
-    return `<li class="${s === sel ? 'sel' : ''}">${pick ? `<button type="button" class="bs-row" data-sym="${s}" aria-pressed="${s === sel}">${inner}</button>` : `<div class="bs-row">${inner}</div>`}</li>`;
+      <span class="bs-r"><b class="num" data-bind="price">${inr(v.last)}</b><span class="bs-pill ${c} num" data-bind="chg">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
+    return `<li class="${s === sel ? 'sel' : ''}" data-sym="${s}">${pick ? `<button type="button" class="bs-row" data-sym="${s}" aria-pressed="${s === sel}">${inner}</button>` : `<div class="bs-row">${inner}</div>`}</li>`;
   }).join('')}</ul>`;
 }
 

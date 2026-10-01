@@ -455,7 +455,10 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .b-sh-last { font: 700 34px/1 var(--font-num); color: var(--ink); }
 .b-sh-chg { font-size: 17px; font-weight: 600; }
 .s-ctrls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
-.s-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+/* columns no narrower than a real value needs (a 4-digit rupee price or "NNN.N lakh" both measure
+   up to ~107px at this font size) -- a fixed 6-column grid let the figures overflow into each
+   other below ~710px of card width, which this card rarely has once the watchlist sits beside it */
+.s-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 112px), 1fr)); gap: 10px 14px; padding-top: 10px; border-top: 1px solid var(--line); }
 .s-scroll { max-height: 620px; overflow: auto; overscroll-behavior: contain; }
 .s-scroll-x { overflow-x: auto; }
 .s-greeks { display: flex; flex-direction: column; }
@@ -469,7 +472,7 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .s-refs ol { margin-bottom: 0; }
 /* four headline numbers (Key results) sit in one row when there is room */
 /* (the number grid fits as many columns as the panel allows, so wide numerals never collide) */
-@media (max-width: 900px) { .s-nums { grid-template-columns: 1fr; } .s-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .s-nums { grid-template-columns: 1fr; } }
 
 /* ------------------------------------------------------------------ shared block defaults ------ */
 .b-sub { color: var(--muted); }

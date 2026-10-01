@@ -11,6 +11,9 @@ POST /api/price  {"strike": 23150, "kind": "call", "params": {v0_1, kappa1, thet
                   v0_2, kappa2, theta2, xi2, rho2}, "mc": true}
 -> price, implied vol, Greeks, the smile at this expiry, model prices across the chain, the Feller
    condition for each factor, and a 20,000-path Monte Carlo check.
+
+GET  /api/live   -> live last price/change for NIFTY 50, NIFTY BANK and the 40 watchlist stocks,
+   via the Upstox market-quote API (website/tools/live_quotes.py), cached server-side for 5s.
 """
 from __future__ import annotations
 
@@ -20,6 +23,7 @@ import json
 import math
 import mimetypes
 import sys
+import threading
 import time
 from functools import lru_cache
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -45,6 +49,23 @@ BOUNDS = {"v0": M.HESTON_BOUNDS["v0"], "kappa": M.HESTON_BOUNDS["kappa"], "theta
 for ext, typ in ((".js", "text/javascript"), (".mjs", "text/javascript"), (".json", "application/json"),
                  (".woff2", "font/woff2"), (".svg", "image/svg+xml"), (".webmanifest", "application/manifest+json")):
     mimetypes.add_type(typ, ext)
+
+sys.path.insert(0, str(HERE / "tools"))
+import live_quotes  # noqa: E402  (website/tools/live_quotes.py)
+
+_LIVE_CACHE: dict = {"t": 0.0, "data": None}
+_LIVE_LOCK = threading.Lock()
+
+
+def live_quotes_cached(max_age=5.0) -> dict:
+    now = time.monotonic()
+    with _LIVE_LOCK:
+        if _LIVE_CACHE["data"] is not None and now - _LIVE_CACHE["t"] < max_age:
+            return _LIVE_CACHE["data"]
+    result = live_quotes.fetch_live_quotes()
+    with _LIVE_LOCK:
+        _LIVE_CACHE["t"], _LIVE_CACHE["data"] = now, result
+    return result
 
 
 def clamp_params(p: dict) -> dict:
@@ -145,6 +166,8 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/api/health"):
             return self._json(200, {"ok": True, "pricer": "legacy_streamlit_site/models.py"})
+        if self.path.startswith("/api/live"):
+            return self._json(200, live_quotes_cached())
         if self.path.startswith("/api/"):
             return self._json(404, {"error": "unknown endpoint"})
         return super().do_GET()

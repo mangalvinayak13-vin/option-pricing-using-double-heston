@@ -90,6 +90,7 @@ export function sections(page, ctx) {
       const sym = store.get('market.sym', 'RELIANCE');
       return [
         { key: 'top', kind: 'head', title: 'Market', lead: C.MARKET_SUB },
+        { key: 'live', kind: 'note', body: `<p class="b-live" data-bind="live-status">${esc(C.LIVE_LOADING)}</p>` },
         { key: 'chart', size: 'wide', body: `<div class="s-stock">${B.stockHead(ctx, sym)}</div><div class="s-ctrls">${B.marketControls()}</div>
           <figure class="fig"><figcaption class="fig-t">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
           <div class="s-stats">${B.stockStats(ctx, sym)}</div>` },

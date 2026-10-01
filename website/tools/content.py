@@ -94,9 +94,13 @@ CTA = {"model": "Price an option", "finding": "See the results", "market": "Open
 
 # ------------------------------------------------------------------ market ---------------
 MARKET_TITLE = "Market"
-MARKET_SUB = (f"Official NSE closing prices, {FIRST_DAY} to {LAST_DAY}, {N_DAYS} trading days. "
-              "Live prices from Upstox are planned for the same places; this version shows the closes.")
+MARKET_SUB = (f"Daily history is NSE's official closes, {FIRST_DAY} to {LAST_DAY}, {N_DAYS} trading days. "
+              "The price and change beside each name are live, from Upstox, while the market's open.")
 STATUS = f"Prices as of the NSE close, {LAST_DAY}, 15:30 IST"
+LIVE_LOADING = "Checking for live prices…"
+LIVE_OPEN = "Live, updated {time} IST"
+LIVE_CLOSED = "Market closed — last traded price shown"
+LIVE_FALLBACK = "Live prices unavailable right now — the numbers above are NSE's last close."
 UNIVERSE = "NIFTY 50, NIFTY BANK and the 40 most traded F&O stocks: every stock we show an implied volatility for."
 
 # ------------------------------------------------------------------ model ----------------
