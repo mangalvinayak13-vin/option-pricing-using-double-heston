@@ -46,7 +46,7 @@ function pinnAnn(ctx) {
     </div>
     <div class="pa3d-key"><span><i class="pa3d-k-net"></i><span data-pa-keynet>network's price</span></span><span><i class="pa3d-k-exact"></i><span data-pa-keyexact>exact Double Heston price</span></span><span><i class="pa3d-k-neg"></i>price below zero by more than 0.2% of the strike (impossible)</span></div>
     <p class="fig-cap">${esc(cap)}</p></figure>
-    <div class="s-nums">${B.nums(C.PA_NUMS)}</div><p class="s-lead">${esc(C.PA_RESULT)} ${esc(C.PA_REPLAY)}</p><p class="s-fine">${esc(C.PA_NOTE)}</p>`;
+    <div class="s-nums">${B.nums(dir(C.PA_NUMS, ['lower', 'lower', 'higher']))}</div><p class="s-lead">${esc(C.PA_RESULT)} ${esc(C.PA_REPLAY)}</p><p class="s-fine">${esc(C.PA_NOTE)}</p>`;
 }
 
 function dataTable(ctx) {
@@ -56,9 +56,16 @@ function dataTable(ctx) {
 
 function resultsTable(ctx) {
   const label = { good: 'Good news', mixed: 'Mixed', bad: 'Bad news' };
-  return `<div class="s-scroll-x"><table class="b-tb b-results"><caption class="vh">Every result of the project</caption><thead><tr><th scope="col">Result</th><th scope="col">Value</th><th scope="col">What it measures</th><th scope="col">Reading</th></tr></thead><tbody>${ctx.C.RESULTS.map(([n, v, w, verdict]) =>
-    `<tr><th scope="row">${esc(n)}</th><td class="num b-val">${esc(v)}</td><td class="b-wrap">${esc(w)}</td><td><span class="b-verdict b-v-${verdict}">${label[verdict]}</span></td></tr>`).join('')}</tbody></table></div>`;
+  return `<p class="b-dir-note">${esc(ctx.C.RESULTS_DIRECTION)}</p><div class="s-scroll-x"><table class="b-tb b-results"><caption class="vh">Every result of the project</caption><thead><tr><th scope="col">Result</th><th scope="col">Value</th><th scope="col">What it measures</th><th scope="col">Reading</th></tr></thead><tbody>${ctx.C.RESULTS.map(([n, v, w, verdict]) => {
+    const [b, pic, mean] = ctx.C.RESULT_INFO[n];
+    return `<tr><th scope="row">${esc(n)}</th><td class="num b-val">${esc(v)}${B.better(b)}</td><td class="b-wrap">${esc(w)}${B.explain([pic, mean])}</td><td><span class="b-verdict b-v-${verdict}">${label[verdict]}</span></td></tr>`;
+  }).join('')}</tbody></table></div>`;
 }
+
+// "Explain simply" for a section, if the content has one
+const X = (ctx, k) => B.explain(ctx.C.EXPLAIN[k]);
+// pair each number with which way is good news
+const dir = (items, dirs) => items.map((it, i) => [it[0], it[1], dirs[i]]);
 
 const terms = ctx => `<dl class="b-terms">${ctx.C.TERMS.map(([t, d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join('')}</dl>`;
 
@@ -69,13 +76,13 @@ export function sections(page, ctx) {
     // lives on the Results page, prices live on Market and Price an option, the maths on How it works.
     case 'home':
       return [
-        { key: 'hero', kind: 'hero', q: C.Q, title: C.A_SHORT, title2: 'Reading its settings? No.', lead: `${C.A_LONG} ${C.TWIST}`,
+        { key: 'hero', kind: 'hero', pre: C.HERO_PRE, q: C.Q, title: C.A_SHORT, title2: 'Reading its settings? No.', lead: `${C.A_LONG} ${C.TWIST}`,
           ctas: [['model.html', C.CTA.model], ['results.html', C.CTA.finding]] },
         { key: 'journey', title: C.JOURNEY_HEAD, ico: 'references', size: 'full', lead: C.JOURNEY_LEDE, body: journey(ctx) },
         { key: 'done', title: C.DONE_HEAD, ico: 'maths', size: 'full', body: done(ctx) },
         { key: 'nn', title: C.PA_HEAD, ico: 'model', size: 'full', lead: C.PA_LEDE, body: pinnAnn(ctx) },
         { key: 'key', title: C.KEY_HEAD, ico: 'results', size: 'full', accent: true, lead: C.KEY_LEDE,
-          body: `<div class="s-nums">${B.nums(C.KEY_NUMS)}</div><p class="s-more"><a class="btn ghost" href="results.html">${esc(C.CTA.finding)}</a></p>` },
+          body: `<div class="s-nums">${B.nums(dir(C.KEY_NUMS, C.KEY_BETTER))}</div><p class="s-more"><a class="btn ghost" href="results.html">${esc(C.CTA.finding)}</a></p>` },
       ];
     case 'market': {
       const sym = store.get('market.sym', 'RELIANCE');
@@ -108,45 +115,53 @@ export function sections(page, ctx) {
         { key: 'source', kind: 'note', size: 'full', fine: C.MODEL_SOURCE },
       ];
     }
+    // How it works: centred, every formula on its theme's glass, then the ten settings and the charts
     case 'maths':
       return [
         { key: 'top', kind: 'head', title: 'How it works', lead: C.MATHS_INTRO },
-        { key: 'bend', title: C.BEND_HEAD, ico: 'model', size: 'full', lead: C.BEND, body: fig(ctx, 'smileBend', 400) },
-        { key: 'steps', title: 'Five steps from settings to a price', ico: 'maths', size: 'full', body: B.steps(ctx) },
-        { key: 'eq', title: 'The equations', ico: 'maths', size: 'full', body: B.equations(ctx) },
-        { key: 'decay', title: C.FACTORS_HEAD, ico: 'slow', size: 'half', lead: C.TWO_CLOCKS, body: fig(ctx, 'decay', 320) },
-        { key: 'factors', title: 'Two factors, live', ico: 'fast', size: 'half', lead: C.FACTORS, body: traceFig(ctx) },
-        { key: 'skew', title: 'Skew by time to expiry', ico: 'model', size: 'full', lead: C.SKEW_NOTE, body: fig(ctx, 'skew', 320) },
-        { key: 'fan', title: 'Check by simulation', ico: 'fast', size: 'full', lead: C.FAN_NOTE, body: fig(ctx, 'fan', 420) },
-        { key: 'surface', title: 'The whole surface', ico: 'maths', size: 'full', lead: C.SURFACE_NOTE, body: fig(ctx, 'surface', 420) },
+        { key: 'bend', title: C.BEND_HEAD, ico: 'model', size: 'full', glass: true, lead: C.BEND, body: fig(ctx, 'smileBend', 400) + X(ctx, 'bend') },
+        { key: 'formulas', kind: 'head', level: 2, title: C.FORMULAS_HEAD, lead: C.FORMULAS_LEDE },
+        ...C.FORMULAS.map((f, i) => ({ key: `f-${f[0]}`, title: `${i + 1}. ${f[1]}`, ico: 'maths', size: 'full', glass: true, body: B.formula(ctx, f) })),
+        { key: 'settings', kind: 'head', level: 2, title: C.SETTINGS_HEAD, lead: C.SETTINGS_LEDE },
+        { key: 'settings-list', title: 'Five settings for each factor', ico: 'slow', size: 'full', glass: true, body: B.settings(ctx) },
+        { key: 'decay', title: C.FACTORS_HEAD, ico: 'slow', size: 'half', glass: true, lead: C.TWO_CLOCKS, body: fig(ctx, 'decay', 320) + X(ctx, 'decay') },
+        { key: 'factors', title: 'Two factors, live', ico: 'fast', size: 'half', glass: true, lead: C.FACTORS, body: traceFig(ctx) + X(ctx, 'factors') },
+        { key: 'skew', title: 'Skew by time to expiry', ico: 'model', size: 'full', glass: true, lead: C.SKEW_NOTE, body: fig(ctx, 'skew', 320) + X(ctx, 'skew') },
+        { key: 'fan', title: 'Simulated paths', ico: 'fast', size: 'full', glass: true, lead: C.FAN_NOTE, body: fig(ctx, 'fan', 420) + X(ctx, 'fan') },
+        { key: 'surface', title: 'The whole surface', ico: 'maths', size: 'full', glass: true, lead: C.SURFACE_NOTE, body: fig(ctx, 'surface', 420) + X(ctx, 'surface') },
       ];
-    // the one place every result lives: the answer, its evidence, the networks, then the full table
+    // the one place every result lives, all on glass: the answer, its evidence, the networks, then the full table
     case 'results': {
       const sym = store.get('finding.sym', 'RELIANCE');
+      const g = true;
       return [
         { key: 'top', kind: 'head', title: C.RESULTS_PAGE_HEAD, lead: C.RESULTS_PAGE_LEDE },
-        { key: 'key', title: C.KEY_HEAD, ico: 'results', size: 'full', accent: true, body: `<div class="s-nums">${B.nums(C.KEY_NUMS)}</div>` },
+        { key: 'key', title: C.KEY_HEAD, ico: 'results', size: 'full', glass: g, body: `<div class="s-nums">${B.nums(dir(C.KEY_NUMS, C.KEY_BETTER))}</div>` },
         { key: 'evidence', kind: 'head', level: 2, title: 'The evidence', lead: C.TWIST },
-        { key: 'proof1', title: C.PROOF1_HEAD, ico: 'maths', size: 'half', lead: C.PROOF1, body: `<div class="s-nums">${B.nums(C.PROOF1_NUMS)}</div>`, fine: C.PROOF1_NET },
-        { key: 'proof2', title: C.PROOF2_HEAD, ico: 'market', size: 'half', lead: C.PROOF2, body: `<div class="s-nums">${B.nums(C.PROOF2_NUMS)}</div>` },
-        { key: 'hist', title: `How far apart equally good fits landed, ${D.hist.n.toLocaleString('en-IN')} surfaces`, ico: 'finding', size: 'full', body: fig(ctx, 'hist', 320) },
-        { key: 'params', title: 'Setting by setting', ico: 'maths', size: 'full', lead: C.PER_PARAM, body: fig(ctx, 'paramBars', 0) },
+        { key: 'proof1', title: C.PROOF1_HEAD, ico: 'maths', size: 'half', glass: g, lead: C.PROOF1,
+          body: `<div class="s-nums">${B.nums(dir(C.PROOF1_NUMS, ['lower', 'lower', 'lower']))}</div><p class="s-fine">${esc(C.PROOF1_NET)}</p>${X(ctx, 'proof1')}` },
+        { key: 'proof2', title: C.PROOF2_HEAD, ico: 'market', size: 'half', glass: g, lead: C.PROOF2,
+          body: `<div class="s-nums">${B.nums(dir(C.PROOF2_NUMS, ['lower', 'lower', 'higher']))}</div>${X(ctx, 'proof2')}` },
+        { key: 'hist', title: `How far apart equally good fits landed, ${D.hist.n.toLocaleString('en-IN')} surfaces`, ico: 'finding', size: 'full', glass: g, body: fig(ctx, 'hist', 320) + X(ctx, 'hist') },
+        { key: 'params', title: 'Setting by setting', ico: 'maths', size: 'full', glass: g, lead: C.PER_PARAM, body: fig(ctx, 'paramBars', 0) + X(ctx, 'params') },
         { key: 'pair', kind: 'head', level: 2, title: C.PAIR_HEAD, lead: C.PAIR_LEDE },
-        { key: 'pool', title: 'Bharti Airtel, 39‑day options', ico: 'model', size: 'wide', body: fig(ctx, 'pairPool', 400) },
-        { key: 'magnets-why', title: C.PAIR_MAGNETS_HEAD, ico: 'finding', size: 'narrow', lead: `${C.PAIR_MAGNETS} ${C.PAIR_TYPICAL}` },
-        { key: 'magnets', title: 'The ten settings of each fit', ico: 'maths', size: 'full', body: fig(ctx, 'pairMagnets', 0), fine: C.PAIR_NOTE },
-        { key: 'part', title: C.PAIR_PART_HEAD, ico: 'finding', size: 'full', lead: C.PAIR_PART, body: fig(ctx, 'pairPart', 400) },
-        { key: 'six', title: 'All six equally good fits', ico: 'finding', size: 'full', lead: C.PAIR_SIX, body: fig(ctx, 'pairSix', 0) },
-        { key: 'stock', title: 'One stock, day by day', ico: 'market', size: 'full',
-          body: `<div class="s-ctrls">${B.stockPicker(ctx)}</div><p class="s-lead" data-bind="stock-line">${esc(B.stockLine(ctx, sym))}</p>${fig(ctx, 'stockPanel', 0, { sym })}` },
+        { key: 'pool', title: 'Bharti Airtel, 39‑day options', ico: 'model', size: 'wide', glass: g, body: fig(ctx, 'pairPool', 400) },
+        { key: 'magnets-why', title: C.PAIR_MAGNETS_HEAD, ico: 'finding', size: 'narrow', glass: g, lead: `${C.PAIR_MAGNETS} ${C.PAIR_TYPICAL}` },
+        { key: 'magnets', title: 'The ten settings of each fit', ico: 'maths', size: 'full', glass: g, body: `${fig(ctx, 'pairMagnets', 0)}<p class="s-fine">${esc(C.PAIR_NOTE)}</p>${X(ctx, 'magnets')}` },
+        { key: 'part', title: C.PAIR_PART_HEAD, ico: 'finding', size: 'full', glass: g, lead: C.PAIR_PART, body: fig(ctx, 'pairPart', 400) + X(ctx, 'part') },
+        { key: 'six', title: 'All six equally good fits', ico: 'finding', size: 'full', glass: g, lead: C.PAIR_SIX, body: fig(ctx, 'pairSix', 0) + X(ctx, 'six') },
+        { key: 'stock', title: 'One stock, day by day', ico: 'market', size: 'full', glass: g,
+          body: `<div class="s-ctrls">${B.stockPicker(ctx)}</div><p class="s-lead" data-bind="stock-line">${esc(B.stockLine(ctx, sym))}</p>${fig(ctx, 'stockPanel', 0, { sym })}${X(ctx, 'stock')}` },
         { key: 'nets', kind: 'head', level: 2, title: C.NN_HEAD, lead: `${C.ANN_TEXT} ${C.PINN_TEXT}` },
-        { key: 'heldout', title: 'The ANN on dates it never saw', ico: 'model', size: 'half', body: B.nums([[`${(D.consolidated.g8.median_network_relative * 100).toFixed(1)}%`, C.HELDOUT]]) },
-        { key: 'backtest', title: 'The ANN against Black–Scholes', ico: 'market', size: 'half', body: B.nums([[C.BEAT_BS_NUM, C.BACKTEST]]) },
-        { key: 'pinn', title: 'The PINN on real NIFTY options', ico: 'maths', size: 'full', body: `${B.nums([[`${C.PINN_NIFTY.ft_3.toFixed(2)}`, 'PINN calibrator, median error in volatility points'], [`${C.PINN_NIFTY.bs.toFixed(2)}`, 'Black–Scholes on the same quotes'], [`${C.PINN_NIFTY_BEST} of 10`, 'days the PINN was the best model']])}<p class="s-lead">${esc(C.PINN_MARKET)}</p>` },
+        { key: 'heldout', title: 'The ANN on dates it never saw', ico: 'model', size: 'half', glass: g,
+          body: B.nums([[`${(D.consolidated.g8.median_network_relative * 100).toFixed(1)}%`, C.HELDOUT, 'lower']]) + X(ctx, 'heldout') },
+        { key: 'backtest', title: 'The ANN against Black–Scholes', ico: 'market', size: 'half', glass: g, body: B.nums([[C.BEAT_BS_NUM, C.BACKTEST, 'higher']]) + X(ctx, 'backtest') },
+        { key: 'pinn', title: 'The PINN on real NIFTY options', ico: 'maths', size: 'full', glass: g,
+          body: `${B.nums([[`${C.PINN_NIFTY.ft_3.toFixed(2)}`, 'PINN calibrator, median error in volatility points', 'lower'], [`${C.PINN_NIFTY.bs.toFixed(2)}`, 'Black–Scholes on the same quotes', 'lower'], [`${C.PINN_NIFTY_BEST} of 10`, 'days the PINN was the best model', 'higher']])}<p class="s-lead">${esc(C.PINN_MARKET)}</p>${X(ctx, 'pinn')}` },
         { key: 'all', kind: 'head', level: 2, title: C.RESULTS_HEAD, lead: C.RESULTS_LEDE },
-        { key: 'results', title: 'Every result', ico: 'results', size: 'full', body: resultsTable(ctx) },
-        { key: 'data', title: 'The data', ico: 'market', size: 'full', body: dataTable(ctx) },
-        { key: 'terms', title: 'What the words mean', ico: 'about', size: 'full', body: terms(ctx) },
+        { key: 'results', title: 'Every result', ico: 'results', size: 'full', glass: g, body: resultsTable(ctx) },
+        { key: 'data', title: 'The data', ico: 'market', size: 'full', glass: g, body: dataTable(ctx) },
+        { key: 'terms', title: 'What the words mean', ico: 'about', size: 'full', glass: g, body: terms(ctx) },
       ];
     }
     case 'about':

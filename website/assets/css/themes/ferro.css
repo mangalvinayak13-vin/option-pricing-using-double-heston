@@ -122,3 +122,10 @@ html[data-mode="dark"][data-theme="ferro"] .fp-l { color: #F2F2F2; }
 /* the accent panel's lead, number labels and link button take the panel's text colour */
 [data-theme="ferro"] .fe-acc .s-lead, [data-theme="ferro"] .fe-acc .b-num span { color: color-mix(in srgb, var(--bg) 84%, transparent); }
 [data-theme="ferro"] .fe-acc .btn.ghost { color: var(--bg); background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--bg) 50%, transparent); }
+
+/* this theme's glass (base.css .glass): formula cards, Results sections, Explain simply */
+html[data-theme="ferro"] { --glass-bg: linear-gradient(180deg, rgb(255 255 255 / .66), rgb(222 226 232 / .5)); --glass-edge: rgb(255 255 255 / .8); --glass-shine: rgb(255 255 255 / .95); --glass-r: 18px; --glass-backdrop: radial-gradient(70% 55% at 15% 10%, rgb(170 178 190 / .35), transparent 70%), radial-gradient(60% 50% at 88% 60%, rgb(120 128 140 / .22), transparent 70%); }
+html[data-theme="ferro"][data-mode="dark"] { --glass-bg: linear-gradient(180deg, rgb(46 48 53 / .58), rgb(20 21 24 / .58)); --glass-edge: rgb(255 255 255 / .1); --glass-shine: rgb(255 255 255 / .16); --glass-backdrop: radial-gradient(70% 55% at 15% 10%, rgb(150 160 175 / .14), transparent 70%), radial-gradient(60% 50% at 88% 60%, rgb(110 120 135 / .1), transparent 70%); }
+/* Ferro's rows have no box of their own: on glass they get padding, and stack on How it works so they can centre */
+[data-theme="ferro"] .fe-row.glass { padding: clamp(22px, 2.8vw, 34px); margin-block: 14px; border-top: 1px solid var(--glass-edge); }
+html[data-page="maths"][data-theme="ferro"] .fe-row { grid-template-columns: 1fr; }

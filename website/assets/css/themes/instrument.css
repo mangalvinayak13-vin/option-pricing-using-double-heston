@@ -120,3 +120,7 @@ html.motion[data-theme="instrument"] .in-m.is-in { opacity: 1; transform: none; 
 /* the accent panel's lead, number labels and link button take the panel's text colour */
 [data-theme="instrument"] .in-acc .s-lead, [data-theme="instrument"] .in-acc .b-num span { color: color-mix(in srgb, var(--on-acc) 84%, transparent); }
 [data-theme="instrument"] .in-acc .btn.ghost { color: var(--on-acc); background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--on-acc) 50%, transparent); }
+
+/* this theme's glass (base.css .glass): formula cards, Results sections, Explain simply */
+html[data-theme="instrument"] { --glass-bg: rgb(247 250 253 / .62); --glass-edge: rgb(150 166 184 / .45); --glass-shine: rgb(255 255 255 / .9); --glass-r: 12px; }
+html[data-theme="instrument"][data-mode="dark"] { --glass-bg: rgb(22 28 36 / .6); --glass-edge: rgb(140 170 205 / .2); --glass-shine: rgb(170 200 235 / .12); }

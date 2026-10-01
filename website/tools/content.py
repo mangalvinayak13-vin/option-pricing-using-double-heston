@@ -125,8 +125,10 @@ GREEKS = [("Delta", f"{K['delta']:.3f}", "per ₹1 move in NIFTY"), ("Gamma", f"
 CHAIN = [r for r in D["chain"] if abs(r["strike"] - K["strike"]) <= 250]
 
 # ------------------------------------------------------------------ maths ----------------
-MATHS_INTRO = ("Double Heston (Christoffersen, Heston and Jacobs, 2009) lets the stock's variance come from two "
-               "independent sources. Each follows its own mean-reverting process with five settings, ten in all.")
+MATHS_INTRO = ("An option's price depends on how jumpy the stock will be before it expires. Black–Scholes assumes one "
+               "fixed jumpiness. Double Heston (Christoffersen, Heston and Jacobs, 2009) lets it move, and splits it "
+               "into two parts that move on their own: a fast one for sudden scares and a slow one for long moods. "
+               "Below is the whole model, one formula at a time.")
 EQ_PRICE = "dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂"
 EQ_VAR = "dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2"
 EQ_FELLER = "2κᵢθᵢ > ξᵢ²"
@@ -357,7 +359,7 @@ SURFACE_NOTE = (f"Implied volatility at the starting settings, for every strike 
                 "nothing, where no volatility can be read.")
 SKEW_NOTE = ("The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets "
              "further away.")
-FAN_NOTE = (f"Sixty of the simulated one-year paths from 100, with the middle 50% and 90% of all paths shaded. "
+FAN_NOTE = (f"Sixty of 400 simulated one-year paths, all starting at 100, with the middle 50% and 90% of the 400 shaded. "
             f"The same simulator checks the pricer: 20,000 paths price the NIFTY {inr(K['strike'], 0)} call at ₹{inr(K['mc'])} "
             f"± {K['mc_se']:.2f}, against ₹{inr(K['dh'])} from the formula.")
 FACTORS_HEAD = "Two volatilities, one fast and one slow."
@@ -366,7 +368,8 @@ FACTORS = (f"Each factor gets knocked about and drifts back to its long-run leve
 
 
 # ------------------------------------------------------------------ home: from Einstein's random walk to Wall Street
-JOURNEY_HEAD = "From a speck of pollen to Wall Street"
+JOURNEY_HEAD = "Twelve steps from a jiggling grain to option prices"
+HERO_PRE = "From a speck of pollen to Wall Street"
 JOURNEY_LEDE = ("Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became "
                 "the way finance describes prices, and this project carries that line forward to today's NSE options.")
 JOURNEY = [  # (year, who, what happened)
@@ -520,3 +523,173 @@ KEY_NUMS = [  # the answer in numbers: the four that carry the story
 KEY_HEAD = "What we found, in four numbers"
 KEY_LEDE = ("Double Heston fits real option prices better than one flat volatility, but the prices can't tell you its "
             "ten settings. The Results page has the evidence behind every number.")
+
+
+# ------------------------------------------------------------------ How it works: the model, one formula at a time
+FORMULAS_HEAD = "The model, one formula at a time"
+FORMULAS_LEDE = "Each card gives the formula, what its symbols mean and what it does. Open “Explain simply” for an everyday picture of it."
+FORMULAS = [  # (key, title, plain formula for screen readers, what it does, [(symbol, meaning)])
+    ("price", "The price moves with two variances", EQ_PRICE,
+     "Over a tiny moment of time, the share price drifts at the interest rate minus the dividend yield, and gets two "
+     "random kicks. How big each kick is depends on one of the two variances.",
+     [("S", "share price"), ("r", "interest rate"), ("q", "dividend yield"), ("v₁, v₂", "the two variances, slow and fast"),
+      ("dW₁, dW₂", "two independent random shocks"), ("dt", "a tiny step of time")]),
+    ("variance", "Each variance drifts back to normal", EQ_VAR,
+     "Each variance is pulled back toward its long-run level θ at speed κ, and shaken by random shocks of size ξ. "
+     "Its shocks move with the price's shocks at correlation ρ. A negative ρ means falls come with rising volatility, "
+     "which is what tilts the smile.",
+     [("vᵢ", "today's variance of factor i"), ("θᵢ", "the long-run level it returns to"), ("κᵢ", "how fast it returns"),
+      ("ξᵢ", "how hard it gets shaken"), ("dZᵢ", "its own random shock"), ("ρᵢ", "the link between price and variance shocks"),
+      ("i", "1 for the slow factor, 2 for the fast one")]),
+    ("cf", "Independent factors multiply", EQ_CF,
+     "The characteristic function φ is a compact fingerprint of where the price could end up. Because the two factors "
+     "are independent, the model's fingerprint is just the product of each factor's own, so pricing stays fast.",
+     [("φ(u)", "the model's fingerprint, read at frequency u"), ("φ₁, φ₂", "the slow and fast factors' own fingerprints")]),
+    ("call", "One integral gives the price", EQ_CALL,
+     "A call is worth what you expect to receive above the strike, minus what you expect to pay, brought back to "
+     "today's money. P₂ is the chance, under the pricing measure, that the option ends in the money; P₁ is the same "
+     "chance counted in shares. Both come out of the fingerprint through one integral (Gil-Pelaez). The code uses the "
+     "“little trap” form (Albrecher et al., 2007), which avoids a branch-cut error in the 1993 formula at long expiries.",
+     [("C", "call price"), ("F", "forward price of the share"), ("K", "strike"), ("T", "time to expiry, in years"),
+      ("e^(−rT)", "discount back to today"), ("P₁, P₂", "the two probabilities"), ("Re", "real part of a complex number")]),
+    ("mc", "Check by simulation", "C ≈ e^(−rT) · (1/N) Σₙ max(S_T⁽ⁿ⁾ − K, 0)",
+     f"Monte Carlo prices the same option the slow way: simulate 20,000 possible paths of the price and both variances, "
+     f"average what the call pays at expiry, and discount. The paths use full-truncation Euler steps and antithetic "
+     f"pairs. For the NIFTY {inr(K['strike'], 0)} call it gives ₹{inr(K['mc'])} ± {K['mc_se']:.2f}, against "
+     f"₹{inr(K['dh'])} from the formula: inside the simulation's own margin of error.",
+     [("N", "number of simulated paths, 20,000"), ("S_T⁽ⁿ⁾", "the share price at expiry on path n"),
+      ("max(S − K, 0)", "what a call pays at expiry")]),
+    ("feller", "When a factor can't touch zero", EQ_FELLER,
+     "If 2κθ is bigger than ξ², that factor's variance never reaches zero. Real markets often break this. When a "
+     "simulated variance would go below zero, the simulator holds it at zero for that step (full truncation), so prices "
+     "stay valid.",
+     [("κᵢ, θᵢ, ξᵢ", "the speed, long-run level and shake of factor i")]),
+]
+SETTINGS_HEAD = "The ten settings"
+SETTINGS_LEDE = ("Each factor has the same five settings, so the model has ten. Here is what each one controls and what "
+                 "raising it does. The starting values are the ones Price an option opens with.")
+SETTINGS = [  # (symbol, name, what it controls, what raising it does, slow start, fast start)
+    ("v₀", "Today's variance", "How jumpy the stock is right now. Variance is volatility squared: 0.02 is about 14% a year.",
+     "Options cost more now, short-dated ones most.", "0.02", "0.02"),
+    ("θ", "Long-run variance", "The level the jumpiness settles back to over time.",
+     "Long-dated options cost more.", "0.02", "0.02"),
+    ("κ", "Speed back to normal", f"How fast jumpiness returns to its long-run level after a shock. Half of a shock is gone "
+     f"after ln 2 ÷ κ years: {SLOW_HL} for the slow factor, {FAST_HL} for the fast one.",
+     "Shocks fade faster, so the factor matters less for long-dated options.", "0.5", "5.0"),
+    ("ξ", "Volatility of volatility", "How much the jumpiness itself jumps around.",
+     "The smile curves more: options far from today's price cost more.", "0.3", "0.5"),
+    ("ρ", "Price–volatility link", "Whether jumpiness rises when the price falls (negative) or when it rises (positive), from −1 to 1.",
+     "Toward −1: protection against falls gets dearer than bets on rises, so the smile tilts more.", "−0.7", "−0.7"),
+]
+
+# ------------------------------------------------------------------ "Explain simply": (everyday picture, what it means here)
+EXPLAIN = {
+    # the formulas
+    "f-price": ("Think of a boat on a river. The current carries it steadily downstream: that's the drift, r − q. Two kinds "
+                "of waves rock it at once, short choppy ones and long swells. How rough each kind is right now is v₁ and v₂.",
+                "So the price wanders at random, and how wildly depends on two separate, changing levels of jumpiness."),
+    "f-variance": ("Picture a ball on a spring. θ is where the spring rests, κ is how stiff it is, and ξ is how hard someone "
+                   "keeps shaking it. ρ says which way the shaking leans.",
+                   "In stock markets fear rises when prices fall, so ρ is usually negative, and that is what makes "
+                   "protection against a fall cost more."),
+    "f-cf": ("Two independent dice. To find the chance of each total you could list all 36 combinations, or combine each "
+             "die's fingerprint with one multiplication. Independence is what makes the shortcut work.",
+             "That is why two factors cost little more to price than one."),
+    "f-call": ("Like a receipt for a bet. One line is what you expect to collect if the share ends above the strike (F·P₁). "
+               "The next is the strike you expect to pay (K·P₂). The difference, brought back to today's money, is the fair price.",
+               "The integral is only the step that turns the model's fingerprint into those two chances."),
+    "f-mc": ("Instead of working out a die's average on paper, roll it 20,000 times and average the rolls.",
+             "If the formula and the simulation agree, the formula is coded right. They agree to within the simulation's "
+             "own margin of error."),
+    "f-feller": ("A ball on a spring above the floor. If the spring pulls back hard enough (2κθ) compared with how hard it's "
+                 "shaken (ξ²), the ball never touches the floor.",
+                 "Here the floor is zero variance. At the starting settings both factors break the condition, so the "
+                 "simulator stops the variance at zero instead of letting it go negative."),
+    # the settings, as weather
+    "s-v₀": ("Today's weather.", "It sets the price of options that expire soon, before the weather has time to change."),
+    "s-θ": ("The climate: what the weather averages out to.", "It matters most for options with a long time to run."),
+    "s-κ": ("How quickly the sky clears after a storm.",
+            "Option prices barely depend on it, which is why equally good fits disagree about it most."),
+    "s-ξ": ("How changeable the weather is: calm and predictable, or sun and hail in the same hour.",
+            "More of it makes extreme moves likelier, so options far from today's price get dearer."),
+    "s-ρ": ("Whether storms tend to arrive when prices drop.", "In stock markets they usually do, so ρ is usually negative."),
+    # How it works charts
+    "bend": ("Black–Scholes draws the market with a ruler: one straight volatility for every strike. Double Heston uses a "
+             "flexible curve.", "Real option prices bend, so the curve fits and the ruler can't."),
+    "decay": ("Two cups of coffee cooling: a small cup is cold in minutes, a big pot stays warm for hours. Same law, "
+              "different speeds.", f"Half of a shock to the fast factor is gone in {FAST_HL}; in the slow factor it takes {SLOW_HL}."),
+    "factors": ("Two dogs walked side by side, one on a short leash and one on a long one. The first darts about but stays "
+                "close; the second wanders slowly and far.", "The fast factor jitters and snaps back; the slow one drifts."),
+    "skew": ("A fresh scare matters a lot for next week and much less for next year, because it has time to fade.",
+             "So the extra cost of protection against a fall shrinks as expiry gets further away."),
+    "fan": ("Like a weather forecast cone: tomorrow is fairly certain, next month much less.",
+            "The shaded bands show how far simulated prices spread over a year. Averaging what an option pays across "
+            "paths like these gives the Monte Carlo price."),
+    "surface": ("A relief map. Across is the strike, down is time to expiry, and colour is the height: implied volatility.",
+                "One look shows the smile at every expiry at once, steepest for short-dated options."),
+    # Results evidence
+    "proof1": ("Like copying a song perfectly by ear, yet naming the wrong instruments.",
+               f"The optimizer reproduced the prices almost exactly, but the settings it found scored "
+               f"{CB['mean_median_skill']:.2f}, where 1.00 is always guessing the typical value."),
+    "proof2": ("Different magnets can raise the same ferrofluid surface.",
+               f"On {SHARE * 100:.0f}% of real surfaces, more than one set of settings priced the options equally well, and "
+               f"those sets were {RATIO:.1f} times as far apart as two random guesses."),
+    "hist": ("Many witnesses describe the same car. If they agreed, every bar would sit near zero.",
+             "Bars far to the right are surfaces whose equally good fits disagreed a lot."),
+    "params": ("Some things every thermometer agrees on, like the room's temperature. Others you can't read off the room "
+               "at all, like how fast it would cool if the heating went off.",
+               "Today's level (v₀) is pinned down by prices; the speeds back to normal (κ) are not."),
+    "magnets": ("Two people can draw the same smile with different pens.",
+                "Bharti Airtel's 39-day options were fitted equally well by two very different sets of ten settings."),
+    "part": ("Two maps that match street for street in the town centre but disagree about the countryside nobody visits.",
+             "Where options trade, the two fits agree. Beyond them, where no price can check them, they part."),
+    "six": ("Six different recipes that bake the same cake.",
+            "Where the spikes bunch, the prices pin that setting down; where they scatter, they don't."),
+    "stock": ("A scale that weighs you correctly every morning but reports a different height each day.",
+              "The price error stays small day after day while the distance between equally good fits stays large."),
+    "heldout": ("A student who did well on the practice papers but slipped in the real exam.",
+                f"On 8 later dates the ANN's prices were off by {G8['median_network_relative'] * 100:.1f}%, against "
+                f"{G8['median_best_fit_relative'] * 100:.1f}% for the best possible fit."),
+    "backtest": ("A new gadget that beats the old ruler about one day in twenty.",
+                 f"With the ANN's settings, Double Heston priced better than a same-day Black–Scholes fit on {BEAT_BS_NUM} of stock-days."),
+    "pinn": ("A student who also has to obey the textbook, not just copy past answers.",
+             f"On real NIFTY options the physics-informed calibrator was off by {PINN_NIFTY['ft_3']:.2f} volatility points, "
+             f"against {PINN_NIFTY['bs']:.2f} for Black–Scholes, and was the best model on {PINN_NIFTY_BEST} of 10 days."),
+}
+
+# every result: which way is good news, and an everyday picture of it (keys are RESULTS names)
+RESULT_INFO = {
+    "Double Heston against one flat volatility": ("higher", "A tailored suit against one size fits all.",
+        f"On a typical surface the best Double Heston fit had {FLAT_BETTER * 100:.0f}% less price error, and it was ahead on all 2,400."),
+    "Fitting simulated prices": ("lower", "Tracing a drawing so closely you can't see the original underneath.",
+        "The optimizer's prices matched the simulated ones almost exactly."),
+    "Reading the settings back": ("lower", "Copying a song perfectly by ear, yet naming the wrong instruments.",
+        f"{CB['mean_median_skill']:.2f} means the recovered settings were further off than always guessing the typical value (1.00)."),
+    "Several equally good fits": ("lower", "Different magnets, same ferrofluid surface.",
+        f"{SHARE * 100:.0f}% of real surfaces had more than one equally good set of settings."),
+    "How far apart they sat": ("lower", "Two maps that agree on every street but put the landmarks in very different places.",
+        f"Equally good fits sat {RATIO:.1f} times as far apart as two random sets of settings."),
+    "Today's level": ("lower", "The room temperature: every thermometer agrees on it.",
+        "Equally good fits agreed on today's level more closely than random settings would."),
+    "Speeds back to normal": ("lower", "Judging how fast a spring snaps back from one photo of it at rest.",
+        "Prices barely depend on the speed, so equally good fits put it almost anywhere."),
+    "ANN, reading the settings": ("lower", "A student who learned from worked examples and plays safe by answering near the average.",
+        f"{NET['mean_skill']:.2f} beats always guessing (1.00) and the optimizer ({CB['mean_skill']:.2f}), mostly by reading today's level well."),
+    "ANN on dates it never saw": ("lower", "Good on the practice papers, worse in the real exam.",
+        f"On new dates its prices were off by {G8['median_network_relative'] * 100:.1f}%, about four times the best possible fit."),
+    "ANN settings against Black–Scholes": ("higher", "A new gadget that beats the old ruler about one day in twenty.",
+        "Reading the settings from prices didn't make Double Heston better than the simplest model most of the time."),
+    "Next day, against Black–Scholes": ("higher", "Yesterday's forecast, judged on today's weather.",
+        "Settings carried to the next day beat Black–Scholes carried forward about one day in five."),
+    "PINN fidelity": ("lower", "A student who also has to obey the textbook.",
+        "Its prices match the exact formula to about 0.1 volatility points."),
+    "PINN, controlled test": ("higher", "Three runners, forty races, the same finishing order every time.",
+        "The PINN beat a refitted one-factor Heston on every surface, and Heston beat Black–Scholes."),
+    "PINN calibrator on NIFTY": ("lower", "Measured like a thermometer's error, in volatility points.",
+        f"{PINN_NIFTY['ft_3']:.2f} points against {PINN_NIFTY['bs']:.2f} for Black–Scholes, on quotes it never saw."),
+    "PINN against ANN (demonstration)": ("lower", "Two students, the same lessons; one also had to obey the textbook.",
+        "The one that obeyed the pricing equation was about seven times more accurate and priced nothing impossible."),
+}
+assert set(RESULT_INFO) == {r[0] for r in RESULTS}, "every result needs a direction and an explanation"
+RESULTS_DIRECTION = "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture."
+KEY_BETTER = ["lower", "lower", "higher", "lower"]  # 99%, 3.9×, 23%, 2.48 vs 2.98

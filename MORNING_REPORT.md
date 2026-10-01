@@ -1,6 +1,46 @@
 # Morning report: the Double Heston website
 
-## Fourth pass: the PINN-against-ANN 3D view now shows training (latest)
+## Fifth pass: glass, clearer explanations, "Explain simply" (latest)
+
+- **Glass in every theme.** A shared `.glass` surface, tuned per theme with `--glass-*` tokens:
+
+  | Theme | Glass |
+  |---|---|
+  | Springboard | iOS frosted |
+  | Glass | its own stage tiles |
+  | Ferro | chrome-tinted |
+  | Amber | smoked amber, square |
+  | Instrument | steel screen |
+  | Trading | dark terminal |
+
+  It covers every formula card on How it works and every section on Results, over a soft backdrop wash.
+- **How it works is centred** and rebuilt as "The model, one formula at a time". Six numbered glass cards (price, variance, independent factors, the pricing integral, Monte Carlo check, Feller) each give:
+  - the formula;
+  - what it does in plain words;
+  - a key to every symbol.
+
+  The separate steps list it replaces is gone.
+- **The ten settings:** a new section explains v₀, θ, κ, ξ and ρ: what each controls, what raising it does, and both factors' starting values.
+- **Results: which way is good.** Every number carries "▲ Higher is better" or "▼ Lower is better", as text and glyph. That covers the key numbers, the evidence panels, the ANN and PINN numbers, the PINN-against-ANN figures on Home, and every row of the results table.
+- **"Explain simply" dropdowns** after every formula, setting, chart and result. Each opens a glass squircle (a true superellipse in browsers that support `corner-shape`) with an everyday picture and what it means here. It's a native `<details>` element, so it works by keyboard and needs no script.
+  - Numbers inside the explanations come from the data, not retyped.
+  - The analogies: a boat on a river, a ball on a spring, weather for the ten settings, a song copied by ear with the wrong instruments, and different magnets under the same ferrofluid.
+- **Home's first line** is now "From a speck of pollen to Wall Street", above the question, in all six themes. The journey section below is retitled so the line isn't repeated.
+- **Copy fixes:**
+  - The How it works intro is rewritten in plain words.
+  - The simulation note now says exactly what's drawn: 60 of 400 paths, all starting at 100, with bands over all 400.
+- **Also fixed:**
+  - A class-name collision that broke the symbol key.
+  - Number tiles that collided in Instrument's wide monospace font.
+- **Checks:**
+  - parity OK;
+  - console clean;
+  - interaction tests pass in all six themes;
+  - no overflow at 390 or 1280 px;
+  - screenshots checked in all six themes for How it works, Results and the Home hero.
+  - Not run: the per-page scroll frame-rate sweep, which you stopped.
+
+## Fourth pass: the PINN-against-ANN 3D view now shows training
 
 - **Training replay.** `website/tools/pinn_vs_ann.py` now records both networks' surfaces at 11 points during training (steps 50 to 10,000) in `pinn_vs_ann_steps.json`. A slider and a "Replay training" button play them back, gliding between checkpoints. Each view shows that frame's error on the slice and its count of impossible prices.
   - I re-ran it with the same seed, and the final numbers are identical to before (0.8%, 5.7%, 35×, 187 vs 0).

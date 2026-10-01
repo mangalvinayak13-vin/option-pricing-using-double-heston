@@ -149,9 +149,11 @@ function autoRaw(n) {
 }
 
 export function nums(items, cls = 'b-num', count = true) {
-  return items.map(([n, c, raw = autoRaw(n)]) => {
+  // [value, caption, optional: raw count-up spec (object) or 'higher' | 'lower' (which way is good news)]
+  return items.map(([n, c, extra]) => {
+    const raw = extra && typeof extra === 'object' ? extra : autoRaw(n), b = typeof extra === 'string' ? extra : '';
     const counter = count && raw ? ` data-count="${raw.v}" data-fmt="${raw.f || 'num'}" data-dp="${raw.dp ?? 2}"${raw.pre ? ` data-pre="${raw.pre}"` : ''}${raw.suf ? ` data-suf="${esc(raw.suf)}"` : ''}` : '';
-    return `<div class="${cls}"><b class="num"${counter}>${esc(n)}</b><span>${esc(c)}</span></div>`;
+    return `<div class="${cls}"><b class="num"${counter}>${esc(n)}</b><span>${esc(c)}</span>${better(b)}</div>`;
   }).join('');
 }
 
@@ -169,7 +171,38 @@ const MATH = {
     `<mspace width="1em"/>${sub(mi('P'), mi('j'))}${mo('=')}<mfrac>${mn(1)}${mn(2)}</mfrac>${mo('+')}<mfrac>${mn(1)}${mi('π')}</mfrac>` +
     `<msubsup>${mo('∫')}${mn(0)}${mi('∞')}</msubsup><mi mathvariant="normal">Re</mi>${mo('[')}<mfrac><mrow>${sup(mi('e'), `<mrow>${mo('−')}${mi('i')}${mi('u')}<mi mathvariant="normal">ln</mi>${mo('(')}${mi('K')}${mo('/')}${mi('F')}${mo(')')}</mrow>`)}${sub(mi('φ'), mi('j'))}${mo('(')}${mi('u')}${mo(')')}</mrow><mrow>${mi('i')}${mi('u')}</mrow></mfrac>${mo(']')}${d(mi('u'))}`,
   feller: `${mn(2)}${sub(mi('κ'), mi('i'))}${sub(mi('θ'), mi('i'))}${mo('>')}${sup(sub(mi('ξ'), mi('i')), mn(2))}`,
+  mc: `${mi('C')}${mo('≈')}${sup(mi('e'), `<mrow>${mo('−')}${mi('r')}${mi('T')}</mrow>`)}<mfrac>${mn(1)}${mi('N')}</mfrac>` +
+    `<munderover>${mo('∑')}<mrow>${mi('n')}${mo('=')}${mn(1)}</mrow>${mi('N')}</munderover>` +
+    `<mi mathvariant="normal">max</mi>${mo('(')}<msubsup>${mi('S')}${mi('T')}<mrow>${mo('(')}${mi('n')}${mo(')')}</mrow></msubsup>${mo('−')}${mi('K')}${mo(',')}${mn(0)}${mo(')')}`,
 };
+
+// "Explain simply": a small dropdown that opens a glass squircle with an everyday picture and what it means here.
+// Native <details>, so it works by keyboard and screen reader with no script; the opening animates in CSS.
+export function explain(xp) {
+  if (!xp) return '';
+  const [picture, meaning] = xp;
+  return `<details class="xp"><summary><span>Explain simply</span><i class="xp-chev" aria-hidden="true"></i></summary>` +
+    `<div class="xp-body glass squircle"><p class="xp-pic">${esc(picture)}</p><p class="xp-mean">${esc(meaning)}</p></div></details>`;
+}
+
+// which way is good news for a number: text and glyph, never colour alone
+export const better = b => (b ? `<span class="b-better b-better-${b}">${b === 'higher' ? '▲ Higher is better' : '▼ Lower is better'}</span>` : '');
+
+// one formula as a card: the formula, what it does, what each symbol means, and the dropdown
+export function formula(ctx, [k, , plain, what, symbols]) {
+  return `<div class="b-f"><div class="b-eqn"><math display="block" displaystyle="true" alttext="${esc(plain)}">${MATH[k]}</math></div>
+    <p class="b-f-what">${esc(what)}</p>
+    <dl class="b-symkey">${symbols.map(([sym, m]) => `<div><dt>${esc(sym)}</dt><dd>${esc(m)}</dd></div>`).join('')}</dl>
+    ${explain(ctx.C.EXPLAIN[`f-${k}`])}</div>`;
+}
+
+// the ten settings: five rows, each with both factors' starting values and its dropdown
+export function settings(ctx) {
+  return `<ol class="b-set">${ctx.C.SETTINGS.map(([sym, name, ctl, up, slow, fast]) => `<li>
+    <b class="b-set-sym">${esc(sym)}</b>
+    <div class="b-set-txt"><h4>${esc(name)}</h4><p>${esc(ctl)}</p><p class="b-set-up"><span>Raise it:</span> ${esc(up)}</p>
+      <p class="b-set-start num">Starts at ${esc(slow)} (slow) and ${esc(fast)} (fast)</p>${explain(ctx.C.EXPLAIN[`s-${sym}`])}</div></li>`).join('')}</ol>`;
+}
 export function equations(ctx, cls = 'b-eq') {
   const C = ctx.C;
   return [['The price moves with two variances', 'price', C.EQ_PRICE], ['Each variance pulls back to its own level (i = 1, 2)', 'variance', C.EQ_VAR],

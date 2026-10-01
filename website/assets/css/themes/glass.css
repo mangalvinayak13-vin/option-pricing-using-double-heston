@@ -121,3 +121,9 @@ html.motion[data-theme="glass"] .gl-feature.is-in > :nth-child(2) { transition-d
 /* the accent panel's lead, number labels and link button take the panel's text colour */
 [data-theme="glass"] .gl-acc .s-lead, [data-theme="glass"] .gl-acc .b-num span { color: color-mix(in srgb, #FFFFFF 84%, transparent); }
 [data-theme="glass"] .gl-acc .btn.ghost { color: #FFFFFF; background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, #FFFFFF 50%, transparent); }
+
+/* this theme's glass (base.css .glass): formula cards, Results sections, Explain simply */
+html[data-theme="glass"] { --glass-bg: var(--tile); --glass-edge: var(--tile-edge); --glass-shine: var(--tile-hl); --glass-shadow: var(--tile-sh); --glass-r: 28px; --glass-blur: 28px; }
+html[data-theme="glass"][data-mode="dark"] { --glass-bg: var(--tile); --glass-edge: var(--tile-edge); --glass-shine: var(--tile-hl); --glass-shadow: var(--tile-sh); }
+/* a full-width Glass section is a headline over a frosted stage tile: the stage is the glass, so the outer layer stays clear */
+[data-theme="glass"] .gl-feature.glass { background: none; border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }

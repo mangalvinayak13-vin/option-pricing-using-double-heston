@@ -110,3 +110,7 @@ html.motion[data-theme="amber"] .am-p.is-in { opacity: 1; transform: none; trans
 /* the accent panel's lead, number labels and link button take the panel's text colour */
 [data-theme="amber"] .am-acc .s-lead, [data-theme="amber"] .am-acc .b-num span { color: color-mix(in srgb, var(--on-acc) 84%, transparent); }
 [data-theme="amber"] .am-acc .btn.ghost { color: var(--on-acc); background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--on-acc) 50%, transparent); }
+
+/* this theme's glass (base.css .glass): formula cards, Results sections, Explain simply */
+html[data-theme="amber"] { --glass-bg: rgb(255 251 242 / .62); --glass-edge: color-mix(in srgb, var(--acc) 38%, transparent); --glass-shine: color-mix(in srgb, var(--acc) 22%, transparent); --glass-r: 3px; }
+html[data-theme="amber"][data-mode="dark"] { --glass-bg: rgb(28 24 16 / .58); --glass-edge: color-mix(in srgb, var(--acc) 26%, transparent); --glass-shine: color-mix(in srgb, var(--acc) 18%, transparent); }

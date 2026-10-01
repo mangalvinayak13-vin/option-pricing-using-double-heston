@@ -115,3 +115,10 @@ html.motion[data-theme="trading"] .tr-pane.is-in { opacity: 1; transition: opaci
 /* the accent panel's lead, number labels and link button take the panel's text colour */
 [data-theme="trading"] .tr-acc .s-lead, [data-theme="trading"] .tr-acc .b-num span { color: color-mix(in srgb, #FFFFFF 84%, transparent); }
 [data-theme="trading"] .tr-acc .btn.ghost { color: #FFFFFF; background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, #FFFFFF 50%, transparent); }
+
+/* this theme's glass (base.css .glass): formula cards, Results sections, Explain simply */
+html[data-theme="trading"] { --glass-bg: rgb(255 255 255 / .7); --glass-edge: var(--line); --glass-shine: rgb(255 255 255 / .9); --glass-r: 6px; --glass-blur: 14px; }
+html[data-theme="trading"][data-mode="dark"] { --glass-bg: rgb(18 22 28 / .64); --glass-edge: rgb(255 255 255 / .09); --glass-shine: rgb(255 255 255 / .07); }
+/* How it works is centred: the page heading stacks instead of sitting title-left, lead-right */
+html[data-page="maths"][data-theme="trading"] .tr-pgt { flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+html[data-page="maths"][data-theme="trading"] .tr-pgt p { margin-inline: auto; max-width: 68ch; }
