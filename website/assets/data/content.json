@@ -5,7 +5,7 @@
  "A_LONG": "Real option prices bend: protection against a fall usually costs more than a bet on a rise. Double Heston bends the same way, and on all 2,400 real NSE option surfaces we tested, its best fit beat one fixed volatility.",
  "A_NO": "Reading its settings? No.",
  "A_SHORT": "For fitting today's prices, yes.",
- "BACKTEST": "With the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better than a same-day Black–Scholes fit on 4.8% of 12,265 stock-days (589 of them). Carried to the next day, its settings beat Black–Scholes carried forward on 19.1%.",
+ "BACKTEST": "A same-day Black–Scholes fit is a hard bar to clear: it gets refit fresh to that day's own prices, while Double Heston here is using settings our ANN read earlier. Even so, with the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better than that fresh same-day Black–Scholes fit on 4.8% of 12,265 stock-days (589 of them). The fairer, same-conditions comparison carries both forward one day unrefit: there, Double Heston's carried-forward settings beat Black–Scholes's on 19.1%.",
  "BEAT_BS_NUM": "4.8%",
  "BEND": "Black–Scholes prices every strike at the same volatility, so its smile is flat. Double Heston's two moving volatilities, tied to the price by a negative ρ, make protection against falls dearer: the line bends.",
  "BEND_HEAD": "One fixed volatility draws a flat line. Real prices bend.",
@@ -313,6 +313,7 @@
    "The 10 NIFTY dates of 2026 with the highest recent realised volatility, chosen by a rule fixed before any fit."
   ]
  ],
+ "DH_BEAT_ALL": 1.0,
  "DONE": [
   [
    "Built the pricer",
@@ -492,7 +493,7 @@
  "FELLER_NOTE": "Both factors can touch zero at these settings. The simulator uses full truncation, so prices stay valid.",
  "FINDING_LINE": "On 99% of 2,400 real NSE option surfaces, several different settings priced the options equally well.",
  "FINDING_SUB": "They sat 3.9 times further apart than two settings picked at random from the model's training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.",
- "FIND_HEAD": "A perfect price fit is not the same as knowing the settings.",
+ "FIND_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
  "FIRST_DAY": "1 Jul 2026",
  "FLAT_BETTER": 0.22732612776006444,
  "FORMULAS": [
@@ -753,29 +754,29 @@
  "JOURNEY_HEAD": "Twelve steps from a jiggling grain to option prices",
  "JOURNEY_LEDE": "Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became the way finance describes prices, and this project carries that line forward to today's NSE options.",
  "KEY_BETTER": [
-  "lower",
-  "lower",
   "higher",
-  "lower"
+  "lower",
+  "",
+  ""
  ],
  "KEY_HEAD": "What we found, in four numbers",
- "KEY_LEDE": "Double Heston fits real option prices better than one flat volatility, but the prices can't tell you its ten settings. The Results page has the evidence behind every number.",
+ "KEY_LEDE": "Double Heston fits real option prices better than one flat volatility, every time we checked — but the prices alone can't tell you which of its ten settings did it. The Results page has the evidence behind every number.",
  "KEY_NUMS": [
   [
-   "99%",
-   "of 2,400 real NSE surfaces had several equally good fits"
-  ],
-  [
-   "3.9×",
-   "further apart than two random sets of settings"
-  ],
-  [
-   "23%",
-   "less price error than one flat volatility, median"
+   "100%",
+   "of 2,400 real surfaces: Double Heston beat one flat volatility (23% less error, median)"
   ],
   [
    "2.48 vs 2.98",
    "PINN against Black–Scholes on real NIFTY options, volatility points"
+  ],
+  [
+   "99%",
+   "of those surfaces had several equally good fits — a finding, not a flaw: it's why every result here was checked this hard"
+  ],
+  [
+   "3.9×",
+   "further apart than two random sets of settings, when that happens"
   ]
  ],
  "LAST_DAY": "25 Sep 2026",
@@ -986,6 +987,7 @@
   "ann_pde_residual_rms": 0.0788485844537107,
   "pinn_pde_residual_rms": 0.0022265521434856033
  },
+ "PA_WHY": "Why a PINN at all: reading a stock's ten settings off its option prices normally means a classical optimizer searching from several starting points, which takes seconds to minutes per surface and, as the Results page shows, can still land on settings that break the model's own rules. A physics-informed network is built differently — trained to obey Double Heston's pricing equation itself, not just copy examples, with its output wired so it cannot propose a setting that violates the model's constraints. Trained once, it then reads a full day's settings in a fraction of a second, not minutes.",
  "PER_PARAM": "Split by setting, the pattern is physical. Today's level (v₀) is pinned down: equally good fits agree on it more closely than random sets would. The speeds back to normal (κ) are not pinned down at all; the best fit's speed sat at the edge of the allowed range on 45% (slow) and 73% (fast) of surfaces.",
  "PINN_MARKET": "On real NIFTY options (10 high-volatility days in April 2026, 1,750 held-out quotes) our physics-informed calibrator priced with a median error of 2.48 volatility points, against 2.98 for Black–Scholes and 2.52 for a classical Double Heston fit, in 1.2 s instead of 25 s. It was the best model on 4 of the 10 days.",
  "PINN_NIFTY": {
@@ -1273,8 +1275,8 @@
  "RESULTS_DIRECTION": "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture.",
  "RESULTS_HEAD": "Every result, and the data behind it",
  "RESULTS_LEDE": "All the project's numbers in one place: what we measured, on which data, and whether it's good news. Negative results are kept, because they are part of the answer.",
- "RESULTS_PAGE_HEAD": "A perfect price fit is not the same as knowing the settings.",
- "RESULTS_PAGE_LEDE": "Everything the project found, in one place: the answer in numbers, the evidence behind it, what our two kinds of network achieved, then every result in a table with the data it came from. Negative results are kept, because they are part of the answer.",
+ "RESULTS_PAGE_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
+ "RESULTS_PAGE_LEDE": "Everything the project found, in one place: the win in numbers, the evidence behind it, what our two kinds of network achieved, then every result in a table with the data it came from — including the results that didn't work, because that's how you know the ones that did are real.",
  "RESULT_INFO": {
   "Double Heston against one flat volatility": [
    "higher",

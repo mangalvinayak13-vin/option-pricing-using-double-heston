@@ -181,7 +181,9 @@ const MATH = {
 export function explain(xp) {
   if (!xp) return '';
   const [picture, meaning] = xp;
-  return `<details class="xp"><summary><span>Explain simply</span><i class="xp-chev" aria-hidden="true"></i></summary>` +
+  // unlabelled on purpose: a small glass disc with a downward triangle; aria-label carries the
+  // name for anyone not seeing it (screen reader, no CSS) -- see base.css for the "why" note.
+  return `<details class="xp"><summary class="glass" aria-label="Explain simply"><i class="xp-chev" aria-hidden="true"></i></summary>` +
     `<div class="xp-body glass squircle"><p class="xp-pic">${esc(picture)}</p><p class="xp-mean">${esc(meaning)}</p></div></details>`;
 }
 

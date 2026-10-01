@@ -35,7 +35,7 @@ function done(ctx) {
 
 function pinnAnn(ctx) {
   const C = ctx.C, [t, cap] = C.CHART_NOTES.pinnAnn;
-  return `<figure class="fig"><figcaption class="fig-t">${esc(t)}</figcaption>
+  return `<p class="s-lead">${esc(C.PA_WHY)}</p><figure class="fig"><figcaption class="fig-t">${esc(t)}</figcaption>
     <div class="pa3d-ctl">${B.seg('pa-view', [['price', 'Price'], ['error', 'Error']], 'price', 'What the surfaces show')}
       <button class="btn ghost pa3d-play" type="button" data-pa-play>Replay training</button>
       <label class="pa3d-step"><span>After <b class="num" data-pa-steplabel>${C.PA_STEPS.at(-1).toLocaleString('en-IN')}</b> training steps</span>
@@ -89,7 +89,7 @@ export function sections(page, ctx) {
     case 'market': {
       const sym = store.get('market.sym', 'RELIANCE');
       return [
-        { key: 'top', kind: 'head', title: 'Market', lead: C.MARKET_SUB },
+        { key: 'top', kind: 'head', title: 'Market', lead: C.MARKET_SUB, action: ['model.html', C.CTA.model] },
         { key: 'live', kind: 'note', body: `<p class="b-live" data-bind="live-status">${esc(C.LIVE_LOADING)}</p>` },
         { key: 'chart', size: 'wide', body: `<div class="s-stock">${B.stockHead(ctx, sym)}</div><div class="s-ctrls">${B.marketControls()}</div>
           <figure class="fig"><figcaption class="fig-t">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>

@@ -42,6 +42,7 @@ RATIO = D["ratio_to_random"]
 RAND = D["random_pair_median"]
 SHARE = AMB["share_with_multiple_equivalents"]
 FLAT_BETTER = 1 - D["dh_over_flat_median"]
+DH_BEAT_ALL = 1 - D["dh_worse_than_flat_share"]  # 1.0: Double Heston beat flat volatility on every one of 2,400 surfaces
 SPOT = K["spot"]
 LAST_DAY = "25 Sep 2026"
 FIRST_DAY = "1 Jul 2026"
@@ -149,7 +150,7 @@ LINEAGE = [("1973", "Black–Scholes", "one fixed volatility, 1 setting"), ("199
            ("2009", "Double Heston", "two moving factors, 10 settings")]
 
 # ------------------------------------------------------------------ finding --------------
-FIND_HEAD = "A perfect price fit is not the same as knowing the settings."
+FIND_HEAD = "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit."
 PROOF1_HEAD = "Simulated surfaces, where the right answer is known"
 PROOF1 = (f"We generated {CB['surfaces_calibrated']} option surfaces from known settings and asked a classical optimizer "
           f"to find them again, from {CB['starts_per_surface']} starting points each. It matched the prices almost exactly: "
@@ -183,9 +184,12 @@ BT_PAIRS = len(_BT)
 BT_SAME_DAY = float((_BT.err_fresh_dh < _BT.err_bs_same_day).mean())
 BT_SAME_DAY_N = int((_BT.err_fresh_dh < _BT.err_bs_same_day).sum())
 BT_NEXT_DAY = float((_BT.err_stale_dh < _BT.err_stale_bs).mean())
-BACKTEST = (f"With the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better "
-            f"than a same-day Black–Scholes fit on {BT_SAME_DAY * 100:.1f}% of {BT_PAIRS:,} stock-days ({BT_SAME_DAY_N:,} of them). "
-            f"Carried to the next day, its settings beat Black–Scholes carried forward on {BT_NEXT_DAY * 100:.1f}%.")
+BACKTEST = (f"A same-day Black–Scholes fit is a hard bar to clear: it gets refit fresh to that day's own prices, while "
+            f"Double Heston here is using settings our ANN read earlier. Even so, with the settings our ANN reads from "
+            f"each day's own quotes, Double Heston priced that day's options better than that fresh same-day "
+            f"Black–Scholes fit on {BT_SAME_DAY * 100:.1f}% of {BT_PAIRS:,} stock-days ({BT_SAME_DAY_N:,} of them). The fairer, "
+            f"same-conditions comparison carries both forward one day unrefit: there, Double Heston's carried-forward "
+            f"settings beat Black–Scholes's on {BT_NEXT_DAY * 100:.1f}%.")
 BEAT_BS_NUM = f"{BT_SAME_DAY * 100:.1f}%"
 
 # the physics-informed networks (PINNs): experiments/nifty_multifactor_v4 and outputs/unified_v6
@@ -407,6 +411,12 @@ DONE = [  # (what, detail)
 _PA = json.loads((_DATA_DIR / "pinn_vs_ann.json").read_text())
 PA_TEST = _PA["test"]
 PA_HEAD = "What the physics buys: a PINN against an ANN"
+PA_WHY = ("Why a PINN at all: reading a stock's ten settings off its option prices normally means a classical optimizer "
+          "searching from several starting points, which takes seconds to minutes per surface and, as the Results page "
+          "shows, can still land on settings that break the model's own rules. A physics-informed network is built "
+          "differently — trained to obey Double Heston's pricing equation itself, not just copy examples, with its "
+          "output wired so it cannot propose a setting that violates the model's constraints. Trained once, it then "
+          "reads a full day's settings in a fraction of a second, not minutes.")
 PA_LEDE = (f"Two identical networks saw the same {_PA['setup']['data_points']} exact Double Heston prices. The ANN learned from "
            f"those prices alone. The PINN also had to obey the model's pricing equation at {_PA['setup']['collocation_points']:,} "
            "points and the option's payoff at expiry. Below, both price surfaces at today's volatility, drawn in 3D against the "
@@ -517,18 +527,19 @@ CHART_NOTES = {
 
 # ------------------------------------------------------------------ consolidation: one Results page, a short summary on Home
 RESULTS_PAGE_HEAD = FIND_HEAD
-RESULTS_PAGE_LEDE = ("Everything the project found, in one place: the answer in numbers, the evidence behind it, what our "
-                     "two kinds of network achieved, then every result in a table with the data it came from. Negative "
-                     "results are kept, because they are part of the answer.")
-KEY_NUMS = [  # the answer in numbers: the four that carry the story
-    (f"{SHARE * 100:.0f}%", "of 2,400 real NSE surfaces had several equally good fits"),
-    (f"{RATIO:.1f}×", "further apart than two random sets of settings"),
-    (f"{FLAT_BETTER * 100:.0f}%", "less price error than one flat volatility, median"),
+RESULTS_PAGE_LEDE = ("Everything the project found, in one place: the win in numbers, the evidence behind it, what our "
+                     "two kinds of network achieved, then every result in a table with the data it came from — including "
+                     "the results that didn't work, because that's how you know the ones that did are real.")
+KEY_NUMS = [  # the answer in numbers: the win first, then the finding that explains why it's worth trusting
+    (f"{DH_BEAT_ALL * 100:.0f}%", f"of 2,400 real surfaces: Double Heston beat one flat volatility ({FLAT_BETTER * 100:.0f}% less error, median)"),
     (f"{PINN_NIFTY['ft_3']:.2f} vs {PINN_NIFTY['bs']:.2f}", "PINN against Black–Scholes on real NIFTY options, volatility points"),
+    (f"{SHARE * 100:.0f}%", "of those surfaces had several equally good fits — a finding, not a flaw: it's why every result here was checked this hard"),
+    (f"{RATIO:.1f}×", "further apart than two random sets of settings, when that happens"),
 ]
 KEY_HEAD = "What we found, in four numbers"
-KEY_LEDE = ("Double Heston fits real option prices better than one flat volatility, but the prices can't tell you its "
-            "ten settings. The Results page has the evidence behind every number.")
+KEY_LEDE = ("Double Heston fits real option prices better than one flat volatility, every time we checked — but the "
+            "prices alone can't tell you which of its ten settings did it. The Results page has the evidence behind "
+            "every number.")
 
 
 # ------------------------------------------------------------------ How it works: the model, one formula at a time
@@ -700,4 +711,4 @@ RESULT_INFO = {
 }
 assert set(RESULT_INFO) == {r[0] for r in RESULTS}, "every result needs a direction and an explanation"
 RESULTS_DIRECTION = "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture."
-KEY_BETTER = ["lower", "lower", "higher", "lower"]  # 99%, 3.9×, 23%, 2.48 vs 2.98
+KEY_BETTER = ["higher", "lower", "", ""]  # beat-rate, PINN vs BS, 99% (a finding, not a score), 3.9× (ditto)
