@@ -56,9 +56,11 @@ html[data-theme="springboard"][data-mode="dark"] {
 }
 @supports (corner-shape: squircle) { [data-theme="springboard"] .sb-w { border-radius: 52px; corner-shape: squircle; } }
 [data-theme="springboard"] .sb-w:hover { transform: translateY(-2px); box-shadow: 0 0 0 .5px var(--w-edge), inset 0 1px 0 var(--w-hl), var(--sh-3); }
-html.motion[data-theme="springboard"] .sb-w[data-anim] { opacity: 0; transform: translateY(18px) scale(.985); }
+html[data-theme="springboard"] { --dur-draw: 1300ms; --draw-ease: cubic-bezier(.3, .7, .2, 1); }
+/* motion signature: widgets pop open like apps launching (bouncy scale-up, quick wave) */
+html.motion[data-theme="springboard"] .sb-w[data-anim] { opacity: 0; transform: scale(.82); }
 html.motion[data-theme="springboard"] .sb-w.is-in { opacity: 1; transform: none;
-  transition: opacity .55s ease calc(var(--i, 0) * 60ms), transform .8s var(--spring-soft) calc(var(--i, 0) * 60ms), box-shadow .3s ease; }
+  transition: opacity .3s ease calc(var(--i, 0) * 45ms), transform .72s var(--spring-bouncy) calc(var(--i, 0) * 45ms), box-shadow .3s ease; }
 html.motion[data-theme="springboard"] .sb-w.is-in:hover { transform: translateY(-2px); transition: transform .5s var(--spring-snappy), box-shadow .3s ease; }
 [data-theme="springboard"] .sb-wh { display: flex; align-items: center; gap: 11px; min-height: 30px; }
 [data-theme="springboard"] .sb-wh h3 { font: 650 17px/1.25 var(--font-body); color: var(--ink); letter-spacing: -.01em; }

@@ -12,7 +12,7 @@ from pathlib import Path
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 OUT = Path(__file__).resolve().parents[1] / ".shots"
 FILES = {"home": "index.html", "market": "market.html", "model": "model.html", "maths": "how-it-works.html",
-         "finding": "finding.html", "about": "about.html", "team": "team.html", "references": "references.html"}
+         "finding": "finding.html", "results": "results.html", "about": "about.html", "team": "team.html", "references": "references.html"}
 BASE = [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1", "--virtual-time-budget=9000", "--force-prefers-reduced-motion"]
 
 

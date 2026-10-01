@@ -58,8 +58,10 @@ html[data-mode="dark"][data-theme="instrument"] .in-scope { box-shadow: inset 0 
 [data-theme="instrument"] .in-m { min-width: 0; display: flex; flex-direction: column; border-radius: 10px; background: linear-gradient(180deg, var(--surf), color-mix(in srgb, var(--surf) 70%, var(--raised)));
   box-shadow: inset 0 1px 0 rgb(255 255 255 / .7), 0 0 0 1px var(--line), var(--sh-1); }
 html[data-mode="dark"][data-theme="instrument"] .in-m { box-shadow: inset 0 1px 0 rgb(255 255 255 / .04), 0 0 0 1px var(--line), var(--sh-2); }
-html.motion[data-theme="instrument"] .in-m[data-anim] { opacity: 0; transform: translateY(12px); }
-html.motion[data-theme="instrument"] .in-m.is-in { opacity: 1; transform: none; transition: opacity .5s ease calc(var(--i, 0) * 50ms), transform .8s var(--spring-soft) calc(var(--i, 0) * 50ms); }
+html[data-theme="instrument"] { --dur-draw: 1600ms; --draw-ease: linear; }
+/* motion signature: a sweep, modules slide in from the left in order; traces draw at constant speed */
+html.motion[data-theme="instrument"] .in-m[data-anim] { opacity: 0; transform: translateX(-36px); }
+html.motion[data-theme="instrument"] .in-m.is-in { opacity: 1; transform: none; transition: opacity .45s linear calc(var(--i, 0) * 90ms), transform .55s cubic-bezier(.3, 0, .2, 1) calc(var(--i, 0) * 90ms); }
 [data-theme="instrument"] .in-mh { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
 [data-theme="instrument"] .in-mh h3 { font: 600 16.5px/1.25 var(--font-display); }
 [data-theme="instrument"] .in-meta { margin-left: auto; font: 500 13px var(--font-num); color: var(--muted); white-space: nowrap; }

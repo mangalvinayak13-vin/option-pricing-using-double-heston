@@ -8,7 +8,7 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'home:nifty': 6, 'home:option': 3, 'home:finding': 3, 'home:factors': 4, 'home:pair': 7, 'home:params': 5, 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
 
 const renderers = ctx => ({
   hero: s => `<section class="tr-hero" data-sec="${s.key}" data-anim><div class="tr-hero-in">
@@ -33,7 +33,7 @@ function page(id, ctx) {
   return `<div class="tr-top"><a class="tr-brand" href="index.html">Double<span>Heston</span></a><div class="tr-ix">${ix(nifty)}${ix(bank)}</div>
       <span class="tr-st"><i></i>${esc(ctx.C.STATUS)}</span></div>
     <div class="tr-tick">${B.ticker(ctx)}</div>
-    <main id="main" class="tr">${renderPage(id, ctx, renderers(ctx))}<div class="tr-end">${B.pageLinks(ctx, { size: 40, tint: 'azure' })}${B.footer(ctx)}</div></main>`;
+    <main id="main" class="tr">${renderPage(id, ctx, renderers(ctx))}<div class="tr-end">${B.dock(ctx, { size: 48, tint: 'azure' })}${B.footer(ctx)}</div></main>`;
 }
 
 function mount(app) {

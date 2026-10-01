@@ -18,6 +18,7 @@ DESC = {
     "model": "Price a NIFTY option with Double Heston and set it against the market's close.",
     "maths": "How Double Heston works: two variance factors, one integral, a Monte Carlo check.",
     "finding": "Why a perfect price fit doesn't tell you the model's ten settings.",
+    "results": "Every result of the Double Heston project, with the data behind it and what each number means.",
     "about": "Method, data, limits and the explainer video.",
     "team": "Who built the Double Heston project.",
     "references": "The papers and data behind the project.",

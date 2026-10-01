@@ -371,7 +371,6 @@ registerChart('decay', (w, o, ctx) => {
   for (const v of [0, 0.5, 1]) b += L(left, ys(v), w - right, ys(v), v ? 'grid' : 'axis') + T(left - 10, ys(v) + 5, `${v * 100}%`, '', 'end');
   for (const yr of [0, 0.5, 1, 1.5, 2]) b += T(xs(yr), h - bottom + 22, `${yr} yr`, '', 'middle');
   b += L(left, ys(0.5), w - right, ys(0.5), 'c-ref');
-  b += T(xs(1.2), ys(0.5) + 22, 'half of the shock gone', '', 'middle');
   const tsx = Array.from({ length: 121 }, (_, i) => i / 60);
   b += Pa(tsx.map(t => [xs(t), ys(Math.exp(-0.5 * t))]), 'c-alt a-draw slow-line', 'pathLength="1" style="stroke-width:var(--c-lw, 3.5)"');
   b += Pa(tsx.map(t => [xs(t), ys(Math.exp(-5 * t))]), 'c-model a-draw fast-line', 'pathLength="1" style="--d:250ms"');
@@ -379,7 +378,7 @@ registerChart('decay', (w, o, ctx) => {
   b += Ci(xs(hs), ys(0.5), 6.5, 'a-pop', 'style="fill:var(--c-alt, var(--ink));--d:1300ms"') + Ci(xs(hf), ys(0.5), 6.5, 'c-fill-model a-pop', 'style="--d:1100ms"');
   const slowLab = `slow: half gone in ${hs.toFixed(1)} years`, room = w - right - xs(hs) > slowLab.length * o.fs * 0.56 + 16;
   b += T(room ? xs(hs) + 12 : xs(hs) - 4, ys(0.5) - 16, slowLab, 't-strong a-fade', room ? 'start' : 'end', 'style="--d:1400ms"');
-  b += T(xs(hf) + 14, ys(0.5) - 14, `fast: ${HL.fast_days.toFixed(0)} days`, 't-strong a-fade', 'start', 'style="--d:1200ms"');
+  b += T(xs(hf) + 12, ys(0.5) + 26, `fast: half gone in ${HL.fast_days.toFixed(0)} days`, 't-strong a-fade', 'start', 'style="--d:1200ms"');
   return { h, body: b, label: `Share of a volatility shock left over two years: the fast factor loses half in ${HL.fast_days.toFixed(0)} days, the slow factor in ${hs.toFixed(1)} years` };
 });
 
@@ -582,6 +581,32 @@ registerChart('pairSix', (w, o, ctx) => {
     y += 16;
   }
   return { h: y, body: b, label: 'Each of the six equally good fits for Bharti Airtel on 21 Aug 2026, drawn as a spike on each setting\'s scale' };
+});
+
+// ------------------------------------------------------------------ the journey: a random walk through the history
+registerChart('journey', (w, o, ctx) => {
+  const ev = ctx.C.JOURNEY;
+  const h = o.h, left = 24, right = 24, top = 22, bottom = 40;
+  // seeded Gaussian random walk (Box-Muller on a small LCG), so every visitor sees the same path
+  let seed = 1905;
+  const u = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const n = 720, walk = [0];
+  for (let i = 1; i < n; i++) { const g = Math.sqrt(-2 * Math.log(u() || 1e-9)) * Math.cos(2 * Math.PI * u()); walk.push(walk[i - 1] + g); }
+  const lo = Math.min(...walk), hi = Math.max(...walk);
+  const xs = scale(0, n - 1, left, w - right), ys = scale(lo, hi, h - bottom, top);
+  const P = walk.map((v, i) => [xs(i), ys(v)]);
+  let b = L(left, h - bottom + 8, w - right, h - bottom + 8, 'axis');
+  b += Pa(P, 'c-model a-draw journey-walk', 'pathLength="1" style="--dur-draw:3200ms;stroke-width:2.2"');
+  const step = (w - left - right) / (ev.length - 1);
+  ev.forEach(([y], k) => {
+    const x = left + k * step, i = Math.round(xs.invert ? (x - left) / (w - left - right) * (n - 1) : 0);
+    const yy = ys(walk[Math.min(n - 1, Math.max(0, i))]);
+    const now = y === '2026';
+    b += L(x, yy + 7, x, h - bottom + 8, 'grid', `style="stroke-dasharray:2 4" class="a-fade"`);
+    b += Ci(x, yy, now ? 7.5 : 5.5, now ? 'c-fill-model a-pop' : 'c-dot-mk a-pop', `style="--d:${Math.round(k / (ev.length - 1) * 3000)}ms"`);
+    if (w >= 640 || k % 2 === 0 || now) b += T(x, h - 10, y, now ? 't-strong' : '', 'middle', `style="--d:${Math.round(k / (ev.length - 1) * 3000)}ms"`);
+  });
+  return { h, body: b, label: `A simulated random walk with the ${ev.length} milestones from ${ev[0][0]} to ${ev[ev.length - 1][0]} marked along it` };
 });
 
 // median helper re-export for pages

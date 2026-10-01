@@ -9,18 +9,23 @@ import { DEFAULT_PARAMS, SLIDER_KEYS } from './model.js';
 const w = (ctx, sym) => ctx.D.watch.find(x => x.sym === sym);
 
 // ------------------------------------------------------------------ ticker (seamless loop)
-export function ticker(ctx, { label = true, model = true, syms } = {}) {
+// the running banner: equity prices only (stocks, not indices, nothing from the model)
+export function ticker(ctx) {
   const C = ctx.C;
-  const items = (syms || C.FEATURED).map(s => {
-    const v = w(ctx, s);
+  const stocks = ctx.D.watch.filter(v => ctx.D.equity[v.sym]).sort((a, b) => (b.vol || 0) - (a.vol || 0)).slice(0, 24);
+  const items = stocks.map(v => {
     const [a, c] = arrow(v.pct);
-    return `<span class="tick-i"><b>${esc(s)}</b><span class="num">${inr(v.last)}</span><span class="${c} num">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
+    return `<span class="tick-i"><b>${esc(v.sym)}</b><span class="num">${inr(v.last)}</span><span class="${c} num">${a} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
   });
-  if (model) C.TICKER_MODEL.forEach(([k, v]) => items.push(`<span class="tick-i tick-m"><span class="m">${esc(k)}</span><b class="num">${esc(v)}</b></span>`));
   const run = items.join('<span class="tick-sep" aria-hidden="true"></span>') + '<span class="tick-sep" aria-hidden="true"></span>';
-  return `<div class="tick b-tick" role="region" aria-label="Closing prices on ${esc(C.LAST_DAY)} and the model's outputs, scrolling">
-    ${label ? `<span class="b-tick-lab">Close ${esc(C.LAST_DAY)}</span>` : ''}
+  return `<div class="tick b-tick" role="region" aria-label="Equity closing prices on ${esc(C.LAST_DAY)}, scrolling">
     <div class="tick-view"><div class="tick-track"><div class="tick-run">${run}</div><div class="tick-run" aria-hidden="true">${run}</div></div></div></div>`;
+}
+
+// the page dock: every page as an app icon, magnified under the cursor; sits above the footer text
+export function dock(ctx, { size = 56, tint } = {}) {
+  return `<nav class="b-dock" aria-label="All pages"><div class="b-dock-in">${ctx.C.PAGES.map(([id, file, label]) =>
+    `<a href="${file}" class="b-dock-i${id === ctx.page ? ' cur' : ''}"${id === ctx.page ? ' aria-current="page"' : ''}>${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span class="b-dock-l">${esc(label)}</span></a>`).join('')}</div></nav>`;
 }
 
 // ------------------------------------------------------------------ market
@@ -158,11 +163,11 @@ const vi = k => sub(mi('v'), mn(k));
 const MATH = {
   price: `${d(mi('S'))}${mo('=')}${mo('(')}${mi('r')}${mo('−')}${mi('q')}${mo(')')}${mi('S')}${d(mi('t'))}${mo('+')}${sqrt(vi(1))}${mi('S')}${d(sub(mi('W'), mn(1)))}${mo('+')}${sqrt(vi(2))}${mi('S')}${d(sub(mi('W'), mn(2)))}`,
   variance: `${d(sub(mi('v'), mi('i')))}${mo('=')}${sub(mi('κ'), mi('i'))}${mo('(')}${sub(mi('θ'), mi('i'))}${mo('−')}${sub(mi('v'), mi('i'))}${mo(')')}${d(mi('t'))}${mo('+')}${sub(mi('ξ'), mi('i'))}${sqrt(sub(mi('v'), mi('i')))}${d(sub(mi('Z'), mi('i')))}` +
-    `<mspace width="1em"/>${mi('corr')}${mo('(')}${d(sub(mi('W'), mi('i')))}${mo(',')}${d(sub(mi('Z'), mi('i')))}${mo(')')}${mo('=')}${sub(mi('ρ'), mi('i'))}`,
+    `<mspace width="1em"/><mi mathvariant="normal">corr</mi>${mo('(')}${d(sub(mi('W'), mi('i')))}${mo(',')}${d(sub(mi('Z'), mi('i')))}${mo(')')}${mo('=')}${sub(mi('ρ'), mi('i'))}`,
   cf: `${mi('φ')}${mo('(')}${mi('u')}${mo(')')}${mo('=')}${sub(mi('φ'), mn(1))}${mo('(')}${mi('u')}${mo(')')}${mo('·')}${sub(mi('φ'), mn(2))}${mo('(')}${mi('u')}${mo(')')}`,
   call: `${mi('C')}${mo('=')}${sup(mi('e'), `<mrow>${mo('−')}${mi('r')}${mi('T')}</mrow>`)}${mo('[')}${mi('F')}${sub(mi('P'), mn(1))}${mo('−')}${mi('K')}${sub(mi('P'), mn(2))}${mo(']')}` +
     `<mspace width="1em"/>${sub(mi('P'), mi('j'))}${mo('=')}<mfrac>${mn(1)}${mn(2)}</mfrac>${mo('+')}<mfrac>${mn(1)}${mi('π')}</mfrac>` +
-    `<msubsup>${mo('∫')}${mn(0)}${mi('∞')}</msubsup>${mi('Re')}${mo('[')}<mfrac><mrow>${sup(mi('e'), `<mrow>${mo('−')}${mi('i')}${mi('u')}${mi('ln')}${mo('(')}${mi('K')}${mo('/')}${mi('F')}${mo(')')}</mrow>`)}${sub(mi('φ'), mi('j'))}${mo('(')}${mi('u')}${mo(')')}</mrow><mrow>${mi('i')}${mi('u')}</mrow></mfrac>${mo(']')}${d(mi('u'))}`,
+    `<msubsup>${mo('∫')}${mn(0)}${mi('∞')}</msubsup><mi mathvariant="normal">Re</mi>${mo('[')}<mfrac><mrow>${sup(mi('e'), `<mrow>${mo('−')}${mi('i')}${mi('u')}<mi mathvariant="normal">ln</mi>${mo('(')}${mi('K')}${mo('/')}${mi('F')}${mo(')')}</mrow>`)}${sub(mi('φ'), mi('j'))}${mo('(')}${mi('u')}${mo(')')}</mrow><mrow>${mi('i')}${mi('u')}</mrow></mfrac>${mo(']')}${d(mi('u'))}`,
   feller: `${mn(2)}${sub(mi('κ'), mi('i'))}${sub(mi('θ'), mi('i'))}${mo('>')}${sup(sub(mi('ξ'), mi('i')), mn(2))}`,
 };
 export function equations(ctx, cls = 'b-eq') {
@@ -211,7 +216,7 @@ export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, desc = true }
 }
 
 export function footer(ctx, cls = 'b-foot') {
-  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; during market hours the site would show live Upstox prices in the same places.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
+  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; live Upstox prices are planned for the same places.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
 }
 
 export function stockPicker(ctx) {

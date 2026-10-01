@@ -8,7 +8,7 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'home:nifty': 6, 'home:option': 3, 'home:finding': 3, 'home:factors': 4, 'home:pair': 12, 'home:params': 12, 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
 
 const renderers = ctx => ({
   hero: s => `<section class="in-hero wrap" data-sec="${s.key}" data-anim>
@@ -31,7 +31,7 @@ const renderers = ctx => ({
 
 function page(id, ctx) {
   return `<div class="in-top"><a class="in-brand" href="index.html">Double Heston</a><div class="in-tickwrap">${B.ticker(ctx)}</div></div>
-    <main id="main" class="in">${renderPage(id, ctx, renderers(ctx))}<div class="wrap in-end">${B.pageLinks(ctx, { size: 46, tint: 'steel' })}${B.footer(ctx)}</div></main>`;
+    <main id="main" class="in">${renderPage(id, ctx, renderers(ctx))}<div class="wrap in-end">${B.dock(ctx, { size: 52, tint: 'steel' })}${B.footer(ctx)}</div></main>`;
 }
 
 function mount(app) {

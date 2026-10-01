@@ -8,12 +8,11 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'home:option': 3, 'home:finding': 3, 'home:nifty': 6, 'home:factors': 5, 'home:pair': 7, 'home:params': 12,
-  'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
 const CHEV = '<svg class="gl-chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M1.5 1.5 6.5 7l-5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function tile(ctx, s, i) {
-  const stage = ctx.page === 'home' && s.key === 'bend';
+  const stage = false; // every full-width section is a centred feature (below)
   const span = stage ? 12 : (TWEAK[`${ctx.page}:${s.key}`] || SPAN[s.size] || 12);
   // full-width sections read like a product page: a big centred headline, then the content on a glass stage
   if (span === 12 && s.title) {
@@ -45,7 +44,7 @@ function globalNav(ctx) {
 
 function page(id, ctx) {
   return `${globalNav(ctx)}<main id="main" class="gl">${renderPage(id, ctx, renderers(ctx))}
-    <section class="gl-band gl-band-end"><div class="wrap gl-end">${B.pageLinks(ctx, { size: 56 })}${B.footer(ctx)}</div></section></main>`;
+    <section class="gl-band gl-band-end"><div class="wrap gl-end">${B.dock(ctx, { size: 58 })}${B.footer(ctx)}</div></section></main>`;
 }
 
 function mount(app) {

@@ -49,8 +49,14 @@ html[data-theme="trading"][data-mode="dark"] {
 [data-theme="trading"] .tr-s6 { grid-column: span 6; } [data-theme="trading"] .tr-s7 { grid-column: span 7; } [data-theme="trading"] .tr-s8 { grid-column: span 8; }
 [data-theme="trading"] .tr-s12 { grid-column: 1 / -1; }
 [data-theme="trading"] .tr-pane { background: var(--surf); min-width: 0; display: flex; flex-direction: column; }
+html[data-theme="trading"] { --dur-draw: 550ms; --draw-ease: cubic-bezier(.2, .8, .2, 1); }
+/* motion signature: a terminal, panes appear almost at once; numbers flash green or red when they move */
 html.motion[data-theme="trading"] .tr-pane[data-anim] { opacity: 0; }
-html.motion[data-theme="trading"] .tr-pane.is-in { opacity: 1; transition: opacity .45s ease calc(var(--i, 0) * 35ms); }
+@keyframes tr-flash-up { from { background-color: color-mix(in srgb, var(--up) 34%, transparent); } }
+@keyframes tr-flash-dn { from { background-color: color-mix(in srgb, var(--down) 34%, transparent); } }
+html.motion[data-theme="trading"] .flash-up { animation: tr-flash-up .9s ease-out; border-radius: 4px; }
+html.motion[data-theme="trading"] .flash-dn { animation: tr-flash-dn .9s ease-out; border-radius: 4px; }
+html.motion[data-theme="trading"] .tr-pane.is-in { opacity: 1; transition: opacity .16s linear calc(var(--i, 0) * 22ms); }
 [data-theme="trading"] .tr-ph { height: 42px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--muted); }
 [data-theme="trading"] .tr-ph b { color: var(--ink); font-weight: 600; font-size: 15.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 [data-theme="trading"] .tr-ph .ico { filter: none; }
@@ -93,4 +99,11 @@ html.motion[data-theme="trading"] .tr-pane.is-in { opacity: 1; transition: opaci
   [data-theme="trading"] .tr-desk { margin-left: 0; } [data-theme="trading"] .tr-top, [data-theme="trading"] .tr-tick, [data-theme="trading"] .tr-hero,
   [data-theme="trading"] .tr-pgt, [data-theme="trading"] .tr-end { padding-left: 20px; }
   [data-theme="trading"] .tr-top { padding-right: 90px; } [data-theme="trading"] .tr-st { display: none; }
+}
+
+/* keep the desk clear of the side nav and its names on wide screens */
+@media (min-width: 900px) {
+  html[data-nav="l"][data-theme="trading"] .tr-desk { margin-left: 200px; }
+  html[data-nav="l"][data-theme="trading"] .tr-top, html[data-nav="l"][data-theme="trading"] .tr-tick, html[data-nav="l"][data-theme="trading"] .tr-hero,
+  html[data-nav="l"][data-theme="trading"] .tr-pgt, html[data-nav="l"][data-theme="trading"] .tr-end { padding-left: 200px; }
 }

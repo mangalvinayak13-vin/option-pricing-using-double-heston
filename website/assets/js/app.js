@@ -22,8 +22,9 @@ if (location.search) {
 const get = u => fetch(u).then(r => { if (!r.ok) throw new Error(`${u}: ${r.status}`); return r.json(); });
 let ctx;
 try {
-  const [C, D, P] = await Promise.all([get('assets/data/content.json'), get('assets/data/site.json'), get('assets/data/ferro_pair.json')]);
-  ctx = { page, C, D, P, pages: C.PAGES.map(([id, file, label, desc]) => ({ id, file, label, desc })) };
+  const [C, D, P, PA] = await Promise.all([get('assets/data/content.json'), get('assets/data/site.json'), get('assets/data/ferro_pair.json'),
+    get('assets/data/pinn_vs_ann.json')]);
+  ctx = { page, C, D, P, PA, pages: C.PAGES.map(([id, file, label, desc]) => ({ id, file, label, desc })) };
 } catch (e) {
   app.innerHTML = `<div class="noscript"><h1>The site's data didn't load.</h1><p>Start the local server with <code>python3 website/serve.py</code> and open http://localhost:8765.</p></div>`;
   throw e;
@@ -49,9 +50,10 @@ async function render(id) {
     nav?.destroy();
     nav = kind === 'ferro' ? createFerroNav({ pages: ctx.pages, current: page }) : createDashNav({ pages: ctx.pages, current: page, side });
     Object.assign(nav, { kind, side });
+    root.dataset.nav = kind === 'ferro' ? 'r' : side; // the page reserves a strip on this side (base.css)
   }
   unmountCharts = mountCharts(app, ctx);
-  mountControllers(app, ctx);
+  cleanups.push(mountControllers(app, ctx));
   cleanups.push(T.mount?.(app, ctx));
   observe(app);
 }

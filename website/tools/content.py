@@ -95,8 +95,8 @@ CTA = {"model": "Price an option", "finding": "See the finding", "market": "Open
 # ------------------------------------------------------------------ market ---------------
 MARKET_TITLE = "Market"
 MARKET_SUB = (f"Official NSE closing prices, {FIRST_DAY} to {LAST_DAY}, {N_DAYS} trading days. "
-              "During market hours the site shows live prices from Upstox in the same places.")
-STATUS = f"Market closed. Last close {LAST_DAY}, 15:30 IST"
+              "Live prices from Upstox are planned for the same places; this version shows the closes.")
+STATUS = f"Prices as of the NSE close, {LAST_DAY}, 15:30 IST"
 UNIVERSE = "NIFTY 50, NIFTY BANK and the 40 most traded F&O stocks: every stock we show an implied volatility for."
 
 # ------------------------------------------------------------------ model ----------------
@@ -151,7 +151,7 @@ PROOF1 = (f"We generated {CB['surfaces_calibrated']} option surfaces from known 
           "where 1.00 is what you'd get by always guessing the typical value, and lower is better.")
 PROOF1_NUMS = [("9.16 × 10⁻⁸", "median price error"), (f"{CB['mean_median_skill']:.2f}", "recovery skill (1.00 = guessing)"),
                (f"{CB['price_equivalent_subset']['mean_median_skill']:.2f}", f"on the {CB['price_equivalent_subset']['n']} closest price fits")]
-PROOF1_NET = (f"A neural network trained to read the settings from prices scores {NET['mean_skill']:.2f} on the RMSE-based "
+PROOF1_NET = (f"Our neural network (a standard ANN, which learns only from examples) reads the settings from prices and scores {NET['mean_skill']:.2f} on the RMSE-based "
               f"version of the same score, where the optimizer scores {CB['mean_skill']:.2f}. It does better by leaning "
               f"toward typical values; the one setting it reads well is today's level (v₀, {NET['param_skill']['v0_s']:.2f}).")
 PROOF2_HEAD = "Real NSE surfaces, where no answer is assumed"
@@ -166,11 +166,40 @@ PER_PARAM = ("Split by setting, the pattern is physical. Today's level (v₀) is
              "it more closely than random sets would. The speeds back to normal (κ) are not pinned down at all; the best "
              f"fit's speed sat at the edge of the allowed range on {NB['kappa_s'] * 100:.0f}% (slow) and "
              f"{NB['kappa_f'] * 100:.0f}% (fast) of surfaces.")
-HELDOUT = (f"On 8 later dates the model never saw, a trained network repriced options with a median error of "
+HELDOUT = (f"On 8 later dates it never saw, our ANN repriced options with a median error of "
            f"{G8['median_network_relative'] * 100:.1f}%, against {G8['median_best_fit_relative'] * 100:.1f}% for the best "
            f"possible fit: a gap of {G8['median_gap_pp']:.1f} points.")
-BACKTEST = ("Across 210 stocks and 60 days, prices from the network's settings lost to a single flat volatility on "
-            "every one of the 210 stocks.")
+
+# the option backtest (outputs/option_backtest/option_backtest_pairs.csv): ANN-read settings vs Black-Scholes
+import pandas as _pd  # noqa: E402
+_BT = _pd.read_csv(Path(__file__).resolve().parents[2] / "outputs" / "option_backtest" / "option_backtest_pairs.csv")
+BT_PAIRS = len(_BT)
+BT_SAME_DAY = float((_BT.err_fresh_dh < _BT.err_bs_same_day).mean())
+BT_SAME_DAY_N = int((_BT.err_fresh_dh < _BT.err_bs_same_day).sum())
+BT_NEXT_DAY = float((_BT.err_stale_dh < _BT.err_stale_bs).mean())
+BACKTEST = (f"With the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better "
+            f"than a same-day Black–Scholes fit on {BT_SAME_DAY * 100:.1f}% of {BT_PAIRS:,} stock-days ({BT_SAME_DAY_N:,} of them). "
+            f"Carried to the next day, its settings beat Black–Scholes carried forward on {BT_NEXT_DAY * 100:.1f}%.")
+BEAT_BS_NUM = f"{BT_SAME_DAY * 100:.1f}%"
+
+# the physics-informed networks (PINNs): experiments/nifty_multifactor_v4 and outputs/unified_v6
+_RM = json.loads((Path(__file__).resolve().parents[2] / "outputs" / "unified_v6" / "finetune_real_summary.json").read_text())["NIFTY"]
+PINN_NIFTY = {k: _RM["median_iv_rmse"][k] * 100 for k in ("ft_3", "dh_cold", "sh", "bs")}
+PINN_NIFTY_BEST = _RM["dates_best"]["ft_3"]
+PINN_NIFTY_SECONDS = (_RM["median_seconds"]["ft_3"], _RM["median_seconds"]["dh_cold"])
+NN_HEAD = "Two kinds of network: an ANN and a PINN"
+ANN_TEXT = ("Our ANN (a standard artificial neural network) learns to read the ten settings from prices purely from "
+            "examples. It produced the settings behind the 210-stock studies on this site.")
+PINN_TEXT = ("Our PINNs (physics-informed neural networks) are also trained on the model's own pricing equation, so their "
+             "answers must obey the physics, not just match examples. The Double Heston PINN learned from exact prices plus "
+             "the pricing equation at 18,000 points, and reproduces the exact pricer to 1.1 × 10⁻⁵ (about 0.1 volatility "
+             "points) on 8,192 points it never saw. On 40 controlled test surfaces it beat a refitted one-factor Heston, which "
+             "beat Black–Scholes, every time.")
+PINN_MARKET = (f"On real NIFTY options (10 high-volatility days in April 2026, 1,750 held-out quotes) our physics-informed "
+               f"calibrator priced with a median error of {PINN_NIFTY['ft_3']:.2f} volatility points, against "
+               f"{PINN_NIFTY['bs']:.2f} for Black–Scholes and {PINN_NIFTY['dh_cold']:.2f} for a classical Double Heston fit, in "
+               f"{PINN_NIFTY_SECONDS[0]:.1f} s instead of {PINN_NIFTY_SECONDS[1]:.0f} s. It was the best model on "
+               f"{PINN_NIFTY_BEST} of the 10 days.")
 REL_STOCK = D["per_stock"]["RELIANCE"]
 
 
@@ -193,7 +222,7 @@ VIDEO_SRC = ""
 METHOD = [
     "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
     f"Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. "
-    "Live prices on the site come from Upstox.",
+    "The site shows NSE closing prices; live Upstox prices are planned.",
     "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat "
     "volatility, which a true best fit can never lose to.",
 ]
@@ -202,7 +231,7 @@ LIMITS = [
     "Dividends are supported but set to zero; one interest rate for every maturity.",
     "Prices are frictionless. Real trading crosses a bid–ask spread.",
     "End-of-day research data has closing prices only, no bid–ask quotes.",
-    "Only 11 to 19 of the 20 target option slots are quoted on a typical day.",
+    "A typical surface has 17 of the 20 target option slots quoted (between 10 and 20 on 80% of surfaces).",
 ]
 ALSO = ("Whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like "
         "last month, tested walk-forward over 60 stocks and ten years.")
@@ -213,13 +242,14 @@ TEAM_INTRO = "Built for [Event] at [College]. Replace each placeholder with the 
 TEAM = [("[Name]", "[Role: e.g. model and pricer]"), ("[Name]", "[Role: e.g. data pipeline]"),
         ("[Name]", "[Role: e.g. website and design]"), ("[Name]", "[Role: e.g. research and report]")]
 SUPERVISOR = ("[Supervisor name]", "[Department], [College]")
-THANKS = ["NSE, for the public end-of-day files the research uses.", "Upstox, for the market-data API behind the live prices.",
+THANKS = ["NSE, for the public end-of-day files the research uses.", "Upstox, whose market-data API we plan to use for live prices.",
           "The authors of NumPy, SciPy and pandas."]
 
 # ------------------------------------------------------------------ references -----------
 REFS = [
     ("Models", [
         ("Black, F. and Scholes, M. (1973)", "The pricing of options and corporate liabilities.", "Journal of Political Economy 81(3)."),
+        ("Merton, R. C. (1973)", "Theory of rational option pricing.", "Bell Journal of Economics and Management Science 4(1)."),
         ("Heston, S. L. (1993)", "A closed-form solution for options with stochastic volatility with applications to bond and currency options.", "Review of Financial Studies 6(2)."),
         ("Christoffersen, P., Heston, S. and Jacobs, K. (2009)", "The shape and term structure of the index option smirk: why multifactor stochastic volatility models work so well.", "Management Science 55(12)."),
     ]),
@@ -231,7 +261,16 @@ REFS = [
         ("Glasserman, P. (2003)", "Monte Carlo Methods in Financial Engineering.", "Springer."),
     ]),
     ("History", [
+        ("Brown, R. (1828)", "A brief account of microscopical observations on the particles contained in the pollen of plants.", "Philosophical Magazine 4."),
         ("Bachelier, L. (1900)", "Théorie de la spéculation.", "Annales scientifiques de l'École normale supérieure 17."),
+        ("Einstein, A. (1905)", "Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen.", "Annalen der Physik 17."),
+        ("Wiener, N. (1923)", "Differential space.", "Journal of Mathematics and Physics 2."),
+        ("Itô, K. (1944)", "Stochastic integral.", "Proceedings of the Imperial Academy, Tokyo 20."),
+        ("Samuelson, P. A. (1965)", "Rational theory of warrant pricing.", "Industrial Management Review 6."),
+        ("Rubinstein, M. (1994)", "Implied binomial trees.", "Journal of Finance 49(3)."),
+    ]),
+    ("Neural networks", [
+        ("Raissi, M., Perdikaris, P. and Karniadakis, G. E. (2019)", "Physics-informed neural networks: a deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations.", "Journal of Computational Physics 378."),
     ]),
     ("Data and software", [
         ("National Stock Exchange of India", "Bhavcopy end-of-day files, cash market and F&O, July to September 2026.", "nseindia.com."),
@@ -250,6 +289,7 @@ PAGES = [  # (id, file, label, short description)
     ("model", "model.html", "The model", "price an option"),
     ("maths", "how-it-works.html", "How it works", "the equations"),
     ("finding", "finding.html", "The finding", "why a fit isn't an answer"),
+    ("results", "results.html", "Results", "every number, explained"),
     ("about", "about.html", "About", "video, method, limits"),
     ("team", "team.html", "Team", "who built it"),
     ("references", "references.html", "References", "papers and data"),
@@ -321,3 +361,137 @@ FAN_NOTE = (f"Sixty of the simulated one-year paths from 100, with the middle 50
 FACTORS_HEAD = "Two volatilities, one fast and one slow."
 FACTORS = (f"Each factor gets knocked about and drifts back to its long-run level. The fast one (κ 5.0) loses half "
            f"of any shock in {FAST_HL}; the slow one (κ 0.5) takes {SLOW_HL}. Same kind of process, different clocks.")
+
+
+# ------------------------------------------------------------------ home: from Einstein's random walk to Wall Street
+JOURNEY_HEAD = "From a speck of pollen to Wall Street"
+JOURNEY_LEDE = ("Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became "
+                "the way finance describes prices, and this project carries that line forward to today's NSE options.")
+JOURNEY = [  # (year, who, what happened)
+    ("1827", "Robert Brown", "Under a microscope, tiny particles from pollen grains jiggle in water without stopping. Nobody can say why."),
+    ("1900", "Louis Bachelier", "Five years before Einstein, a Paris thesis models stock prices as a random walk and prices options with it."),
+    ("1905", "Albert Einstein", "Explains the jiggling: water molecules kick the particles at random. The spread grows with the square root of time."),
+    ("1923", "Norbert Wiener", "Turns Brownian motion into exact mathematics: the Wiener process."),
+    ("1944", "Kiyosi Itô", "Invents calculus for random paths. Itô's lemma becomes the working tool of quantitative finance."),
+    ("1965", "Paul Samuelson", "Prices follow geometric Brownian motion: the random walk applies to returns, so prices can't go negative."),
+    ("1973", "Black, Scholes and Merton", "A formula for the fair price of an option, with one fixed volatility."),
+    ("1987", "The crash", "After Black Monday, index options stop fitting one volatility. Protection against falls costs more: the smile appears."),
+    ("1993", "Steven Heston", "Volatility gets its own random walk, and options still have a near-closed-form price."),
+    ("2009", "Christoffersen, Heston and Jacobs", "Two volatility factors, one fast and one slow: Double Heston, ten settings."),
+    ("2019", "Raissi, Perdikaris and Karniadakis", "Physics-informed neural networks: networks trained to obey the equations of physics."),
+    ("2026", "This project", "Double Heston on real NSE options, priced with our own code and read with an ANN and PINNs."),
+]
+DONE_HEAD = "What we did"
+DONE = [  # (what, detail)
+    ("Built the pricer", f"Double Heston by its characteristic function, checked by a 20,000-path Monte Carlo simulation: ₹{inr(K['dh'])} against ₹{inr(K['mc'])} ± {K['mc_se']:.2f}."),
+    ("Collected real data", "Official NSE end-of-day files for 210 stocks over 60 trading days: 12,480 real option surfaces."),
+    ("Trained an ANN", "A standard neural network that reads the model's ten settings from prices, learned from examples."),
+    ("Trained PINNs", "Physics-informed networks that also obey Double Heston's pricing equation; one reproduces the exact pricer to 1.1 × 10⁻⁵."),
+    ("Asked the hard question", "On 2,400 real surfaces, fitted from 16 starts each: can the prices tell us the settings? On 99% of them, no."),
+    ("Found and fixed three bugs", "Then re-ran every real-market result and checked each against a flat volatility, which a true best fit can never lose to."),
+    ("Built this site", "Every price on it comes from the project's own pricer; every number from NSE files or the research outputs."),
+]
+
+# ------------------------------------------------------------------ home: PINN vs ANN, computed (tools/pinn_vs_ann.py)
+_PA = json.loads((_DATA_DIR / "pinn_vs_ann.json").read_text())
+PA_TEST = _PA["test"]
+PA_HEAD = "What the physics buys: a PINN against an ANN"
+PA_LEDE = (f"Two identical networks saw the same {_PA['setup']['data_points']} exact Double Heston prices. The ANN learned from "
+           f"those prices alone. The PINN also had to obey the model's pricing equation at {_PA['setup']['collocation_points']:,} "
+           "points and the option's payoff at expiry. Below, both price surfaces at today's volatility, drawn in 3D against the "
+           "exact pricer.")
+_NEG = lambda net: sum(1 for row in _PA["slice"][net] for v in row if v < -0.002)  # below zero by > 0.2% of the strike
+_NPTS = len(_PA["slice"]["s"]) * len(_PA["slice"]["tau"])
+PA_RESULT = (f"On 2,000 fresh points the PINN's error was {PA_TEST['pinn_rel_rmse'] * 100:.1f}% of the average price, against "
+             f"{PA_TEST['ann_rel_rmse'] * 100:.1f}% for the ANN, and it broke the pricing equation "
+             f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f} times less. Where it had no data, the ANN "
+             f"guessed: on the slice above it priced {_NEG('ann')} of {_NPTS:,} points below zero by more than 0.2% of the "
+             f"strike, which no option can be worth. The PINN priced {'none' if _NEG('pinn') == 0 else _NEG('pinn')}.")
+PA_NOTE = ("A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, "
+           "same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.")
+PA_NUMS = [(f"{PA_TEST['pinn_rel_rmse'] * 100:.1f}%", "PINN error, share of the average price"),
+           (f"{PA_TEST['ann_rel_rmse'] * 100:.1f}%", "ANN error on the same points"),
+           (f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f}×", "smaller pricing-equation error for the PINN")]
+
+# ------------------------------------------------------------------ results (stats) page
+RESULTS_HEAD = "Every result, and the data behind it"
+RESULTS_LEDE = ("All the project's numbers in one place: what we measured, on which data, and whether it's good news. "
+                "Negative results are kept, because they are part of the answer.")
+DATA_SETS = [  # (name, size, what it is)
+    ("Market display", f"{N_DAYS} trading days", f"NSE closing prices, {FIRST_DAY} to {LAST_DAY}, for NIFTY 50, NIFTY BANK and the stocks on the Market page."),
+    ("NIFTY option chain", f"{len(D['chain'])} strikes", f"NIFTY options expiring {EXPIRY}, closing prices on {LAST_DAY}, with traded volume, open interest and trades above zero."),
+    ("Real option surfaces", "12,480 surfaces", "210 NSE stocks × 60 trading days (12,600 attempted, 120 rejected by the data checks). Each surface targets 20 quotes; a typical one has 17."),
+    ("Ambiguity study", "2,400 surfaces", "The 40 most traded of those stocks over the same 60 days, each surface fitted from 16 starting points."),
+    ("Simulated surfaces", f"{CB['surfaces_calibrated']} surfaces", "Made by our own pricer from known settings, so the right answer is known."),
+    ("ANN test set", f"{NET['test_samples']:,} surfaces", "Simulated surfaces the ANN never saw while learning."),
+    ("Held-out dates", "8 dates", "Later trading dates the ANN never saw, used to test it on real quotes."),
+    ("Backtest", f"{BT_PAIRS:,} stock-days", "Every stock and pair of consecutive trading days: settings from one day used to price the next."),
+    ("PINN training", "100,000 + 18,000", "Exact Double Heston prices to learn from, plus points where the pricing equation itself is enforced."),
+    ("NIFTY, high volatility", "10 days, 1,750 quotes", "The 10 NIFTY dates of 2026 with the highest recent realised volatility, chosen by a rule fixed before any fit."),
+]
+RESULTS = [  # (result, value, what it measures, verdict: good | mixed | bad)
+    ("Double Heston against one flat volatility", f"{FLAT_BETTER * 100:.0f}% less error", "Median price error of the best fit on 2,400 real surfaces; it was ahead on every one.", "good"),
+    ("Fitting simulated prices", "9.16 × 10⁻⁸", "Median price error of a classical optimizer on 60 simulated surfaces.", "good"),
+    ("Reading the settings back", f"{CB['mean_median_skill']:.2f}", "Recovery skill on the same surfaces; 1.00 is always guessing the typical value, lower is better.", "bad"),
+    ("Several equally good fits", f"{SHARE * 100:.0f}%", "Share of 2,400 real surfaces where more than one set of settings priced equally well (within 10% of the best price error).", "bad"),
+    ("How far apart they sat", f"{RATIO:.1f}×", f"Median distance between equally good fits ({AMB['median_dispersion']:.2f}) against two random settings ({RAND:.2f}).", "bad"),
+    ("Today's level", f"{[p for p in D['per_param'] if p['name'] == 'v0_s'][0]['fits']:.2f}", "Distance between equally good fits for the slow factor's level, against about 0.95 at random: pinned down.", "good"),
+    ("Speeds back to normal", f"{[p for p in D['per_param'] if p['name'] == 'kappa_s'][0]['fits']:.2f}", "Distance for the slow factor's speed, against about 0.90 at random: not pinned down at all.", "bad"),
+    ("ANN, reading the settings", f"{NET['mean_skill']:.2f}", f"RMSE-based recovery skill on {NET['test_samples']:,} simulated surfaces, against {CB['mean_skill']:.2f} for the optimizer.", "mixed"),
+    ("ANN on dates it never saw", f"{G8['median_network_relative'] * 100:.1f}%", f"Median repricing error on 8 later dates, against {G8['median_best_fit_relative'] * 100:.1f}% for the best possible fit.", "bad"),
+    ("ANN settings against Black–Scholes", BEAT_BS_NUM, f"Stock-days where Double Heston with the ANN's settings priced better than a same-day Black–Scholes fit ({BT_SAME_DAY_N:,} of {BT_PAIRS:,}).", "bad"),
+    ("Next day, against Black–Scholes", f"{BT_NEXT_DAY * 100:.1f}%", "Stock-days where yesterday's settings beat yesterday's Black–Scholes volatility on today's quotes.", "mixed"),
+    ("PINN fidelity", "1.1 × 10⁻⁵", "Price error of the Double Heston PINN against the exact pricer on 8,192 points it never saw (0.1 volatility points).", "good"),
+    ("PINN, controlled test", "40 of 40", "Surfaces where the PINN beat a refitted one-factor Heston, which beat Black–Scholes.", "good"),
+    ("PINN calibrator on NIFTY", f"{PINN_NIFTY['ft_3']:.2f} pts", f"Median error in volatility points on 1,750 held-out quotes, against {PINN_NIFTY['bs']:.2f} for Black–Scholes; best on {PINN_NIFTY_BEST} of 10 days.", "good"),
+    ("PINN against ANN (demonstration)", f"{PA_TEST['pinn_rel_rmse'] * 100:.1f}% vs {PA_TEST['ann_rel_rmse'] * 100:.1f}%", "Price error of two identical networks trained on the same data, with and without the pricing equation.", "good"),
+]
+TERMS = [  # (term, plain meaning)
+    ("Option surface", "All of one stock's option prices on one day, across strikes and expiries."),
+    ("Setting (parameter)", "One of Double Heston's ten numbers: for each factor, today's level, long-run level, speed back to normal, volatility of volatility and link to price moves."),
+    ("Equally good fit", "A set of settings whose price error is within 10% of the best one found for that surface."),
+    ("Distance between fits", "How far apart two sets of settings are, measured in spreads of the settings seen in the training data, so every setting counts equally."),
+    ("Recovery skill", "Error in the settings divided by the error from always guessing the typical value. 1.00 is no better than guessing; lower is better."),
+    ("Volatility point", "One percentage point of implied volatility, for example 15% against 16%."),
+    ("Stock-day", "One stock on one trading day."),
+    ("Held out", "Data the model never saw while it was being built, kept back to test it fairly."),
+]
+
+# ------------------------------------------------------------------ titles and how-to-read lines for every chart
+CHART_NOTES = {
+    "smileBend": ("Implied volatility by strike, 30 days to expiry",
+                  "Strike on the left axis is a percentage of today's price; height is implied volatility. The dashed line is Black–Scholes' one volatility; the solid line is Double Heston at its starting settings."),
+    "marketSmile": ("Market against model, by strike",
+                    "Rings are NSE closing prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks today's NIFTY level."),
+    "candles": ("Daily candlesticks with volume",
+                "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath; the tag on the right is the last close."),
+    "indexLine": ("Closing level by day", "One point per trading day; the shaded area sits under the line. Hover for the date and level."),
+    "hist": ("How far apart equally good fits landed, per surface",
+             "Each bar counts surfaces by the distance between their equally good fits. The dashed line is the typical distance between two random settings; the solid line is the median for equally good fits."),
+    "paramBars": ("Distance between equally good fits, setting by setting",
+                  "Bars show how far apart equally good fits landed for each setting; the tick shows two random settings. A bar shorter than its tick means the prices pin that setting down."),
+    "stockPanel": ("One stock over 60 trading days",
+                   "Top: price error each day for the best Double Heston fit (solid) and one flat volatility (dashed). Bottom: how far apart that day's equally good fits landed; the dashed line is two random settings."),
+    "skew": ("Skew by time to expiry",
+             "How many volatility points dearer protection against a fall is than a bet on a rise, at each expiry. The time axis is stretched so short expiries are readable."),
+    "decay": ("How fast each factor forgets a shock",
+              "Share of a volatility shock left after each period. Dots mark the half-life: where half the shock is gone."),
+    "fan": ("Simulated price paths for one year",
+            "Thin lines are individual simulated paths from 100; shading covers the middle 50% and 90% of 400 paths; the bold line is the median."),
+    "surface": ("Implied volatility for every strike and expiry",
+                "Rows are time to expiry, columns are strike as a percentage of today's price. Darker cells mean higher implied volatility; ≈ 0 marks options worth almost nothing."),
+    "pairPool": ("Bharti Airtel, 39-day options: two fits on top of each other",
+                 "Rings are the market's prices as implied volatility; the filled curve is fit A and the dotted line fit B. They lie almost exactly on each other."),
+    "pairMagnets": ("The ten settings of each fit",
+                    "One spike per setting; height is the setting's size on its own scale. Compare the rows: same prices, very different settings."),
+    "pairPart": ("At-the-money volatility by time to expiry, both fits",
+                 "The shaded band covers the expiries that traded that day. Rings are the market's at-the-money prices. Past the band, the fits disagree."),
+    "pairSix": ("Each setting of all six equally good fits",
+                "Each spike is one fit's value on that setting's scale. Spikes bunched together mean the prices pin the setting; spread out means they don't."),
+    "factorTrace": ("The two variance factors, simulated live",
+                    "The model's own variance equation at its starting settings, run forward as you watch, shown as volatility in percent. The fast factor jitters and snaps back; the slow one drifts."),
+    "pinnAnn": ("Option price surface at today's volatility: ANN, PINN and the exact pricer",
+                "Height is the call price as a share of the strike; across is the share price as a share of the strike, and depth is time to expiry. Coloured surfaces are each network; the grey mesh is the exact pricer. Drag to turn."),
+    "journey": ("A random walk, drawn as the timeline unfolds",
+                "A simulated Brownian path: each step is a random kick, the motion Einstein explained and finance borrowed."),
+}

@@ -6,7 +6,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 const W = +(process.argv[2] || 390);
 const THEMES = ['springboard', 'glass', 'ferro', 'amber', 'instrument', 'trading'];
-const FILES = ['index.html', 'market.html', 'model.html', 'how-it-works.html', 'finding.html', 'about.html', 'team.html', 'references.html'];
+const FILES = ['index.html', 'market.html', 'model.html', 'how-it-works.html', 'finding.html', 'results.html', 'about.html', 'team.html', 'references.html'];
 const PORT = 9335;
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', ['--headless=new', `--remote-debugging-port=${PORT}`,
   `--user-data-dir=/tmp/dh-of-${Date.now()}`, 'about:blank'], { stdio: 'ignore' });

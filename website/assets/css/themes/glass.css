@@ -74,8 +74,10 @@ html.motion[data-theme="glass"] .is-in > :nth-child(4) { transition-delay: 270ms
   --glint: color-mix(in srgb, var(--acc) 12%, transparent);
 }
 @supports (corner-shape: squircle) { [data-theme="glass"] .gl-tile { border-radius: 54px; corner-shape: squircle; } }
-html.motion[data-theme="glass"] .gl-tile[data-anim] { opacity: 0; transform: translateY(24px) scale(.98); }
-html.motion[data-theme="glass"] .gl-tile.is-in { opacity: 1; transform: none; transition: opacity .7s ease calc(var(--i, 0) * 70ms), transform 1s var(--spring-soft) calc(var(--i, 0) * 70ms); }
+html[data-theme="glass"] { --dur-draw: 2000ms; --draw-ease: cubic-bezier(.16, 1, .3, 1); }
+/* motion signature: tiles settle into place from slightly larger, slow and soft */
+html.motion[data-theme="glass"] .gl-tile[data-anim] { opacity: 0; transform: scale(1.07); }
+html.motion[data-theme="glass"] .gl-tile.is-in { opacity: 1; transform: none; transition: opacity 1s ease calc(var(--i, 0) * 110ms), transform 1.4s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * 110ms); }
 [data-theme="glass"] .gl-th { display: flex; align-items: center; gap: 13px; }
 [data-theme="glass"] .gl-th h3 { font: 650 clamp(20px, 1.7vw, 24px)/1.2 var(--font-display); letter-spacing: -.015em; }
 [data-theme="glass"] .gl-note { margin-left: auto; font-size: 14px; color: var(--muted); white-space: nowrap; }

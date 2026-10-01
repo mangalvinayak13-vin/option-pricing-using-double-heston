@@ -74,10 +74,11 @@ export function createDashNav({ pages, current, side = 'l' }) {
       const dy = cy - ys[i];
       const g = Math.exp(-(dy * dy) / (2 * SIGMA * SIGMA));
       const s = P * g;
-      const tS = 1 + (d.page ? 1.5 : 2.3) * s;
-      let tR = Math.atan2(dy, dxAbs) * 180 / Math.PI * s * 0.85;
-      tR = clamp(tR, -34, 34) * (side === 'l' ? 1 : -1);
-      const tX = (side === 'l' ? 1 : -1) * 5 * s;
+      // short at rest; the dashes nearest the cursor grow longest (no tilt)
+      const tS = 1 + (d.page ? 2.4 : 2.9) * s;
+      const tR = 0;
+
+      const tX = (side === "l" ? 1 : -1) * 3 * s;
       const tLo = d.page ? P * (0.4 + 0.6 * Math.exp(-(dy * dy) / (2 * 110 * 110))) : 0;
       if (reduced) { d.s = tS; d.r = tR; d.x = tX; d.lo = tLo; d.vs = d.vr = d.vx = d.vlo = 0; }
       else {
@@ -88,7 +89,7 @@ export function createDashNav({ pages, current, side = 'l' }) {
       }
       if (Math.abs(tS - d.s) + Math.abs(d.vs) > 0.002 || Math.abs(tR - d.r) + Math.abs(d.vr) > 0.05 ||
           Math.abs(tLo - d.lo) + Math.abs(d.vlo) > 0.003) moving = true;
-      els[i].style.transform = `translateX(${d.x.toFixed(2)}px) rotate(${d.r.toFixed(2)}deg) scaleX(${d.s.toFixed(3)})`;
+      els[i].style.transform = `translateX(${d.x.toFixed(2)}px) scaleX(${d.s.toFixed(3)})`;
       if (d.page) {
         const k = i / (MINOR + 1);
         const lo = clamp(d.lo, 0, 1);

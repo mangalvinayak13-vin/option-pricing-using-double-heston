@@ -7,13 +7,39 @@ import { retarget } from './motion.js';
 import { renderChart, morphPath } from './charts.js';
 import { price, DEFAULT_PARAMS, OFFLINE_HELP, feller } from './model.js';
 import { stockLine } from './blocks.js';
+import { createPA3D } from './pa3d.js';
 
 export function mountControllers(scope, ctx) {
+  const stops = [];
   segs(scope);
   videoSlots(scope, ctx);
   if (scope.querySelector('[data-ctl="model-form"], [data-param]')) modelPage(scope, ctx);
   if (scope.querySelector('[data-chart="candles"]')) marketPage(scope, ctx);
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
+  $$('[data-pa3d]', scope).forEach(el => stops.push(createPA3D(el, ctx.PA)));
+  $$('.b-dock-in', scope).forEach(d => stops.push(dockMagnify(d)));
+  return () => stops.forEach(s => s && s.stop && s.stop());
+}
+
+// the page dock magnifies under the cursor like the macOS Dock (transform only; rAF-throttled)
+function dockMagnify(dock) {
+  if (!matchMedia('(hover: hover)').matches || !document.documentElement.classList.contains('motion')) return null;
+  const items = [...dock.querySelectorAll('.b-dock-i')];
+  let raf = 0, x = null;
+  const apply = () => {
+    raf = 0;
+    items.forEach(it => {
+      const r = it.getBoundingClientRect();
+      const d = x == null ? 1e9 : Math.abs(x - (r.left + r.width / 2));
+      const s = 1 + 0.38 * Math.exp(-(d * d) / (2 * 64 * 64));
+      it.style.transform = s > 1.001 ? `translateY(${(-(s - 1) * 26).toFixed(1)}px) scale(${s.toFixed(3)})` : '';
+    });
+  };
+  const move = e => { x = e.clientX; raf ||= requestAnimationFrame(apply); };
+  const leave = () => { x = null; raf ||= requestAnimationFrame(apply); };
+  dock.addEventListener('pointermove', move);
+  dock.addEventListener('pointerleave', leave);
+  return { stop() { dock.removeEventListener('pointermove', move); dock.removeEventListener('pointerleave', leave); } };
 }
 
 // the explainer video: loads only when someone presses play; until a file is set, the slot says so
@@ -80,13 +106,22 @@ function modelPage(scope, ctx) {
   // once the model has been asked, its numbers are live: stop entrance count-ups from writing the defaults
   const liveNumbers = () => ['dh', 'gap'].forEach(k => bind(k).forEach(el => { el.removeAttribute('data-count'); el._cancel?.(); }));
 
+  // a number that moved flashes up or down (only the Trading theme styles .flash-up / .flash-dn)
+  const flash = (el, to) => {
+    const from = parseFloat(el.dataset.v);
+    if (!Number.isFinite(from) || !Number.isFinite(to) || Math.abs(to - from) < 1e-9) return;
+    el.classList.remove('flash-up', 'flash-dn');
+    void el.offsetWidth;
+    el.classList.add(to > from ? 'flash-up' : 'flash-dn');
+  };
+
   function apply(res) {
     liveNumbers();
     const mkt = marketSide();
-    bind('dh').forEach(el => retarget(el, res.price, { f: fmt.inr, pre: '₹' }));
-    bind('dh-iv').forEach(el => retarget(el, res.iv, { suf: '%' }));
+    bind('dh').forEach(el => { flash(el, res.price); retarget(el, res.price, { f: fmt.inr, pre: '₹' }); });
+    bind('dh-iv').forEach(el => { flash(el, res.iv); retarget(el, res.iv, { suf: '%' }); });
     const gap = res.price - mkt;
-    bind('gap').forEach(el => retarget(el, gap, { f: v => (v < 0 ? '−' : '+') + '₹' + inr(Math.abs(v)) }));
+    bind('gap').forEach(el => { flash(el, gap); retarget(el, gap, { f: v => (v < 0 ? '−' : '+') + '₹' + inr(Math.abs(v)) }); });
     if (res.mc) bind('mc').forEach(el => { el.textContent = `₹${inr(res.mc.price)} ± ${res.mc.se.toFixed(2)}`; });
     const g = res.greeks;
     [['delta', 3], ['gamma', 5], ['vega', 1], ['theta', 2], ['rho', 1]].forEach(([k, dp]) => bind(`g-${k}`).forEach(el => retarget(el, g[k], { dp })));

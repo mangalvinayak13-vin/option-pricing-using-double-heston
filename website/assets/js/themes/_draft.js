@@ -15,6 +15,6 @@ const r = {
 
 export default {
   nav: { kind: 'dashes', side: 'l' },
-  page: (id, ctx) => `<main id="main" class="dr">${B.ticker(ctx)}${renderPage(id, ctx, r)}<div class="wrap">${B.pageLinks(ctx)}${B.footer(ctx)}</div></main>`,
+  page: (id, ctx) => `<main id="main" class="dr">${B.ticker(ctx)}${renderPage(id, ctx, r)}<div class="wrap">${B.dock(ctx)}${B.footer(ctx)}</div></main>`,
   mount(app) { const s = [...app.querySelectorAll('[data-trace]')].map(el => factorTrace(el)); return () => s.forEach(x => x.stop()); },
 };

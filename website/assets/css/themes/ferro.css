@@ -77,8 +77,10 @@ html.motion[data-theme="ferro"] .fe-plate.is-in > :nth-child(5) { transition-del
 [data-theme="ferro"] .fe-acc { background: var(--ink); color: var(--bg); border-radius: 10px; padding: 34px; border-top: 0; margin-block: 10px; }
 [data-theme="ferro"] .fe-acc h2, [data-theme="ferro"] .fe-acc .s-find, [data-theme="ferro"] .fe-acc b { color: var(--bg); }
 [data-theme="ferro"] .fe-acc .s-fine { color: color-mix(in srgb, var(--bg) 75%, transparent); }
-html.motion[data-theme="ferro"] .fe-row[data-anim] { opacity: 0; transform: translateY(18px); }
-html.motion[data-theme="ferro"] .fe-row.is-in { opacity: 1; transform: none; transition: opacity .6s ease calc(var(--i, 0) * 40ms), transform .9s var(--spring-soft) calc(var(--i, 0) * 40ms); }
+html[data-theme="ferro"] { --dur-draw: 2400ms; --draw-ease: cubic-bezier(.45, 0, .2, 1); }
+/* motion signature: rows rise and settle like liquid (squashed, then relaxing with a soft wobble) */
+html.motion[data-theme="ferro"] .fe-row[data-anim] { opacity: 0; transform: translateY(26px) scaleY(.9); transform-origin: 50% 100%; }
+html.motion[data-theme="ferro"] .fe-row.is-in { opacity: 1; transform: none; transition: opacity .8s ease calc(var(--i, 0) * 60ms), transform 1.3s var(--spring-bouncy) calc(var(--i, 0) * 60ms); }
 /* quiet divider: hairlines either side of a small bead of ferrofluid */
 [data-theme="ferro"] .fe-ridge { display: flex; align-items: flex-end; gap: 0; padding-block: 18px; opacity: .8; }
 [data-theme="ferro"] .fe-ridge-line { flex: 1; height: 1px; margin-bottom: 8px; background: var(--line); }

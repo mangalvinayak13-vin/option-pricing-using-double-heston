@@ -141,46 +141,46 @@ html[data-mode="dark"] .tmenu {
 .tmenu .tm-mode { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px 6px; font-size: 12.5px; opacity: .6; }
 
 /* ------------------------------------------------------------------ magnetic dashes nav ------- */
+/* Short dashes at rest; the ones nearest the cursor grow longest (scaleX only, no tilt). The page
+   reserves a strip beside the nav on wide screens (see "reserved strip" below), so the names that
+   appear never cover content. */
 .mdash {
   position: fixed; z-index: 80; top: 50%; left: 0; width: 64px; height: var(--md-h, 420px); transform: translateY(-50%);
   touch-action: manipulation;
 }
 .mdash.side-r { left: auto; right: 0; }
 .mdash-hit { position: absolute; inset: -30px 0; width: 64px; }
-.mdash-panel {
-  position: absolute; top: -14px; bottom: -14px; left: 12px; width: 236px; border-radius: 18px; pointer-events: none;
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6); backdrop-filter: blur(18px) saturate(1.6);
-  box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 12%, transparent), var(--sh-3);
-  opacity: 0; transform: translateX(-10px) scale(.98); transform-origin: 0 50%; will-change: opacity, transform;
-  transition: opacity .2s ease, transform .45s var(--spring-snappy);
-}
-.mdash.side-r .mdash-panel { left: auto; right: 12px; transform-origin: 100% 50%; transform: translateX(10px) scale(.98); }
-.mdash.open .mdash-panel { opacity: 1; transform: none; }
+.mdash-panel { display: none; }
 .mdash-d {
-  position: absolute; left: 18px; height: 4px; width: var(--dl, 12px); margin-top: -2px; border-radius: 2.5px;
-  background: var(--md-dash, var(--muted)); opacity: .5; transform-origin: 0 50%; will-change: transform;
+  position: absolute; left: 18px; height: 3px; width: var(--dl, 8px); margin-top: -1.5px; border-radius: 2px;
+  background: var(--md-dash, var(--muted)); opacity: .45; transform-origin: 0 50%; will-change: transform;
   pointer-events: none;
 }
 .mdash.side-r .mdash-d { left: auto; right: 18px; transform-origin: 100% 50%; }
-.mdash-d.pg { --dl: 22px; opacity: .75; height: 5px; margin-top: -2.5px; border-radius: 3px; }
-.mdash-d.cur { --dl: 30px; background: var(--md-cur, var(--acc)); opacity: 1; height: 6px; margin-top: -3px; border-radius: 3.5px;
+.mdash-d.pg { --dl: 12px; opacity: .7; height: 4px; margin-top: -2px; border-radius: 2.5px; }
+.mdash-d.cur { --dl: 16px; background: var(--md-cur, var(--acc)); opacity: 1; height: 5px; margin-top: -2.5px; border-radius: 3px;
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--acc) 40%, transparent), 0 2px 6px color-mix(in srgb, var(--acc) 35%, transparent); }
 .mdash-a {
-  position: absolute; left: 0; height: 36px; margin-top: -18px; width: 64px; display: flex; align-items: center;
+  position: absolute; left: 0; height: 34px; margin-top: -17px; width: 64px; display: flex; align-items: center;
   border-radius: 10px; outline-offset: -2px;
 }
-.mdash.open .mdash-a { width: 250px; }
+.mdash.open .mdash-a { width: 200px; }
 .mdash.side-r .mdash-a { left: auto; right: 0; justify-content: flex-end; }
 .mdash-l {
-  position: absolute; left: 64px; white-space: nowrap; font: 600 16px/1 var(--font-body); color: var(--ink);
+  position: absolute; left: 70px; white-space: nowrap; font: 600 15px/1 var(--font-body); color: var(--ink);
   opacity: 0; transform: translateX(-6px); will-change: transform, opacity; pointer-events: none;
 }
-.mdash.side-r .mdash-l { left: auto; right: 64px; }
+.mdash.side-r .mdash-l { left: auto; right: 70px; }
 .mdash-a[aria-current="page"] .mdash-l { color: var(--md-cur, var(--acc)); }
 .mdash-a:focus-visible { outline: 3px solid var(--focus); }
 @media (hover: none) { .mdash.open .mdash-l { opacity: 1 !important; transform: none !important; } }
 @media (max-width: 720px) { .mdash { --md-h: 300px; } }
+
+/* reserved strip: on wide screens the content keeps clear of the side nav and its names */
+@media (min-width: 900px) {
+  html[data-nav="l"] .wrap { padding-left: max(var(--gutter), 200px); }
+  html[data-nav="r"] .wrap { padding-right: max(var(--gutter), 240px); }
+}
 
 /* ------------------------------------------------------------------ ferrofluid nav ----------- */
 .fnav { position: fixed; z-index: 80; top: 50%; right: 0; width: 72px; height: var(--fn-h, 460px); transform: translateY(-50%); touch-action: manipulation; }
@@ -195,7 +195,7 @@ html[data-mode="dark"] .tmenu {
 .fnav .fnav-l { position: absolute; right: 128px; white-space: nowrap; font: 600 16px/1 var(--font-body); color: var(--ink); opacity: 0;
   transform: translateX(8px); will-change: transform, opacity; pointer-events: none; }
 .fnav .fnav-a[aria-current="page"] .fnav-l { font-weight: 800; }
-.fnav .fnav-panel { position: absolute; top: -16px; bottom: -16px; right: 114px; width: 190px; border-radius: 18px; pointer-events: none;
+.fnav .fnav-panel { display: none; position: absolute; top: -16px; bottom: -16px; right: 114px; width: 190px; border-radius: 18px; pointer-events: none;
   background: color-mix(in srgb, var(--bg) 74%, transparent); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
   box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 14%, transparent), var(--sh-3); opacity: 0; transform: translateX(10px) scale(.98);
   transform-origin: 100% 50%; transition: opacity .2s ease, transform .45s var(--spring-snappy); will-change: opacity, transform; }
@@ -237,6 +237,8 @@ html[data-mode="dark"] .tmenu {
   background: radial-gradient(closest-side, var(--glint, rgb(255 255 255 / .16)), transparent); opacity: 0; z-index: 0;
   transition: opacity .35s ease; will-change: transform, opacity; }
 [data-glint]:hover > .glint { opacity: 1; }
+html.scrolling [data-glint] > .glint { opacity: 0 !important; transition: opacity .1s ease; }
+html.scrolling #app { pointer-events: none; }
 [data-glint] > :not(.glint) { position: relative; z-index: 1; }
 .press { transition: transform .45s var(--spring-snappy); }
 .press:active { transform: scale(.97); transition-duration: .08s; }
@@ -300,7 +302,7 @@ input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(
 
 /* chart entrance animations: only when motion is on (html.motion), so charts are never left hidden */
 html.motion .a-draw { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
-html.motion .is-in .a-draw { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur-draw) var(--ease-io) var(--d, 0ms); }
+html.motion .is-in .a-draw { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur-draw) var(--draw-ease, var(--ease-io)) var(--d, 0ms); }
 html.motion .a-rise { transform: scaleY(0); transform-box: fill-box; transform-origin: 50% 100%; }
 html.motion .is-in .a-rise { transform: none; transition: transform .9s var(--spring-soft) calc(var(--d, 0ms) + var(--i, 0) * 14ms); }
 html.motion .a-grow { transform: scaleX(0); transform-box: fill-box; transform-origin: 0 50%; }
@@ -339,6 +341,71 @@ html[data-mode="dark"] .ico { --ic-base-a: #3B3C41; --ic-base-b: #18191C; --ic-g
 a:hover > .ico, button:hover > .ico, a:focus-visible > .ico { transform: scale(1.06); }
 .ico { transition: transform .5s var(--spring-bouncy); }
 a:active > .ico { transform: scale(.94); transition-duration: .1s; }
+
+/* ------------------------------------------------------------------ figures: every chart is titled and explained */
+.fig { display: flex; flex-direction: column; gap: 10px; min-width: 0; margin: 0; }
+.fig-t { font: 650 15.5px/1.35 var(--font-body); color: var(--ink); }
+.fig-cap { font-size: var(--fs-small); line-height: 1.5; color: var(--muted); max-width: 90ch; }
+
+/* journey: from Brownian motion to Wall Street */
+.b-journey { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px 22px; margin-top: 6px; }
+.b-journey li { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 2px solid var(--line); }
+.b-journey li.now { border-top-color: var(--acc); }
+.b-jy { font: 700 26px/1 var(--font-num); color: var(--ink); letter-spacing: -.02em; }
+.b-journey li.now .b-jy { color: var(--acc); }
+.b-journey li > span { display: flex; flex-direction: column; gap: 3px; }
+.b-journey li > span > b { color: var(--ink); font-size: 16.5px; }
+.b-journey li > span > span { color: var(--body); font-size: 15.5px; line-height: 1.5; }
+html.motion .b-journey li { opacity: 0; transform: translateY(10px); transition: opacity .5s ease calc(var(--i) * 90ms), transform .8s var(--spring-soft) calc(var(--i) * 90ms); }
+html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; transform: none; }
+
+/* what we did */
+.b-done { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px 26px; }
+.b-done li { display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: start; }
+.b-dn { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--acc); color: var(--on-acc); font: 700 16px/1 var(--font-num); }
+.b-done li > span { display: flex; flex-direction: column; gap: 4px; }
+.b-done li > span > b { color: var(--ink); font-size: 17px; }
+.b-done li > span > span { color: var(--body); font-size: 15.5px; line-height: 1.5; }
+
+/* results page */
+.b-data td, .b-results td { white-space: normal; vertical-align: top; }
+.b-data th[scope="row"], .b-results th[scope="row"] { text-align: left; color: var(--ink); font-size: 16px; font-weight: 650; padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 170px; }
+.b-wrap { white-space: normal !important; color: var(--body); min-width: 260px; line-height: 1.5; }
+.b-results .b-val { font: 700 19px/1.2 var(--font-num); color: var(--ink); white-space: nowrap; }
+.b-verdict { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 13.5px; font-weight: 650; white-space: nowrap; }
+.b-v-good { background: color-mix(in srgb, var(--up) 16%, transparent); color: var(--up); }
+.b-v-bad { background: color-mix(in srgb, var(--down) 14%, transparent); color: var(--down); }
+.b-v-mixed { background: color-mix(in srgb, var(--muted) 18%, transparent); color: var(--body); }
+.b-terms { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px 28px; margin: 0; }
+.b-terms dt { font-weight: 700; color: var(--ink); font-size: 16.5px; }
+.b-terms dd { margin: 4px 0 0; color: var(--body); font-size: 15.5px; line-height: 1.5; }
+
+/* PINN vs ANN in 3D */
+.pa3d { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; cursor: grab; touch-action: pan-y; border-radius: var(--r-m); }
+.pa3d:active { cursor: grabbing; }
+.pa3d-cell { position: relative; min-width: 0; border-radius: var(--r-s); background: color-mix(in srgb, var(--ink) 3%, transparent); box-shadow: inset 0 0 0 1px var(--line); }
+.pa3d-cell canvas { display: block; max-width: none; }
+.pa3d-l { position: absolute; left: 14px; top: 12px; z-index: 1; font-size: 14px; color: var(--muted); pointer-events: none; }
+.pa3d-l b { color: var(--ink); font-size: 16px; margin-right: 6px; }
+.pa3d-key { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--body); }
+.pa3d-key i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 7px; vertical-align: 0; }
+.pa3d-k-net { background: var(--c-model, var(--acc)); } .pa3d-k-exact { background: transparent; box-shadow: inset 0 0 0 1.5px var(--muted); }
+.pa3d-k-neg { background: var(--down); }
+@media (max-width: 760px) { .pa3d { grid-template-columns: 1fr; } }
+
+/* the page dock: above the footer text, in the page (never fixed over the Mac's own Dock) */
+.b-dock { display: flex; justify-content: center; padding-block: 40px 30px; }
+.b-dock-in { display: flex; align-items: flex-end; gap: 14px; padding: 12px 16px; border-radius: 28px; max-width: 100%; overflow-x: auto; scrollbar-width: none;
+  background: color-mix(in srgb, var(--surf) 62%, transparent); -webkit-backdrop-filter: blur(24px) saturate(1.7); backdrop-filter: blur(24px) saturate(1.7);
+  box-shadow: 0 0 0 .5px color-mix(in srgb, var(--ink) 12%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent), var(--sh-3); }
+.b-dock-i { position: relative; display: block; flex: none; transform-origin: 50% 100%; will-change: transform; border-radius: 14px; transition: transform .25s var(--ease-out); }
+.b-dock-i.cur::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--ink); opacity: .55; }
+.b-dock-l { position: absolute; left: 50%; bottom: calc(100% + 14px); transform: translateX(-50%) translateY(4px); padding: 5px 10px; border-radius: 8px; pointer-events: none;
+  background: color-mix(in srgb, var(--surf) 92%, transparent); color: var(--ink); font: 600 13.5px/1 var(--font-body); white-space: nowrap; box-shadow: var(--sh-2);
+  opacity: 0; transition: opacity .15s ease, transform .3s var(--spring-snappy); }
+.b-dock-i:hover .b-dock-l, .b-dock-i:focus-visible .b-dock-l { opacity: 1; transform: translateX(-50%); }
+.b-dock-i:hover > .ico, .b-dock-i:focus-visible > .ico { transform: none; }
+@media (max-width: 720px) { .b-dock-in { gap: 8px; } .b-dock-in .ico { width: 44px !important; height: 44px !important; } }
 
 /* ------------------------------------------------------------------ section content (pages.js) -- */
 .s-lead { font-size: var(--fs-body); line-height: 1.58; color: var(--body); max-width: 72ch; }
@@ -441,6 +508,10 @@ button.bs-row:hover { background: color-mix(in srgb, var(--ink) 5%, transparent)
 .b-eq:last-child { border-bottom: 0; }
 .b-eqn { font-size: clamp(19px, 1.7vw, 24px); line-height: 1.5; color: var(--ink); overflow-x: auto; overflow-y: hidden; padding-block: 4px; }
 .b-eqn math { font-family: "STIX Two Math", "Latin Modern Math", "Cambria Math", math; color: var(--ink); text-align: left; margin: 0; }
+/* letters and numbers in the theme's own face, so the equations belong to the page; operators keep the math font so they stretch */
+.b-eqn math mi, .b-eqn math mn { font-family: var(--font-display), "STIX Two Math", math; }
+.b-eqn math mi { text-transform: none; font-style: italic; }
+.b-eqn math mi[mathvariant="normal"] { font-style: normal; }
 .b-eqn math[display="block"] { display: block math; }
 .b-steps { list-style: none; display: flex; flex-direction: column; gap: 22px; }
 .b-steps li { display: grid; grid-template-columns: 48px 1fr; gap: 14px; }
