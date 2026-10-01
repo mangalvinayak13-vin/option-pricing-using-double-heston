@@ -504,27 +504,27 @@
    [
     [
      "S",
-     "share price"
+     "Share price"
     ],
     [
      "r",
-     "interest rate"
+     "Interest rate"
     ],
     [
      "q",
-     "dividend yield"
+     "Dividend yield"
     ],
     [
      "v₁, v₂",
-     "the two variances, slow and fast"
+     "The two variances, slow and fast"
     ],
     [
      "dW₁, dW₂",
-     "two independent random shocks"
+     "Two independent random shocks"
     ],
     [
      "dt",
-     "a tiny step of time"
+     "A tiny step of time"
     ]
    ]
   ],
@@ -536,27 +536,27 @@
    [
     [
      "vᵢ",
-     "today's variance of factor i"
+     "Today's variance of factor i"
     ],
     [
      "θᵢ",
-     "the long-run level it returns to"
+     "The long-run level it returns to"
     ],
     [
      "κᵢ",
-     "how fast it returns"
+     "How fast it returns"
     ],
     [
      "ξᵢ",
-     "how hard it gets shaken"
+     "How hard it gets shaken"
     ],
     [
      "dZᵢ",
-     "its own random shock"
+     "Its own random shock"
     ],
     [
      "ρᵢ",
-     "the link between price and variance shocks"
+     "The link between price and variance shocks"
     ],
     [
      "i",
@@ -572,11 +572,11 @@
    [
     [
      "φ(u)",
-     "the model's fingerprint, read at frequency u"
+     "The model's fingerprint, read at frequency u"
     ],
     [
      "φ₁, φ₂",
-     "the slow and fast factors' own fingerprints"
+     "The slow and fast factors' own fingerprints"
     ]
    ]
   ],
@@ -588,31 +588,31 @@
    [
     [
      "C",
-     "call price"
+     "Call price"
     ],
     [
      "F",
-     "forward price of the share"
+     "Forward price of the share"
     ],
     [
      "K",
-     "strike"
+     "Strike"
     ],
     [
      "T",
-     "time to expiry, in years"
+     "Time to expiry, in years"
     ],
     [
      "e^(−rT)",
-     "discount back to today"
+     "Discount back to today"
     ],
     [
      "P₁, P₂",
-     "the two probabilities"
+     "The two probabilities"
     ],
     [
      "Re",
-     "real part of a complex number"
+     "Real part of a complex number"
     ]
    ]
   ],
@@ -624,15 +624,15 @@
    [
     [
      "N",
-     "number of simulated paths, 20,000"
+     "Number of simulated paths, 20,000"
     ],
     [
      "S_T⁽ⁿ⁾",
-     "the share price at expiry on path n"
+     "The share price at expiry on path n"
     ],
     [
      "max(S − K, 0)",
-     "what a call pays at expiry"
+     "What a call pays at expiry"
     ]
    ]
   ],
@@ -644,7 +644,7 @@
    [
     [
      "κᵢ, θᵢ, ξᵢ",
-     "the speed, long-run level and shake of factor i"
+     "The speed, long-run level and shake of factor i"
     ]
    ]
   ]
@@ -1368,7 +1368,7 @@
   [
    "κ",
    "Speed back to normal",
-   "How fast jumpiness returns to its long-run level after a shock. Half of a shock is gone after ln 2 ÷ κ years: 1.4 years for the slow factor, 51 days for the fast one.",
+   "How fast jumpiness returns to its long-run level after a shock. Half of a shock is gone after ln 2 ÷ κ years: 1.4 years for the slow factor, 51 days for the fast one.",
    "Shocks fade faster, so the factor matters less for long-dated options.",
    "0.5",
    "5.0"
@@ -1399,7 +1399,7 @@
   [
    "slow",
    "v₀",
-   "today's variance",
+   "Today's variance",
    0.02,
    0.0005,
    1.0
@@ -1407,7 +1407,7 @@
   [
    "slow",
    "κ",
-   "speed back to normal",
+   "Speed back to normal",
    0.5,
    0.1,
    10.0
@@ -1415,7 +1415,7 @@
   [
    "slow",
    "θ",
-   "long-run variance",
+   "Long-run variance",
    0.02,
    0.0005,
    1.0
@@ -1423,7 +1423,7 @@
   [
    "slow",
    "ξ",
-   "volatility of volatility",
+   "Volatility of volatility",
    0.3,
    0.05,
    2.0
@@ -1431,7 +1431,7 @@
   [
    "slow",
    "ρ",
-   "price–volatility link",
+   "Price–volatility link",
    -0.7,
    -0.99,
    0.99
@@ -1439,7 +1439,7 @@
   [
    "fast",
    "v₀",
-   "today's variance",
+   "Today's variance",
    0.02,
    0.0005,
    1.0
@@ -1447,7 +1447,7 @@
   [
    "fast",
    "κ",
-   "speed back to normal",
+   "Speed back to normal",
    5.0,
    0.1,
    10.0
@@ -1455,7 +1455,7 @@
   [
    "fast",
    "θ",
-   "long-run variance",
+   "Long-run variance",
    0.02,
    0.0005,
    1.0
@@ -1463,7 +1463,7 @@
   [
    "fast",
    "ξ",
-   "volatility of volatility",
+   "Volatility of volatility",
    0.5,
    0.05,
    2.0
@@ -1471,7 +1471,7 @@
   [
    "fast",
    "ρ",
-   "price–volatility link",
+   "Price–volatility link",
    -0.7,
    -0.99,
    0.99

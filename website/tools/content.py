@@ -110,12 +110,12 @@ MC_LINE = f"Monte Carlo check, 20,000 paths: ₹{inr(K['mc'])} ± {K['mc_se']:.2
 MODEL_SOURCE = (f"Option prices: NSE closing prices, {LAST_DAY}. Forward from NIFTY October futures "
                 f"({inr(K['forward'])}). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.")
 SLIDERS = [  # (factor, symbol, name, value, lo, hi)
-    ("slow", "v₀", "today's variance", 0.02, 0.0005, 1.0), ("slow", "κ", "speed back to normal", 0.5, 0.1, 10.0),
-    ("slow", "θ", "long-run variance", 0.02, 0.0005, 1.0), ("slow", "ξ", "volatility of volatility", 0.3, 0.05, 2.0),
-    ("slow", "ρ", "price–volatility link", -0.7, -0.99, 0.99),
-    ("fast", "v₀", "today's variance", 0.02, 0.0005, 1.0), ("fast", "κ", "speed back to normal", 5.0, 0.1, 10.0),
-    ("fast", "θ", "long-run variance", 0.02, 0.0005, 1.0), ("fast", "ξ", "volatility of volatility", 0.5, 0.05, 2.0),
-    ("fast", "ρ", "price–volatility link", -0.7, -0.99, 0.99),
+    ("slow", "v₀", "Today's variance", 0.02, 0.0005, 1.0), ("slow", "κ", "Speed back to normal", 0.5, 0.1, 10.0),
+    ("slow", "θ", "Long-run variance", 0.02, 0.0005, 1.0), ("slow", "ξ", "Volatility of volatility", 0.3, 0.05, 2.0),
+    ("slow", "ρ", "Price–volatility link", -0.7, -0.99, 0.99),
+    ("fast", "v₀", "Today's variance", 0.02, 0.0005, 1.0), ("fast", "κ", "Speed back to normal", 5.0, 0.1, 10.0),
+    ("fast", "θ", "Long-run variance", 0.02, 0.0005, 1.0), ("fast", "ξ", "Volatility of volatility", 0.5, 0.05, 2.0),
+    ("fast", "ρ", "Price–volatility link", -0.7, -0.99, 0.99),
 ]
 FELLER = {"slow": "Feller condition fails: 2κθ = 0.02 is below ξ² = 0.09", "fast": "Feller condition fails: 2κθ = 0.20 is below ξ² = 0.25"}
 FELLER_NOTE = ("Both factors can touch zero at these settings. The simulator uses full truncation, so prices stay valid.")
@@ -567,6 +567,8 @@ FORMULAS = [  # (key, title, plain formula for screen readers, what it does, [(s
      "stay valid.",
      [("κᵢ, θᵢ, ξᵢ", "the speed, long-run level and shake of factor i")]),
 ]
+# each symbol's meaning starts with a capital, like any label
+FORMULAS = [(k, t, plain, what, [(sym, m[:1].upper() + m[1:]) for sym, m in syms]) for k, t, plain, what, syms in FORMULAS]
 SETTINGS_HEAD = "The ten settings"
 SETTINGS_LEDE = ("Each factor has the same five settings, so the model has ten. Here is what each one controls and what "
                  "raising it does. The starting values are the ones Price an option opens with.")
@@ -576,7 +578,7 @@ SETTINGS = [  # (symbol, name, what it controls, what raising it does, slow star
     ("θ", "Long-run variance", "The level the jumpiness settles back to over time.",
      "Long-dated options cost more.", "0.02", "0.02"),
     ("κ", "Speed back to normal", f"How fast jumpiness returns to its long-run level after a shock. Half of a shock is gone "
-     f"after ln 2 ÷ κ years: {SLOW_HL} for the slow factor, {FAST_HL} for the fast one.",
+     f"after ln 2 ÷ κ years: {SLOW_HL} for the slow factor, {FAST_HL} for the fast one.",
      "Shocks fade faster, so the factor matters less for long-dated options.", "0.5", "5.0"),
     ("ξ", "Volatility of volatility", "How much the jumpiness itself jumps around.",
      "The smile curves more: options far from today's price cost more.", "0.3", "0.5"),
