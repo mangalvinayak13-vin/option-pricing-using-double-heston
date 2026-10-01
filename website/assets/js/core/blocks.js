@@ -24,8 +24,8 @@ export function ticker(ctx) {
 
 // the page dock: every page as an app icon, magnified under the cursor; sits above the footer text
 export function dock(ctx, { size = 56, tint } = {}) {
-  return `<nav class="b-dock" aria-label="All pages"><div class="b-dock-in">${ctx.C.PAGES.map(([id, file, label]) =>
-    `<a href="${file}" class="b-dock-i${id === ctx.page ? ' cur' : ''}"${id === ctx.page ? ' aria-current="page"' : ''}>${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span class="b-dock-l">${esc(label)}</span></a>`).join('')}</div></nav>`;
+  return `<nav class="b-dock" aria-label="All pages"><div class="b-dock-in">${ctx.pages.map(({ id, file, label }) =>
+    `<a href="${file}" class="b-dock-i${id === ctx.navPage ? ' cur' : ''}"${id === ctx.page ? ' aria-current="page"' : ''}>${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span class="b-dock-l">${esc(label)}</span></a>`).join('')}</div></nav>`;
 }
 
 // ------------------------------------------------------------------ market
@@ -209,9 +209,9 @@ export function refs(ctx, cls = 'b-refs', numbered = true, { group, heading = tr
   }).join('');
 }
 
-// every theme links to all eight pages here, the current one marked (same links in every theme)
+// every theme links to every page in the nav here, the current one marked (same links in every theme)
 export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, desc = true } = {}) {
-  return `<nav class="${cls}" aria-label="All pages">${ctx.C.PAGES.map(([id, file, label, d]) =>
+  return `<nav class="${cls}" aria-label="All pages">${ctx.pages.map(({ id, file, label, desc: d }) =>
     `<a href="${file}" class="press"${id === ctx.page ? ' aria-current="page"' : ''}>${icon(id, { size, tint: typeof tint === 'function' ? tint(id) : tint })}<span><b>${esc(label)}</b>${desc ? `<span>${esc(d)}</span>` : ''}</span></a>`).join('')}</nav>`;
 }
 

@@ -61,3 +61,8 @@ NIGHT_PLAN.md has the architecture.
   - the Einstein-to-Wall-Street home and the new Results page;
   - titled charts, equity-only ticker, page dock, reworked dashes, Springboard scroll fix, equation type, motion per theme;
   - snapshots in website/snapshots.
+- **Third pass** (consolidation):
+  - The finding and Results are merged into one Results page; `finding.html` forwards to it.
+  - Home keeps the story plus one key-results panel.
+  - Market is out of the navs and dock, and reached from a button on Price an option (`NAV_PARENT` in `tools/content.py`).
+  - Accent-panel text colours fixed.

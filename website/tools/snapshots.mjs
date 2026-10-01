@@ -4,27 +4,28 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-const OUT = new URL('../snapshots/', import.meta.url);
+// SNAP_OUT and SNAP_LIST (a JSON list in the same shape) take ad-hoc shots for checking a section
+const OUT = process.env.SNAP_OUT ? new URL(`file://${process.env.SNAP_OUT.replace(/\/?$/, '/')}`) : new URL('../snapshots/', import.meta.url);
 mkdirSync(OUT, { recursive: true });
 // [file name, theme, mode, page, section key (or null for the top), extra action]
-const SHOTS = [
+const SHOTS = process.env.SNAP_LIST ? JSON.parse(process.env.SNAP_LIST) : [
   ['01-ferro-home', 'ferro', 'light', 'index.html', null],
   ['02-ferro-journey', 'ferro', 'light', 'index.html', 'journey'],
   ['03-ferro-pinn-vs-ann-3d', 'ferro', 'light', 'index.html', 'nn', 'fig'],
-  ['04-ferro-factor-pools', 'ferro', 'dark', 'index.html', 'factors'],
-  ['05-ferro-magnets', 'ferro', 'light', 'finding.html', 'magnets'],
+  ['04-ferro-factor-pools', 'ferro', 'dark', 'how-it-works.html', 'factors'],
+  ['05-ferro-magnets', 'ferro', 'light', 'results.html', 'magnets'],
   ['06-ferro-nav-open', 'ferro', 'dark', 'model.html', 'sliders', 'nav'],
   ['07-glass-home-dark', 'glass', 'dark', 'index.html', null],
   ['08-glass-pinn-vs-ann-3d', 'glass', 'dark', 'index.html', 'nn', 'fig'],
   ['09-glass-bend', 'glass', 'light', 'how-it-works.html', 'bend'],
-  ['10-springboard-home', 'springboard', 'light', 'index.html', 'finding'],
+  ['10-springboard-key-results', 'springboard', 'light', 'index.html', 'key'],
   ['11-springboard-model', 'springboard', 'dark', 'model.html', 'price'],
   ['12-springboard-theme-menu', 'springboard', 'light', 'index.html', null, 'menu'],
   ['13-results-page', 'glass', 'light', 'results.html', 'results'],
   ['14-amber-home', 'amber', 'dark', 'index.html', null],
   ['15-instrument-home', 'instrument', 'light', 'index.html', null],
   ['16-trading-market', 'trading', 'dark', 'market.html', null],
-  ['17-springboard-nav-open', 'springboard', 'dark', 'finding.html', 'pair', 'nav-l'],
+  ['17-springboard-nav-open', 'springboard', 'dark', 'results.html', 'pair', 'nav-l'],
 ];
 const PORT = 9336;
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', ['--headless=new', `--remote-debugging-port=${PORT}`,

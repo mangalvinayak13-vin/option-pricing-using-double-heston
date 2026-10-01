@@ -24,7 +24,9 @@ let ctx;
 try {
   const [C, D, P, PA] = await Promise.all([get('assets/data/content.json'), get('assets/data/site.json'), get('assets/data/ferro_pair.json'),
     get('assets/data/pinn_vs_ann.json')]);
-  ctx = { page, C, D, P, PA, pages: C.PAGES.map(([id, file, label, desc]) => ({ id, file, label, desc })) };
+  const all = C.PAGES.map(([id, file, label, desc]) => ({ id, file, label, desc }));
+  // navs list only the pages in the nav; a page outside it (Market) marks its parent page instead
+  ctx = { page, C, D, P, PA, all, pages: all.filter(p => !C.NAV_PARENT[p.id]), navPage: C.NAV_PARENT[page] || page };
 } catch (e) {
   app.innerHTML = `<div class="noscript"><h1>The site's data didn't load.</h1><p>Start the local server with <code>python3 website/serve.py</code> and open http://localhost:8765.</p></div>`;
   throw e;
@@ -41,14 +43,14 @@ async function render(id) {
   unmountCharts?.();
   cleanups.forEach(f => f && f());
   cleanups = [];
-  const label = ctx.pages.find(p => p.id === page)?.label || 'Home';
+  const label = ctx.all.find(p => p.id === page)?.label || 'Home';
   document.title = page === 'home' ? 'Double Heston' : `${label} | Double Heston`;
   ctx.chartOpts = T.chartOpts || {};
   app.innerHTML = T.page(page, ctx);
   const kind = T.nav?.kind || 'dashes', side = T.nav?.side || 'l';
   if (!nav || nav.kind !== kind || nav.side !== side) {
     nav?.destroy();
-    nav = kind === 'ferro' ? createFerroNav({ pages: ctx.pages, current: page }) : createDashNav({ pages: ctx.pages, current: page, side });
+    nav = kind === 'ferro' ? createFerroNav({ pages: ctx.pages, current: ctx.navPage }) : createDashNav({ pages: ctx.pages, current: ctx.navPage, side });
     Object.assign(nav, { kind, side });
     root.dataset.nav = kind === 'ferro' ? 'r' : side; // the page reserves a strip on this side (base.css)
   }

@@ -1,6 +1,37 @@
 # Morning report: the Double Heston website
 
-## Second pass, after your review (latest)
+## Third pass: results in one place, Market off the tabs (latest)
+
+You said results were spread across the site, and asked to remove the Market tab and reach it from a small button on the model page.
+
+- **One Results page.** "The finding" and "Results" are merged into `results.html`. It runs in this order:
+  - the four key numbers;
+  - the evidence (both proofs, the spread histogram, setting by setting);
+  - the Bharti Airtel pair (pool, magnets, six fits);
+  - one stock, day by day;
+  - the ANN and PINN results;
+  - every result in a table, the data, and the glossary.
+
+  `finding.html` still exists, so old links keep working, but it just forwards to `results.html`.
+- **Home holds no scattered results.** It keeps the story:
+  - the hero;
+  - the pollen-to-Wall-Street journey;
+  - what we did;
+  - the PINN-against-ANN 3D comparison;
+  - one "What we found, in four numbers" panel (99%, 3.9×, 23%, 2.48 vs 2.98) with a button to the Results page.
+
+  The finding, option, NIFTY, bend and pair widgets are gone from Home. Each already lived on its own page. The live two-factor trace moved to How it works, next to the decay chart.
+- **About** no longer repeats the dataset sizes; it points to the Results page.
+- **Market is off every nav, the dock and the page links.** Price an option has a small "Market prices" button at the top right of its heading, in all six themes. On the Market page itself, the nav marks "The model" as the parent page, and Amber's marker reads "[02] The model / Market". The ticker still shows equities.
+- **Fixed on the way:** lead text, number labels and the link button were dark-on-dark inside every theme's highlighted panel.
+- **Checks:**
+  - parity OK across 8 pages × 6 themes;
+  - console sweep clean;
+  - interaction tests pass in all six themes;
+  - no horizontal overflow at 390 or 1280 px;
+  - snapshots regenerated: 04 now shows How it works, 05 and 17 show the Results page, and 10 shows Home's key-results panel.
+
+## Second pass, after your review
 
 **Data audit.** Every number on the site was checked against its source. Three fixes:
 
@@ -70,7 +101,7 @@ Then open **http://localhost:8765**. Run the command from the project folder (th
 2. **Theme menu.** Hold the switch at the top right for half a second, or right-click it. Pick another theme and the page changes in place.
 3. **The model page** (`model.html`). Move a slider and the price, Greeks, option chain and smile reprice live. The numbers come from the project's own pricer.
    - In Ferro, each slider group has a pool that reacts to κ and ξ as you move them.
-4. **The finding page in Ferro.**
+4. **The Results page in Ferro.**
    - "Same surface, different magnets" uses a real Bharti Airtel surface fitted twice.
    - Two equally good fits disagree about the one-year option by 11.7 volatility points.
 5. **Glass in dark mode, then Springboard in light mode.**
@@ -87,7 +118,7 @@ Glass is the most polished Apple look and a great second screen, but it could be
 
 ## What's finished
 
-All six themes have all eight pages (Home, Market, The model, How it works, The finding, About, Team, References), in light and dark. Every theme shows exactly the same information and links. That was your request during the night, and it's enforced by one shared content file, `website/assets/js/core/pages.js`.
+All six themes have the same pages, in light and dark. The nav lists seven: Home, The model, How it works, Results, About, Team and References. Market is reached from the model page. Every theme shows exactly the same information and links. That was your request during the night, and it's enforced by one shared content file, `website/assets/js/core/pages.js`.
 
 | Theme | Its look | Checked |
 |---|---|---|

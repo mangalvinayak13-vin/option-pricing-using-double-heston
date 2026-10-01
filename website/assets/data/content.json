@@ -257,7 +257,7 @@
  "CONTRACT_SUB": "Expires 27 Oct 2026, 32 days",
  "CTA": {
   "model": "Price an option",
-  "finding": "See the finding",
+  "finding": "See the results",
   "market": "Open the market"
  },
  "DATA_SETS": [
@@ -473,6 +473,26 @@
  ],
  "JOURNEY_HEAD": "From a speck of pollen to Wall Street",
  "JOURNEY_LEDE": "Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became the way finance describes prices, and this project carries that line forward to today's NSE options.",
+ "KEY_HEAD": "What we found, in four numbers",
+ "KEY_LEDE": "Double Heston fits real option prices better than one flat volatility, but the prices can't tell you its ten settings. The Results page has the evidence behind every number.",
+ "KEY_NUMS": [
+  [
+   "99%",
+   "of 2,400 real NSE surfaces had several equally good fits"
+  ],
+  [
+   "3.9×",
+   "further apart than two random sets of settings"
+  ],
+  [
+   "23%",
+   "less price error than one flat volatility, median"
+  ],
+  [
+   "2.48 vs 2.98",
+   "PINN against Black–Scholes on real NIFTY options, volatility points"
+  ]
+ ],
  "LAST_DAY": "25 Sep 2026",
  "LIMITS": [
   "No jumps: the largest one-day moves are still underestimated.",
@@ -498,6 +518,7 @@
    "two moving factors, 10 settings"
   ]
  ],
+ "MARKET_BUTTON": "Market prices",
  "MARKET_SUB": "Official NSE closing prices, 1 Jul 2026 to 25 Sep 2026, 62 trading days. Live prices from Upstox are planned for the same places; this version shows the closes.",
  "MARKET_TITLE": "Market",
  "MATHS_INTRO": "Double Heston (Christoffersen, Heston and Jacobs, 2009) lets the stock's variance come from two independent sources. Each follows its own mean-reverting process with five settings, ten in all.",
@@ -526,10 +547,10 @@
  "MC_LINE": "Monte Carlo check, 20,000 paths: ₹597.10 ± 3.56",
  "METHOD": [
   "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
-  "Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. The site shows NSE closing prices; live Upstox prices are planned.",
+  "Research data: official NSE end-of-day files. Every dataset, its size and what it was used for is listed on the Results page.",
   "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat volatility, which a true best fit can never lose to."
  ],
- "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the finding explains why a computer can't pick all ten settings for you.",
+ "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
  "MODEL_SOURCE": "Option prices: NSE closing prices, 25 Sep 2026. Forward from NIFTY October futures (23,263.60). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
  "NAMES": {
   "NIFTY 50": "Index",
@@ -552,6 +573,9 @@
   "ONGC": "ONGC",
   "COALINDIA": "Coal India",
   "HINDUNILVR": "Hindustan Unilever"
+ },
+ "NAV_PARENT": {
+  "market": "model"
  },
  "NB": {
   "kappa_s": 0.45166666666666666,
@@ -593,16 +617,10 @@
    "the equations"
   ],
   [
-   "finding",
-   "finding.html",
-   "The finding",
-   "why a fit isn't an answer"
-  ],
-  [
    "results",
    "results.html",
    "Results",
-   "every number, explained"
+   "what we found, every number"
   ],
   [
    "about",
@@ -951,6 +969,8 @@
  ],
  "RESULTS_HEAD": "Every result, and the data behind it",
  "RESULTS_LEDE": "All the project's numbers in one place: what we measured, on which data, and whether it's good news. Negative results are kept, because they are part of the answer.",
+ "RESULTS_PAGE_HEAD": "A perfect price fit is not the same as knowing the settings.",
+ "RESULTS_PAGE_LEDE": "Everything the project found, in one place: the answer in numbers, the evidence behind it, what our two kinds of network achieved, then every result in a table with the data it came from. Negative results are kept, because they are part of the answer.",
  "SHARE": 0.99125,
  "SITE_NAME": "Double Heston",
  "SKEW_NOTE": "The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets further away.",

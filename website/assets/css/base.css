@@ -425,6 +425,15 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .s-sw { display: inline-block; width: 16px; height: 5px; border-radius: 3px; margin-right: 8px; vertical-align: 3px; }
 .s-sw-f { background: var(--c-model, var(--acc)); } .s-sw-s { background: var(--c-alt, var(--ink)); }
 .s-trace { height: 200px; }
+.s-more { margin-top: 18px; }
+/* the small action at the top right of a page heading (Market prices, on Price an option) */
+:where(header, div):has(> .s-act) { position: relative; }
+.s-act { position: absolute; top: 0; right: 0; z-index: 1; width: auto; padding: 7px 14px; font-size: 14px; line-height: 1.2; white-space: nowrap; }
+.wrap > .s-act { right: var(--gutter); }
+@media (min-width: 900px) { html[data-nav="r"] .wrap > .s-act { right: max(var(--gutter), 240px); } }
+@media (max-width: 700px) {
+  .s-act { position: static; display: table; margin: 0 0 14px auto; align-self: flex-end; justify-self: end; }
+}
 .s-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .s-nums .b-num b { font-size: clamp(26px, 2.3vw, 36px); white-space: nowrap; }
 .s-nums .b-num span { font-size: 15px; }
@@ -448,6 +457,8 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .b-lin.s-lin .b-y { font-size: 38px; }
 .s-refs li { grid-template-columns: 44px 1fr; }
 .s-refs ol { margin-bottom: 0; }
+/* four headline numbers (Key results) sit in one row when there is room */
+@media (min-width: 1100px) { .s-nums:has(> :nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .s-nums { grid-template-columns: 1fr; } .s-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* ------------------------------------------------------------------ shared block defaults ------ */

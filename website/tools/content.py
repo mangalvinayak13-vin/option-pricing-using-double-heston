@@ -90,7 +90,7 @@ FINDING_LINE = (f"On {SHARE * 100:.0f}% of 2,400 real NSE option surfaces, sever
 FINDING_SUB = (f"They sat {RATIO:.1f} times further apart than two settings picked at random from the model's "
                "training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.")
 SMILE_CAPTION = "Implied volatility by strike, 30 days to expiry, at the model's starting settings. Computed with the project's pricer."
-CTA = {"model": "Price an option", "finding": "See the finding", "market": "Open the market"}
+CTA = {"model": "Price an option", "finding": "See the results", "market": "Open the market"}
 
 # ------------------------------------------------------------------ market ---------------
 MARKET_TITLE = "Market"
@@ -104,7 +104,7 @@ CONTRACT = f"NIFTY {inr(K['strike'], 0)} call"
 CONTRACT_SUB = f"Expires {EXPIRY}, {K['dte']} days"
 MODEL_EXPLAIN = (f"The starting settings assume 20% volatility. On {LAST_DAY} the market was pricing about "
                  f"{K['market_iv']:.1f}%, so the model charges more. Lower today's level (v₀) and the gap closes. "
-                 "There's no fit button: the finding explains why a computer can't pick all ten settings for you.")
+                 "There's no fit button: the Results page explains why a computer can't pick all ten settings for you.")
 GAP = K["dh"] - K["market"]
 MC_LINE = f"Monte Carlo check, 20,000 paths: ₹{inr(K['mc'])} ± {K['mc_se']:.2f}"
 MODEL_SOURCE = (f"Option prices: NSE closing prices, {LAST_DAY}. Forward from NIFTY October futures "
@@ -221,8 +221,7 @@ VIDEO_CAPTION = "A narrated overview of the model and the finding, made from the
 VIDEO_SRC = ""
 METHOD = [
     "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
-    f"Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. "
-    "The site shows NSE closing prices; live Upstox prices are planned.",
+    "Research data: official NSE end-of-day files. Every dataset, its size and what it was used for is listed on the Results page.",
     "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat "
     "volatility, which a true best fit can never lose to.",
 ]
@@ -288,12 +287,15 @@ PAGES = [  # (id, file, label, short description)
     ("market", "market.html", "Market", "real NSE prices"),
     ("model", "model.html", "The model", "price an option"),
     ("maths", "how-it-works.html", "How it works", "the equations"),
-    ("finding", "finding.html", "The finding", "why a fit isn't an answer"),
-    ("results", "results.html", "Results", "every number, explained"),
+    ("results", "results.html", "Results", "what we found, every number"),
     ("about", "about.html", "About", "video, method, limits"),
     ("team", "team.html", "Team", "who built it"),
     ("references", "references.html", "References", "papers and data"),
 ]
+# pages that exist but stay out of the navs, dock and page links, with the page they sit under:
+# Market is reached from the button at the top right of Price an option (and the ticker)
+NAV_PARENT = {"market": "model"}
+MARKET_BUTTON = "Market prices"
 REL_LINE = rel_line()
 SLOW_HL = f"{HL['slow_years']:.1f} years"
 FAST_HL = f"{HL['fast_days']:.0f} days"
@@ -495,3 +497,19 @@ CHART_NOTES = {
     "journey": ("A random walk, drawn as the timeline unfolds",
                 "A simulated Brownian path: each step is a random kick, the motion Einstein explained and finance borrowed."),
 }
+
+
+# ------------------------------------------------------------------ consolidation: one Results page, a short summary on Home
+RESULTS_PAGE_HEAD = FIND_HEAD
+RESULTS_PAGE_LEDE = ("Everything the project found, in one place: the answer in numbers, the evidence behind it, what our "
+                     "two kinds of network achieved, then every result in a table with the data it came from. Negative "
+                     "results are kept, because they are part of the answer.")
+KEY_NUMS = [  # the answer in numbers: the four that carry the story
+    (f"{SHARE * 100:.0f}%", "of 2,400 real NSE surfaces had several equally good fits"),
+    (f"{RATIO:.1f}×", "further apart than two random sets of settings"),
+    (f"{FLAT_BETTER * 100:.0f}%", "less price error than one flat volatility, median"),
+    (f"{PINN_NIFTY['ft_3']:.2f} vs {PINN_NIFTY['bs']:.2f}", "PINN against Black–Scholes on real NIFTY options, volatility points"),
+]
+KEY_HEAD = "What we found, in four numbers"
+KEY_LEDE = ("Double Heston fits real option prices better than one flat volatility, but the prices can't tell you its "
+            "ten settings. The Results page has the evidence behind every number.")

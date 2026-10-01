@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-PAGES = sys.argv[1:] or ["index.html", "market.html", "model.html", "how-it-works.html", "finding.html", "results.html", "about.html", "team.html", "references.html"]
+PAGES = sys.argv[1:] or ["index.html", "market.html", "model.html", "how-it-works.html", "results.html", "about.html", "team.html", "references.html"]
 
 for p in PAGES:
     r = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--virtual-time-budget=6000", "--enable-logging=stderr", "--v=0",

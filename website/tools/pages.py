@@ -17,8 +17,7 @@ DESC = {
     "market": "NSE closing prices, candlesticks and the stocks the research covers.",
     "model": "Price a NIFTY option with Double Heston and set it against the market's close.",
     "maths": "How Double Heston works: two variance factors, one integral, a Monte Carlo check.",
-    "finding": "Why a perfect price fit doesn't tell you the model's ten settings.",
-    "results": "Every result of the Double Heston project, with the data behind it and what each number means.",
+    "results": "What the Double Heston project found: the evidence, the ANN and PINN results, every number and the data behind it.",
     "about": "Method, data, limits and the explainer video.",
     "team": "Who built the Double Heston project.",
     "references": "The papers and data behind the project.",
@@ -56,12 +55,21 @@ TEMPLATE = """<!doctype html>
 """
 
 
+REDIRECT = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Results | Double Heston</title>
+<meta http-equiv="refresh" content="0; url=results.html"><link rel="canonical" href="results.html"></head>
+<body><p>The finding is now part of the <a href="results.html">Results</a> page.</p></body></html>
+"""
+
+
 def main():
     themes = "\n".join(f'<link rel="stylesheet" href="assets/css/themes/{t}.css">' for t in THEMES)
-    for pid, file, label, _ in PAGES:
+    for pid, file, label, *_ in PAGES:
         title = "Double Heston" if pid == "home" else f"{label} | Double Heston"
         (HERE / file).write_text(TEMPLATE.format(id=pid, default=DEFAULT_THEME, title=title, desc=DESC[pid], boot=BOOT, themes=themes))
         print("wrote", file)
+    (HERE / "finding.html").write_text(REDIRECT)
+    print("wrote finding.html (forwards to results.html)")
 
 
 if __name__ == "__main__":

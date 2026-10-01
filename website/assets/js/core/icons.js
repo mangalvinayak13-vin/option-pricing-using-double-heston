@@ -32,8 +32,8 @@ export const TINTS = {
   steel: ['#7FB2E5', '#2D6FAE', '#FFFFFF', '#9CC6F0', '#5E9BD8'],
   azure: ['#6FA8FF', '#2F6FE0', '#FFFFFF', '#7EB2FF', '#4C8DF6'],
 };
-export const PAGE_TINT = { home: 'blue', market: 'graphite', model: 'orange', maths: 'indigo', finding: 'red', about: 'grey', team: 'teal', references: 'yellow', slow: 'teal', fast: 'orange', play: 'red', video: 'red' };
-export const PAGE_GLYPH = { home: 'home', market: 'market', model: 'model', maths: 'maths', finding: 'finding', about: 'about', team: 'team', references: 'refs' };
+export const PAGE_TINT = { home: 'blue', market: 'graphite', model: 'orange', maths: 'indigo', finding: 'red', results: 'red', about: 'grey', team: 'teal', references: 'yellow', slow: 'teal', fast: 'orange', play: 'red', video: 'red' };
+export const PAGE_GLYPH = { home: 'home', market: 'market', model: 'model', maths: 'maths', finding: 'finding', results: 'finding', about: 'about', team: 'team', references: 'refs' };
 
 const G = {
   home: g => `<path d="M50 23 78.5 47.2c2 1.7.8 5-1.9 5H74V74a5 5 0 0 1-5 5H58.5V63.5a2.5 2.5 0 0 0-2.5-2.5H44a2.5 2.5 0 0 0-2.5 2.5V79H31a5 5 0 0 1-5-5V52.2h-2.6c-2.7 0-3.9-3.3-1.9-5Z" style="fill:${g}"/>`,

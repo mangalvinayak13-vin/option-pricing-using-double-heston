@@ -15,7 +15,7 @@ from collections import Counter
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 THEMES = ["springboard", "glass", "ferro", "amber", "instrument", "trading"]
 FILES = {"home": "index.html", "market": "market.html", "model": "model.html", "maths": "how-it-works.html",
-         "finding": "finding.html", "results": "results.html", "about": "about.html", "team": "team.html", "references": "references.html"}
+         "results": "results.html", "about": "about.html", "team": "team.html", "references": "references.html"}
 
 
 def grab(file, theme):

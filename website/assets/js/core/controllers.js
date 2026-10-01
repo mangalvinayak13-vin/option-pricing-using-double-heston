@@ -1,5 +1,5 @@
 // Theme-agnostic page behaviour, wired by data attributes: the model page (live repricing through the
-// worker), the market page (symbol, range, chart type), and the finding page (stock picker).
+// worker), the market page (symbol, range, chart type), and the Results page (stock picker).
 // Every choice goes into the store, so it survives a theme change.
 import { store } from './state.js';
 import { inr, fmt, esc, arrow, debounce, $, $$ } from './util.js';
@@ -212,7 +212,7 @@ function marketPage(scope, ctx) {
   $$('[data-seg="mode"]', scope).forEach(s => s.addEventListener('seg', e => { mode = e.detail; redraw(); }));
 }
 
-// ------------------------------------------------------------------ the finding page
+// ------------------------------------------------------------------ the Results page stock picker
 function findingPage(scope, ctx) {
   $$('[data-in="finding-sym"]', scope).forEach(sel => sel.addEventListener('change', () => {
     const sym = sel.value;

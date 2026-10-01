@@ -8,7 +8,7 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 const CHEV = '<svg class="gl-chev" viewBox="0 0 8 14" aria-hidden="true"><path d="M1.5 1.5 6.5 7l-5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function tile(ctx, s, i) {

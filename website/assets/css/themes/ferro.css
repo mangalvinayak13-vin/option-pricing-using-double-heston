@@ -118,3 +118,7 @@ html[data-mode="dark"][data-theme="ferro"] .fp-l { color: #F2F2F2; }
   [data-theme="ferro"] .fe-row { grid-template-columns: 1fr; }
   [data-theme="ferro"] .fe-tick { padding-right: 90px; }
 }
+
+/* the accent panel's lead, number labels and link button take the panel's text colour */
+[data-theme="ferro"] .fe-acc .s-lead, [data-theme="ferro"] .fe-acc .b-num span { color: color-mix(in srgb, var(--bg) 84%, transparent); }
+[data-theme="ferro"] .fe-acc .btn.ghost { color: var(--bg); background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--bg) 50%, transparent); }

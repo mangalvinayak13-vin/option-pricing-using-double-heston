@@ -9,7 +9,7 @@ import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
 // widget widths that make each page's grid tile cleanly (content is unchanged)
-const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 
 function widget(ctx, s, i) {
   const span = TWEAK[`${ctx.page}:${s.key}`] || SPAN[s.size] || 12;

@@ -117,3 +117,7 @@ html.motion[data-theme="glass"] .gl-feature.is-in > :nth-child(2) { transition-d
   [data-theme="glass"] .gl-gnav { padding-right: 90px; }
   [data-theme="glass"] .gl-tile { padding: 22px 20px; border-radius: 24px; }
 }
+
+/* the accent panel's lead, number labels and link button take the panel's text colour */
+[data-theme="glass"] .gl-acc .s-lead, [data-theme="glass"] .gl-acc .b-num span { color: color-mix(in srgb, #FFFFFF 84%, transparent); }
+[data-theme="glass"] .gl-acc .btn.ghost { color: #FFFFFF; background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, #FFFFFF 50%, transparent); }

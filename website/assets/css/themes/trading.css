@@ -107,3 +107,11 @@ html.motion[data-theme="trading"] .tr-pane.is-in { opacity: 1; transition: opaci
   html[data-nav="l"][data-theme="trading"] .tr-top, html[data-nav="l"][data-theme="trading"] .tr-tick, html[data-nav="l"][data-theme="trading"] .tr-hero,
   html[data-nav="l"][data-theme="trading"] .tr-pgt, html[data-nav="l"][data-theme="trading"] .tr-end { padding-left: 200px; }
 }
+/* the model page's Market prices button: Trading's heading is a padded flex row, not a .wrap */
+[data-theme="trading"] .tr-pgt:has(> .s-act) { padding-top: 66px; }
+[data-theme="trading"] .tr-pgt > .s-act { top: 18px; right: 24px; }
+@media (max-width: 700px) { [data-theme="trading"] .tr-pgt:has(> .s-act) { flex-direction: column; align-items: flex-start; padding-top: 22px; } }
+
+/* the accent panel's lead, number labels and link button take the panel's text colour */
+[data-theme="trading"] .tr-acc .s-lead, [data-theme="trading"] .tr-acc .b-num span { color: color-mix(in srgb, #FFFFFF 84%, transparent); }
+[data-theme="trading"] .tr-acc .btn.ghost { color: #FFFFFF; background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, #FFFFFF 50%, transparent); }

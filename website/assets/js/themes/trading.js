@@ -8,7 +8,7 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 
 const renderers = ctx => ({
   hero: s => `<section class="tr-hero" data-sec="${s.key}" data-anim><div class="tr-hero-in">

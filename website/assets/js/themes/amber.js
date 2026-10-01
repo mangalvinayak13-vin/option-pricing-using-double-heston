@@ -8,7 +8,7 @@ import { factorTrace } from '../core/factors.js';
 import { renderPage, inner } from '../core/layout.js';
 
 const SPAN = { full: 12, wide: 8, half: 6, narrow: 4, quarter: 3 };
-const TWEAK = { 'finding:pool': 7, 'finding:magnets-why': 5 };
+const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 const two = n => String(n).padStart(2, '0');
 
 const renderers = ctx => {
@@ -36,10 +36,11 @@ const renderers = ctx => {
 };
 
 function page(id, ctx) {
-  const idx = ctx.pages.findIndex(p => p.id === id);
+  const idx = ctx.pages.findIndex(p => p.id === ctx.navPage);
+  const sub = id !== ctx.navPage ? ` / ${ctx.all.find(p => p.id === id).label}` : '';
   return `<div class="am-tick">${B.ticker(ctx)}</div>
     <header class="am-bar wrap"><a class="am-brand" href="index.html">Double Heston</a><span class="am-chip"><i></i>${esc(ctx.C.STATUS)}</span>
-      <span class="am-where">[${two(idx + 1)}] ${esc(ctx.pages[idx].label)}</span></header>
+      <span class="am-where">[${two(idx + 1)}] ${esc(ctx.pages[idx].label + sub)}</span></header>
     <main id="main" class="am">${renderPage(id, ctx, renderers(ctx))}
       <div class="wrap am-end">${B.dock(ctx, { size: 52, tint: 'amber' })}${B.footer(ctx)}</div></main>`;
 }

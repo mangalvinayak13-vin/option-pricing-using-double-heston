@@ -106,3 +106,7 @@ html.motion[data-theme="amber"] .am-p.is-in { opacity: 1; transform: none; trans
   [data-theme="amber"] .am-ro { grid-template-columns: 1fr; gap: 6px; }
   [data-theme="amber"] .am-tick { padding-right: 90px; } [data-theme="amber"] .am-where { display: none; }
 }
+
+/* the accent panel's lead, number labels and link button take the panel's text colour */
+[data-theme="amber"] .am-acc .s-lead, [data-theme="amber"] .am-acc .b-num span { color: color-mix(in srgb, var(--on-acc) 84%, transparent); }
+[data-theme="amber"] .am-acc .btn.ghost { color: var(--on-acc); background: transparent; box-shadow: none; border: 1px solid color-mix(in srgb, var(--on-acc) 50%, transparent); }
