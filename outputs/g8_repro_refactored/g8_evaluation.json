@@ -1,0 +1,112 @@
+{
+  "milestone": "G8_FROZEN_REAL_MARKET_EVALUATION",
+  "held_out": true,
+  "dates_evaluated": 8,
+  "rate_observations_used": [
+    "2026-07-01",
+    "2026-07-15"
+  ],
+  "median_network_relative": 0.18566066922326058,
+  "median_best_fit_relative": 0.08224539584916121,
+  "median_gap_pp": 10.069593715300448,
+  "all_parameters_valid": true,
+  "rows": [
+    {
+      "date_id": "2026-08-05",
+      "usable_slots": 17,
+      "spot": 349.9,
+      "network_rmse": 0.004200261992956469,
+      "network_relative": 0.1728427423915805,
+      "best_fit_rmse": 0.0019700673429254474,
+      "best_fit_relative": 0.08106919111673082,
+      "gap_pp": 9.17735512748497,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-08-12",
+      "usable_slots": 18,
+      "spot": 339.45,
+      "network_rmse": 0.0032932230715549044,
+      "network_relative": 0.11850366483808963,
+      "best_fit_rmse": 0.001996743362253337,
+      "best_fit_relative": 0.07185101070497123,
+      "gap_pp": 4.6652654133118405,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-08-19",
+      "usable_slots": 20,
+      "spot": 336.55,
+      "network_rmse": 0.007702752472047963,
+      "network_relative": 0.2516855674240526,
+      "best_fit_rmse": 0.00432737192507784,
+      "best_fit_relative": 0.1413958273189269,
+      "gap_pp": 11.028974010512574,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-08-26",
+      "usable_slots": 11,
+      "spot": 334.6,
+      "network_rmse": 0.006036759008810418,
+      "network_relative": 0.19303992361275085,
+      "best_fit_rmse": 0.0026087665671198153,
+      "best_fit_relative": 0.08342160058159159,
+      "gap_pp": 10.961832303115928,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-09-02",
+      "usable_slots": 19,
+      "spot": 330.0,
+      "network_rmse": 0.0030139448034613246,
+      "network_relative": 0.10129956535889846,
+      "best_fit_rmse": 0.0012450963725435032,
+      "best_fit_relative": 0.041848052832204594,
+      "gap_pp": 5.945151252669387,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-09-09",
+      "usable_slots": 18,
+      "spot": 334.5,
+      "network_rmse": 0.0044474121421744384,
+      "network_relative": 0.17828141483377027,
+      "best_fit_rmse": 0.002653573746226339,
+      "best_fit_relative": 0.10637262001350724,
+      "gap_pp": 7.190879482026302,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-09-16",
+      "usable_slots": 16,
+      "spot": 327.0,
+      "network_rmse": 0.006781696573829643,
+      "network_relative": 0.2857981190034369,
+      "best_fit_rmse": 0.0018559028347335687,
+      "best_fit_relative": 0.07821251414680654,
+      "gap_pp": 20.758560485663033,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    },
+    {
+      "date_id": "2026-09-23",
+      "usable_slots": 20,
+      "spot": 326.0,
+      "network_rmse": 0.009259216858113413,
+      "network_relative": 0.2903106223366168,
+      "best_fit_rmse": 0.004619367161760845,
+      "best_fit_relative": 0.1448342096402054,
+      "gap_pp": 14.547641269641137,
+      "parameters_valid": true,
+      "rate_carry_forward_from": "2026-07-15"
+    }
+  ],
+  "caveat": "Repricing only; NTPC's true parameters are unknown so recovery is undefined on real data. The rate is carried forward from the latest sealed RBI observation, which shifts only the discount factor because the forward is futures-implied."
+}

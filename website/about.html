@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" data-page="about" data-default-theme="ferro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About | Double Heston</title>
+<meta name="description" content="Method, data, limits and the explainer video.">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<script>(function(){var T=["springboard", "glass", "ferro", "amber", "instrument", "trading"],D="ferro",d=document.documentElement,q,s={},t,m;
+try{q=new URLSearchParams(location.search)}catch(e){q={get:function(){return null}}}
+try{s.t=localStorage.getItem('dh.theme');s.m=localStorage.getItem('dh.mode')}catch(e){}
+t=q.get('theme');m=q.get('mode');if(T.indexOf(t)<0)t=null;if(m!=='light'&&m!=='dark')m=null;
+try{if(t)localStorage.setItem('dh.theme',t);if(m)localStorage.setItem('dh.mode',m)}catch(e){}
+t=t||(T.indexOf(s.t)>=0?s.t:D);m=m||(s.m==='light'||s.m==='dark'?s.m:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+d.setAttribute('data-theme',t);d.setAttribute('data-mode',m);d.style.colorScheme=m;})();</script>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/themes/springboard.css">
+<link rel="stylesheet" href="assets/css/themes/glass.css">
+<link rel="stylesheet" href="assets/css/themes/ferro.css">
+<link rel="stylesheet" href="assets/css/themes/amber.css">
+<link rel="stylesheet" href="assets/css/themes/instrument.css">
+<link rel="stylesheet" href="assets/css/themes/trading.css">
+<link rel="modulepreload" href="assets/js/app.js">
+<script type="module" src="assets/js/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="app"></div>
+<noscript><div class="noscript">This site draws its charts and runs the model with JavaScript. Please turn it on.</div></noscript>
+</body>
+</html>

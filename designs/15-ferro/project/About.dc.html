@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ferro: About</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Epilogue:wght@400;500;700;800&display=swap">
+<style>body{margin:0;background:#050505}a{color:inherit;text-decoration:none}.dh{position:relative;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:Epilogue,Helvetica,sans-serif;overflow:hidden;transition:background-color .2s ease,color .2s ease}.up{color:var(--up)}.dn{color:var(--down)}.mu{color:var(--muted)}.bo{color:var(--body)}.b-tick-in{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}.dh.t-light{--bg:#E9EBEE;--surf:#F5F6F8;--raised:#DCDFE4;--line:#B4BAC3;--grid:#D3D7DD;--ink:#0A0A0A;--body:#2E3136;--muted:#50555D;--acc:#0A0A0A;--on-acc:#F5F6F8;--up:#127A3E;--down:#B3261E;--on-up:#FFFFFF;--track-off:#E3E3E6;--ferro:#0A0A0B;--ferro-hi:#A9AFB6}.dh.t-dark{--bg:#050505;--surf:#121314;--raised:#1C1D1F;--line:#36383C;--grid:#1A1B1D;--ink:#F2F2F2;--body:#C9CBCF;--muted:#9A9DA3;--acc:#D9DCE1;--on-acc:#050505;--up:#3DDC84;--down:#FF5A5A;--on-up:#04120B;--track-off:#39393D;--ferro:#050505;--ferro-hi:#F2F4F8}
+.gsw-wrap{position:absolute;top:8px;right:20px;z-index:30;display:flex;align-items:center;gap:10px;height:32px;
+  font-size:14px;font-weight:500;color:var(--muted)}
+.gsw{position:relative;width:52px;height:32px;padding:0;border:0;border-radius:16px;cursor:pointer;
+  background:var(--track-off);transition:background-color .2s ease}
+.gsw:focus-visible{outline:3px solid #0A84FF;outline-offset:3px}
+.t-dark .gsw{background:#30D158}.t-light .gsw[aria-checked=true]{background:#34C759}
+.gsw .knob{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:14px;background:#FFFFFF;
+  box-shadow:0 3px 8px rgba(0,0,0,.18),0 1px 1px rgba(0,0,0,.12);transition:transform .32s cubic-bezier(.3,1.4,.5,1),width .18s ease}
+.t-dark .gsw .knob{transform:translateX(20px)}
+.gsw:active .knob{width:38px;background:rgba(255,255,255,.42);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 -6px 10px rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.22);
+  backdrop-filter:blur(1px) saturate(1.15) brightness(1.08);-webkit-backdrop-filter:blur(1px) saturate(1.15) brightness(1.08)}
+.t-dark .gsw:active .knob{transform:translateX(10px)}
+@media (prefers-reduced-motion: reduce){.gsw .knob{transition:transform .2s linear}.gsw:active .knob{width:28px}}
+
+.mag{position:absolute;top:260px;z-index:25;width:84px;height:360px}
+.mag.l{left:0}.mag.r{right:0}
+.mag .mag-bar{position:absolute;top:40px;width:7px;height:280px;border-radius:4px;
+  background:linear-gradient(90deg,#3A3B3E,#8C8F95 45%,#2A2B2E);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mag.l .mag-bar{left:8px}.mag.r .mag-bar{right:8px}
+.mag .mag-bead{position:absolute;width:13px;height:13px;border-radius:7px;background:radial-gradient(circle at 35% 30%,var(--ferro-hi) 0 18%,var(--ferro) 45%);
+  box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.mag.l .mag-bead{left:5px}.mag.r .mag-bead{right:5px}
+.mag .mag-fluid{position:absolute;top:0;width:84px;height:360px;opacity:0;transform:scaleX(.2);transition:opacity .22s ease,transform .32s cubic-bezier(.2,1.2,.4,1)}
+.mag.l .mag-fluid{left:0;transform-origin:0 50%}.mag.r .mag-fluid{right:0;transform-origin:100% 50%}
+.mag .mag-links{position:absolute;top:44px;display:flex;flex-direction:column;gap:2px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease .06s;padding:10px 12px;border-radius:14px;background:var(--surf);box-shadow:0 10px 30px rgba(0,0,0,.25);
+  border:1px solid var(--line);min-width:180px}
+.mag.l .mag-links{left:92px}.mag.r .mag-links{right:92px}
+.mag .mag-links a{display:block;padding:7px 10px;border-radius:9px;font-size:15px;font-weight:500;color:var(--ink);white-space:nowrap}
+.mag .mag-links a[aria-current]{background:var(--raised);color:var(--acc)}
+.mag:hover .mag-fluid,.mag:focus-within .mag-fluid{opacity:1;transform:scaleX(1)}
+.mag:hover .mag-links,.mag:focus-within .mag-links{opacity:1;pointer-events:auto}
+.t-dark .mag-fluid{filter:drop-shadow(0 0 4px rgba(242,244,248,.28)) drop-shadow(0 0 12px rgba(242,244,248,.10))}
+@media (prefers-reduced-motion: reduce){.mag .mag-fluid{transform:none;transition:opacity .2s}}
+
+.t-light{--plate:linear-gradient(180deg,#FBFCFD 0%,#E1E5EA 48%,#C9CFD7 100%);--tube:#0A0A0B;--tubehi:rgba(255,255,255,.85);--liq-top:#3B3F45;--dots:#FFFFFF}
+.t-dark{--plate:linear-gradient(180deg,#26282C 0%,#15161A 55%,#0B0C0E 100%);--tube:#000000;--tubehi:rgba(255,255,255,.75);--liq-top:#34373C;--dots:#FFFFFF}
+.top{height:60px;display:flex;align-items:center;gap:22px;padding:0 250px 0 72px;font-size:14.5px;color:var(--muted)}.top b{font-family:Sora,sans-serif;font-weight:700;font-size:18px;color:var(--ink);letter-spacing:.02em}
+.plate{margin:0 150px 0 72px;border-radius:6px;background:var(--plate);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(0,0,0,.25),0 1px 0 var(--line);padding:48px 48px 36px;display:grid;grid-template-columns:5fr 7fr;gap:40px;align-items:center}
+.pg{padding:64px 150px 110px 72px;display:flex;flex-direction:column;gap:84px}
+.h1{margin:0;font-family:Sora,sans-serif;font-weight:700;font-size:60px;line-height:1.02;letter-spacing:-.03em}
+.h2{margin:0;font-family:Sora,sans-serif;font-weight:600;font-size:34px;line-height:1.1;letter-spacing:-.02em}
+.lede{margin:0;font-size:20px;line-height:1.55;color:var(--body);max-width:860px}
+.p{margin:0;font-size:18px;line-height:1.6;color:var(--body)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.ridge{height:46px;display:block}
+.b-tick{height:36px;display:flex;align-items:center;padding:0 250px 0 72px;font-size:14px;white-space:nowrap;border-bottom:1px solid var(--line)}
+.b-tick-in{flex:1;min-width:0;display:flex;gap:26px;overflow:hidden}.b-ti{display:inline-flex;gap:8px}.b-ti-lab{color:var(--muted)}
+.b-tb{width:100%;border-collapse:collapse;font-size:16px}
+.b-tb th{text-align:right;font-weight:600;font-size:13.5px;color:var(--muted);padding:10px;border-bottom:2px solid var(--ink)}
+.b-tb td{text-align:right;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.b-tb th:first-child,.b-tb td:first-child{text-align:left}.b-tb tr.sel td{background:var(--ink);color:var(--bg);font-weight:700}.b-tb tr.sel td *{color:var(--bg)}
+.b-sub{color:var(--muted)}.b-model{font-weight:800;text-decoration:underline;text-underline-offset:4px}.b-lab{font-size:13.5px;font-weight:600;color:var(--muted)}
+.b-form{display:grid;grid-template-columns:1.3fr 1.3fr 1fr 1fr auto;gap:14px;align-items:end;margin:0}
+.b-form label,.b-form fieldset{display:flex;flex-direction:column;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.b-form select,.b-form input{height:50px;border-radius:4px;border:1px solid var(--line);background:var(--surf);color:var(--ink);font:500 17px Epilogue,Helvetica,sans-serif;padding:0 14px}
+.b-seg{display:grid;grid-template-columns:1fr 1fr;height:50px;border:1px solid var(--line);border-radius:4px;overflow:hidden}.b-seg span{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted)}.b-seg span.on{background:var(--ink);color:var(--bg)}
+.b-btn{height:52px;padding:0 26px;border-radius:4px;border:0;background:var(--ink);color:var(--bg);font:700 17px Epilogue,Helvetica,sans-serif;cursor:pointer;display:inline-flex;align-items:center}.b-btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.b-sl{display:grid;grid-template-columns:34px 1fr 78px;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.b-sl b{font-family:Sora,sans-serif;font-size:19px}.b-sl label{display:flex;flex-direction:column;gap:5px;font-size:15px;color:var(--muted)}.b-sl input{width:100%;accent-color:#0A0A0A}.b-sl output{text-align:right;font-weight:700;font-size:17px}
+.b-greek{display:flex;flex-direction:column;gap:4px;padding:16px;background:var(--surf);border-radius:4px}.b-greek b{font-family:Sora,sans-serif;font-size:32px;font-weight:700}
+.b-num{display:flex;flex-direction:column;gap:8px}.b-num b{font-family:Sora,sans-serif;font-size:58px;font-weight:700;letter-spacing:-.03em;line-height:1}.b-num span{font-size:16px;line-height:1.45;color:var(--body)}
+.b-eq{display:flex;flex-direction:column;gap:8px;padding:18px 0;border-bottom:1px solid var(--line)}.b-eqn{font-family:Sora,sans-serif;font-size:24px;font-weight:500;line-height:1.45}
+.b-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px}.b-steps li{display:grid;grid-template-columns:50px 1fr;gap:12px}
+.b-steps .b-n{font-family:Sora,sans-serif;font-size:34px;font-weight:700;line-height:1}.b-steps li>span{display:flex;flex-direction:column;gap:5px}.b-steps li>span>b{font-size:18px}.b-steps li>span>span{font-size:16.5px;line-height:1.55;color:var(--body)}
+.b-lin{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}.b-lin li{display:flex;flex-direction:column;gap:6px}.b-lin .b-y{font-family:Sora,sans-serif;font-size:52px;font-weight:700}.b-lin li>span{display:flex;flex-direction:column}.b-lin li>span>span{color:var(--muted)}
+.b-list{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:17.5px;line-height:1.55;color:var(--body)}
+.b-video{margin:0}.b-video button{width:100%;aspect-ratio:16/9;border:0;border-radius:6px;background:var(--plate);display:flex;align-items:center;justify-content:center;cursor:pointer}.b-video figcaption{margin-top:12px;font-size:15px;color:var(--muted)}
+.b-person{display:flex;flex-direction:column;gap:6px}.b-person .b-ph{aspect-ratio:1/1;border-radius:6px;background:var(--plate);display:flex;align-items:center;justify-content:center;margin-bottom:10px}.b-person b{font-family:Sora,sans-serif;font-size:21px}.b-person>span:last-child{color:var(--muted);font-size:15px}
+.b-refs h2{margin:0 0 10px;font-family:Sora,sans-serif;font-size:24px}.b-refs ol{list-style:none;margin:0 0 34px;padding:0}.b-refs li{display:grid;grid-template-columns:48px 1fr;padding:12px 0;border-bottom:1px solid var(--line);font-size:16.5px;line-height:1.5}.b-refs .b-rn{font-family:Sora,sans-serif;font-weight:700}.b-refs .b-rt{color:var(--body)}
+.b-chip{font-size:14px;font-weight:700;padding:7px 14px;border-radius:4px;border:1px solid var(--line)}.b-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.b-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.b-links a{display:flex;align-items:center;gap:14px}.b-links a>span{display:flex;flex-direction:column}.b-links b{font-size:17px}.b-links a>span>span{color:var(--muted);font-size:14px}
+.ft{padding:24px 150px 36px 72px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+</style>
+</helmet>
+<div class="dh {{theme}}" style="width: 1440px; height: 1411px;">
+<div class="gsw-wrap"><span>Dark mode</span><button type="button" class="gsw" role="switch" aria-checked="{{dark}}" aria-label="Dark mode" onClick="{{toggle}}"><span class="knob"></span></button></div>
+<nav class="mag r" aria-label="Pages"><span class="mag-bar"></span><svg class="mag-fluid" width="84" height="360" viewBox="0 0 84 360" aria-hidden="true"><defs><linearGradient id="rAboutg" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" style="stop-color:var(--ferro)"></stop><stop offset=".55" style="stop-color:var(--ferro)"></stop><stop offset="1" style="stop-color:var(--ferro-hi);stop-opacity:.35"></stop></linearGradient></defs><g transform="translate(84,0) scale(-1,1)"><path d="M12,44 Q16,58 19.1,66 L19.6,68.5 C22.8,73.4 27.2,80.8 31.0,82.2 C27.2,83.6 22.8,78.6 22.3,83.5 L24.3,97.2 C30.4,102.7 42.9,108.8 53.6,110.2 C42.9,111.6 30.4,108.7 26.3,114.2 L27.5,125.9 C36.1,132.1 55.0,136.7 71.4,138.1 C55.0,139.5 36.1,138.8 28.9,144.9 L29.4,154.6 C39.4,161.5 63.0,164.6 83.3,166.0 C63.0,167.4 39.4,168.8 30.0,175.6 L30.0,184.4 C39.4,191.2 63.0,192.6 83.3,194.0 C63.0,195.4 39.4,198.5 29.4,205.4 L28.9,215.1 C36.1,221.2 55.0,220.5 71.4,221.9 C55.0,223.3 36.1,227.9 27.5,234.1 L26.3,245.8 C30.4,251.3 42.9,248.4 53.6,249.8 C42.9,251.2 30.4,257.3 24.3,262.8 L22.3,276.5 C22.8,281.4 27.2,276.4 31.0,277.8 C27.2,279.2 22.8,286.6 19.6,291.5 L19.1,294 Q16,302 12,316 Z" style="fill:url(#rAboutg);stroke:var(--ferro-hi);stroke-width:1;stroke-opacity:.45"></path><path d="M19.0,71.5 C23.0,73.8 26.5,80.4 29.6,81.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,100.6 C31.0,103.2 40.9,108.4 49.6,109.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,129.7 C36.9,132.6 52.0,136.3 65.4,137.5" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,158.8 C40.5,162.0 59.2,164.2 75.8,165.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,188.6 C40.5,191.7 59.2,192.2 75.8,193.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,218.9 C36.9,221.7 52.0,220.1 65.4,221.3" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,249.2 C31.0,251.7 40.9,248.0 49.6,249.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M19.0,279.5 C23.0,281.8 26.5,276.0 29.6,277.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><ellipse cx="18" cy="150" rx="3" ry="16" style="fill:var(--ferro-hi);opacity:.5"></ellipse></g></svg><span class="mag-bead" style="top:238px"></span><div class="mag-links"><a href="Main.dc.html">Home</a><a href="Market.dc.html">Market</a><a href="Model.dc.html">The model</a><a href="Maths.dc.html">How it works</a><a href="Finding.dc.html">The finding</a><a href="About.dc.html" aria-current=page>About</a><a href="Team.dc.html">Team</a><a href="References.dc.html">References</a></div></nav>
+
+<header class="top"><b>ferro</b><span>Double Heston. Market closed. Last close 25 Sep 2026, 15:30 IST</span></header>
+<div class="pg">
+  <section style="display:flex;flex-direction:column;gap:18px"><h1 class="h1">A B.Tech physics project about one question and an honest answer.</h1></section>
+  <section class="two"><figure class="b-video"><button type="button" aria-label="Play the project video"><svg width="96" height="96" viewBox="0 0 100 100" aria-hidden="true" style="flex-shrink:0;display:block"><path d="M50,0 C88,0 100,12 100,50 C100,88 88,100 50,100 C12,100 0,88 0,50 C0,12 12,0 50,0 Z" style="fill:var(--ink)"></path><path d="M38,28 L74,50 L38,72 Z" style="fill:var(--bg)"></path></svg></button><figcaption>A narrated overview of the model and the finding, made from the project report. [Video to be added] The video loads only when played.</figcaption></figure><div style="display:flex;flex-direction:column;gap:14px"><h2 class="h2">Method and data</h2><p class="p">Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.</p><p class="p">Research data: official NSE end-of-day files, 210 stocks, 60 trading days, 12,480 option surfaces. Live prices on the site come from Upstox.</p><p class="p">Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat volatility, which a true best fit can never lose to.</p></div></section>
+  <svg class="ridge" width="1218" height="46" viewBox="0 0 1218 46" aria-hidden="true"><path d="M0,46 L3.7,44 C15.9,40 20.4,37.0 23.4,34.0 C26.4,37.0 30.9,40 43.1,44 L50.6,44 C62.8,40 67.3,35.1 70.3,31.2 C73.3,35.1 77.8,40 89.9,44 L97.4,44 C109.6,40 114.1,33.2 117.1,28.6 C120.1,33.2 124.6,40 136.8,44 L144.3,44 C156.5,40 161.0,31.4 164.0,26.0 C167.0,31.4 171.5,40 183.6,44 L191.1,44 C203.3,40 207.8,29.7 210.8,23.5 C213.8,29.7 218.3,40 230.5,44 L238.0,44 C250.2,40 254.7,28.0 257.7,21.2 C260.7,28.0 265.1,40 277.3,44 L284.8,44 C297.0,40 301.5,26.5 304.5,18.9 C307.5,26.5 312.0,40 324.2,44 L331.7,44 C343.9,40 348.3,25.0 351.3,16.8 C354.3,25.0 358.8,40 371.0,44 L378.5,44 C390.7,40 395.2,23.6 398.2,14.8 C401.2,23.6 405.7,40 417.9,44 L425.4,44 C437.5,40 442.0,22.3 445.0,13.0 C448.0,22.3 452.5,40 464.7,44 L472.2,44 C484.4,40 488.9,21.1 491.9,11.3 C494.9,21.1 499.4,40 511.6,44 L519.1,44 C531.2,40 535.7,20.1 538.7,9.9 C541.7,20.1 546.2,40 558.4,44 L565.9,44 C578.1,40 582.6,19.3 585.6,8.7 C588.6,19.3 593.1,40 605.3,44 L612.7,44 C624.9,40 629.4,18.8 632.4,8.0 C635.4,18.8 639.9,40 652.1,44 L659.6,44 C671.8,40 676.3,19.3 679.3,8.7 C682.3,19.3 686.8,40 698.9,44 L706.4,44 C718.6,40 723.1,20.1 726.1,9.9 C729.1,20.1 733.6,40 745.8,44 L753.3,44 C765.5,40 770.0,21.1 773.0,11.3 C776.0,21.1 780.5,40 792.6,44 L800.1,44 C812.3,40 816.8,22.3 819.8,13.0 C822.8,22.3 827.3,40 839.5,44 L847.0,44 C859.2,40 863.7,23.6 866.7,14.8 C869.7,23.6 874.1,40 886.3,44 L893.8,44 C906.0,40 910.5,25.0 913.5,16.8 C916.5,25.0 921.0,40 933.2,44 L940.7,44 C952.9,40 957.3,26.5 960.3,18.9 C963.3,26.5 967.8,40 980.0,44 L987.5,44 C999.7,40 1004.2,28.0 1007.2,21.2 C1010.2,28.0 1014.7,40 1026.9,44 L1034.4,44 C1046.5,40 1051.0,29.7 1054.0,23.5 C1057.0,29.7 1061.5,40 1073.7,44 L1081.2,44 C1093.4,40 1097.9,31.4 1100.9,26.0 C1103.9,31.4 1108.4,40 1120.6,44 L1128.1,44 C1140.2,40 1144.7,33.2 1147.7,28.6 C1150.7,33.2 1155.2,40 1167.4,44 L1174.9,44 C1187.1,40 1191.6,35.1 1194.6,31.2 C1197.6,35.1 1202.1,40 1214.3,44 L1218,46 Z" style="fill:var(--tube);stroke:var(--ferro-hi);stroke-opacity:.4;stroke-width:1"></path></svg>
+  <section class="two"><div style="display:flex;flex-direction:column;gap:14px"><h2 class="h2">Limits</h2><ul class="b-list"><li>No jumps: the largest one-day moves are still underestimated.</li><li>Dividends are supported but set to zero; one interest rate for every maturity.</li><li>Prices are frictionless. Real trading crosses a bid–ask spread.</li><li>End-of-day research data has closing prices only, no bid–ask quotes.</li><li>Only 11 to 19 of the 20 target option slots are quoted on a typical day.</li></ul></div><div style="display:flex;flex-direction:column;gap:14px"><h2 class="h2">Also explored</h2><p class="p">Also explored: whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.</p><a class="b-model" href="https://github.com/mangalvinayak13-vin/option-pricing-using-double-heston">github.com/mangalvinayak13-vin/option-pricing-using-double-heston</a></div></section>
+</div>
+<footer class="ft"><span>Not trading advice. Prices are NSE closing prices; live Upstox prices replace them during market hours.</span><span>github.com/mangalvinayak13-vin/option-pricing-using-double-heston</span></footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1411}}'>
+class Component extends DCLogic {
+renderVals() {
+const s = this.state || {};
+const dark = s.dark !== undefined ? s.dark : (this.props.dark ?? false);
+return { theme: dark ? 't-dark' : 't-light', dark: dark, toggle: () => this.setState({ dark: !dark }) };
+}
+}
+</script>
+</body>
+</html>

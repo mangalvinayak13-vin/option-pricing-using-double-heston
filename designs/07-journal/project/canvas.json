@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:18:47Z"
+  },
+  "title": "DH Design 07 — Journal",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2514,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 2077,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2409,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2096,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2411,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 2914,
+      "w": 1440,
+      "h": 2807,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 2914,
+      "w": 1440,
+      "h": 1468,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 2914,
+      "w": 1440,
+      "h": 900,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 2914,
+      "w": 1440,
+      "h": 960,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "07 · Journal: The site typeset as a physics paper: title block, abstract, numbered sections, numbered equations, Fig. n."
+    },
+    "row2": {
+      "x": 0,
+      "y": 2614,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Journal. The site typeset as a physics paper: title block, abstract, numbered sections, numbered equations, Fig. n.\n\nLayout: A 1000-px paper: centred title and abstract, justified two-column text, full-width figures and three-rule tables.\nThe memorable thing: Equations set like a paper, numbered at the right margin; every chart is a numbered figure.\nType: Source Serif 4 throughout: 600 for the title, 400 justified for text, italic for equations and captions.\nLight: bg #FAF8F3, surf #FFFFFF, ink #1F1D19, muted #5E5A52, acc #2D3A87, line #D6D0C2\nDark: bg #16151A, surf #1D1C22, ink #ECE8DF, muted #A39E94, acc #9AA6FF, line #35343C\nMagnet rail on the right edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

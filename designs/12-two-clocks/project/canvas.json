@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:39:47Z"
+  },
+  "title": "DH Design 12 — Two Clocks",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2248,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 2091,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2905,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2595,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2375,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 3305,
+      "w": 1440,
+      "h": 3151,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 3305,
+      "w": 1440,
+      "h": 1263,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 3305,
+      "w": 1440,
+      "h": 1068,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 3305,
+      "w": 1440,
+      "h": 1355,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "12 · Two Clocks: The slow and fast factors as two dials; the finding told as 'the market can’t read the clocks'."
+    },
+    "row2": {
+      "x": 0,
+      "y": 3005,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Two Clocks. The slow and fast factors as two dials; the finding told as 'the market can’t read the clocks'.\n\nLayout: Two-column spreads around dials and a shock-decay chart; rounded panels; Unbounded headlines.\nThe memorable thing: Two dials, each a two-year clock with its hand on the factor's half-life (1.4 years, 51 days).\nType: Unbounded 500–700 for headlines, numbers and dial labels; Karla 400–700 for text, tables and charts.\nLight: bg #EDEFF7, surf #FFFFFF, ink #141B34, muted #55607D, acc #D1343F, line #C5CCE2\nDark: bg #0B1024, surf #121A36, ink #E8ECFA, muted #8F99BE, acc #FF6B6B, line #28335C\nMagnet rail on the left edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:02:14Z"
+  },
+  "title": "DH Design 01 — Amber Instrument",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2087,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 2047,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2552,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2338,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2377,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 2952,
+      "w": 1440,
+      "h": 3013,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 2952,
+      "w": 1440,
+      "h": 1595,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 2952,
+      "w": 1440,
+      "h": 1193,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 2952,
+      "w": 1440,
+      "h": 2115,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "01 · Amber Instrument: A precision instrument: bracketed readouts, a $ query hero and hairline panels, in amber on near-black."
+    },
+    "row2": {
+      "x": 0,
+      "y": 2652,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Amber Instrument. A precision instrument: bracketed readouts, a $ query hero and hairline panels, in amber on near-black.\n\nLayout: 12-column grid of hairline panels with labelled headers; left-aligned; one amber accent for the model.\nThe memorable thing: The $ query headline and the fit(prices) ≈ exact / recover(settings) = no readout.\nType: Schibsted Grotesk throughout: 700 for headlines, 900 for readout numbers, 400/500 for text.\nLight: bg #F3F2EE, surf #FFFFFF, ink #16170F, muted #67665E, acc #9E6108, line #D6D3C9\nDark: bg #0F100E, surf #151612, ink #EDEAE1, muted #95928A, acc #F0B24A, line #2C2D28\nMagnet rail on the left edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}
