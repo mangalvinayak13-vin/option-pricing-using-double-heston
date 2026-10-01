@@ -478,7 +478,7 @@ CHART_NOTES = {
     "marketSmile": ("Market against model, by strike",
                     "Rings are NSE closing prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks today's NIFTY level."),
     "candles": ("Daily candlesticks with volume",
-                "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath; the tag on the right is the last close."),
+                "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath (for an index, the shares traded across its stocks); the tag on the right is the last close."),
     "indexLine": ("Closing level by day", "One point per trading day; the shaded area sits under the line. Hover for the date and level."),
     "hist": ("How far apart equally good fits landed, per surface",
              "Each bar counts surfaces by the distance between their equally good fits. The dashed line is the typical distance between two random settings; the solid line is the median for equally good fits."),

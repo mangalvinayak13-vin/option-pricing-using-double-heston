@@ -469,12 +469,13 @@ export function defs3d(id) {
     <linearGradient id="${id}s" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:#fff;stop-opacity:.9"/><stop offset="1" style="stop-color:#fff;stop-opacity:0"/></linearGradient>
     <radialGradient id="${id}c"><stop offset="0" style="stop-color:#000;stop-opacity:.35"/><stop offset="1" style="stop-color:#000;stop-opacity:0"/></radialGradient></defs>`;
 }
-export function spike3d(id, cx, base, h, hw, extra = '') {
+export function spike3d(id, cx, base, h, hw, style = '') {
   h = Math.max(h, 4);
   const top = base - h;
   const shade = h > 10 ? `<path d="M${f1(cx - 1.4)},${f1(top + 4)} Q${f1(cx - hw * 0.2)},${f1(base - h * 0.45)} ${f1(cx - hw * 0.58)},${f1(base - 2)}" style="fill:none;stroke:url(#${id}s);stroke-width:1.6;stroke-linecap:round;opacity:.85"/>` +
     `<circle cx="${f1(cx - 0.5)}" cy="${f1(top + 2.5)}" r="1.3" style="fill:#fff;opacity:.8"/>` : '';
-  return `<g class="spike3d" ${extra}><ellipse cx="${f1(cx)}" cy="${f1(base + 1)}" rx="${f1(hw * 1.25)}" ry="3.2" style="fill:url(#${id}c)"/>` +
+  // one class attribute (a duplicate "class=" here would silently lose a-rise, and the spike would never animate in)
+  return `<g class="spike3d a-rise" style="${style}"><ellipse cx="${f1(cx)}" cy="${f1(base + 1)}" rx="${f1(hw * 1.25)}" ry="3.2" style="fill:url(#${id}c)"/>` +
     `<path d="${spikePath(cx, base, h, hw)}" style="fill:url(#${id}b);stroke:var(--ferro-hi);stroke-opacity:.35;stroke-width:.8"/>${shade}</g>`;
 }
 export function spikePath(cx, base, h, hw) {
@@ -512,7 +513,7 @@ registerChart('pairMagnets', (w, o, ctx) => {
       const v = fit[name];
       const cx = labelW + i * cw + cw / 2;
       const sh = clamp(hf(v), 0, 1) * (rowH - 56);
-      b += o.spike3d ? spike3d(sid, cx, base, sh, cw * 0.34, `class="a-rise" style="--i:${r * 10 + i};--d:${r * 250}ms"`)
+      b += o.spike3d ? spike3d(sid, cx, base, sh, cw * 0.34, `--i:${r * 10 + i};--d:${r * 250}ms`)
         : `<path d="${spikePath(cx, base, sh, cw * 0.34)}" class="spike a-rise" style="--i:${r * 10 + i};--d:${r * 250}ms"/>`;
       const star = Math.abs(v - hiB[name]) < 1e-3 * Math.max(1, Math.abs(hiB[name])) ? '*' : '';
       b += T(cx, base + 21, vf(v) + star, 't-ink', 'middle', `style="font-weight:600;font-size:${narrow ? 11 : 13}px"`);
@@ -574,7 +575,7 @@ registerChart('pairSix', (w, o, ctx) => {
       const vals = P.all_equivalent.map(e => conv(e[`${key}_${suf}`])).sort((a, c) => a - c);
       vals.forEach(v => {
         const x = labelW + s(clamp(v, s.d0, s.d1));
-        b += o.spike3d ? spike3d(sid, x, base, rowH - 26, 9, `class="a-rise" style="--i:${i++}"`) : `<path d="${spikePath(x, base, rowH - 26, 9)}" class="spike a-rise" style="--i:${i++}"/>`;
+        b += o.spike3d ? spike3d(sid, x, base, rowH - 26, 9, `--i:${i++}`) : `<path d="${spikePath(x, base, rowH - 26, 9)}" class="spike a-rise" style="--i:${i++}"/>`;
       });
       y += rowH;
     }

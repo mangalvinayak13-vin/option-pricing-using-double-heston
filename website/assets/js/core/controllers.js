@@ -200,7 +200,7 @@ function marketPage(scope, ctx) {
     set('m-sym', sym); set('m-name', ctx.C.NAMES[sym] || '');
     $$('[data-bind="m-last"]', scope).forEach(el => { el.textContent = inr(r[4]); });
     $$('[data-bind="m-chg"]', scope).forEach(el => { el.textContent = `${a} ${inr(Math.abs(ch))} (${Math.abs(ch / r[6] * 100).toFixed(2)}%)`; el.className = el.className.replace(/\b(up|dn)\b/g, '') + ' ' + c; });
-    set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6])); set('m-volume', `${(r[5] / 1e5).toFixed(1)} lakh`);
+    set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6])); set('m-volume', `${inr(r[5] / 1e5, 1)} lakh`);
     $$('button[data-sym]', scope).forEach(b => {
       const on = b.dataset.sym === sym;
       b.setAttribute('aria-pressed', String(on));

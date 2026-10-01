@@ -191,7 +191,7 @@
   ],
   "candles": [
    "Daily candlesticks with volume",
-   "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath; the tag on the right is the last close."
+   "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath (for an index, the shares traded across its stocks); the tag on the right is the last close."
   ],
   "indexLine": [
    "Closing level by day",
