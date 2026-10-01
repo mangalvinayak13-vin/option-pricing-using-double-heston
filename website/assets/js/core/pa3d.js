@@ -39,13 +39,33 @@ export function createPA3D(host, PA) {
       font: cs.getPropertyValue('--font-chart').trim() || 'sans-serif', dark: document.documentElement.dataset.mode === 'dark' };
   };
 
-  function project(x, y, z) {
+  // raw view coordinates (before fitting to the panel)
+  function raw(x, y, z) {
     const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
     const x1 = x * cy - y * sy, y1 = x * sy + y * cy;            // turn around the vertical axis
     const y2 = y1 * cp - z * sp, z2 = y1 * sp + z * cp;          // tip toward the viewer
     const f = 1 / (1 + y2 * 0.18);                               // gentle perspective
-    const k = Math.min(W, H * 1.5) * 0.3;
-    return [W / 2 + x1 * k * f, H * 0.6 - z2 * k * f, y2];
+    return [x1 * f, -z2 * f, y2];
+  }
+  // fit the whole scene (floor, both networks' extremes, the exact surface) inside the panel, every frame
+  let fit = { k: 1, ox: 0, oy: 0 };
+  function refit() {
+    // over the whole sway (and the current angle), so the zoom stays steady while the view turns
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    const keep = yaw;
+    for (const a of [keep, -1.17, -0.9, -0.62, -0.35, -0.07]) {
+      yaw = a;
+      const take = (x, y, z) => { const [p, q] = raw(x, y, z); x0 = Math.min(x0, p); x1 = Math.max(x1, p); y0 = Math.min(y0, q); y1 = Math.max(y1, q); };
+      for (const [x, y] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { take(x, y, Z(zmin)); take(x, y, Z(zmax)); }
+    }
+    yaw = keep;
+    const padX = 30, padTop = 44, padBottom = 34;
+    const k = Math.min((W - 2 * padX) / (x1 - x0), (H - padTop - padBottom) / (y1 - y0));
+    fit = { k, ox: padX + ((W - 2 * padX) - (x1 - x0) * k) / 2 - x0 * k, oy: padTop + ((H - padTop - padBottom) - (y1 - y0) * k) / 2 - y0 * k };
+  }
+  function project(x, y, z) {
+    const [a, b, d] = raw(x, y, z);
+    return [fit.ox + a * fit.k, fit.oy + b * fit.k, d];
   }
 
   function draw(v) {
@@ -85,8 +105,8 @@ export function createPA3D(host, PA) {
   }
 
   const drawAll = () => views.forEach(draw);
-  size(); drawAll();
-  const onResize = () => { size(); drawAll(); };
+  size(); refit(); drawAll();
+  const onResize = () => { size(); refit(); drawAll(); };
   addEventListener('resize', onResize);
   host.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, yaw, pitch }; host.setPointerCapture(e.pointerId); });
   host.addEventListener('pointermove', e => {
@@ -95,7 +115,7 @@ export function createPA3D(host, PA) {
     pitch = Math.max(0.15, Math.min(1.1, drag.pitch + (e.clientY - drag.y) * 0.006));
     drawAll();
   });
-  const end = () => { drag = null; };
+  const end = () => { if (drag) { drag = null; refit(); drawAll(); } };
   host.addEventListener('pointerup', end); host.addEventListener('pointercancel', end);
   host.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); yaw += e.key === 'ArrowLeft' ? -0.12 : 0.12; drawAll(); }

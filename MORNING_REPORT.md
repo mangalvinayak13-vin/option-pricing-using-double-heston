@@ -1,5 +1,55 @@
 # Morning report: the Double Heston website
 
+## Second pass, after your review (latest)
+
+**Data audit.** Every number on the site was checked against its source. Three fixes:
+
+1. **"Live Upstox prices" was not true.** The site never connected to Upstox. The Market intro, the method text, the thanks and the footer now say the prices are NSE closes and that live prices are planned.
+2. **The network behind the 210-stock studies is a plain ANN, not a PINN.** It's an MLP trained only on parameter examples. Every place it appears now names it as the ANN.
+3. **"A typical day has 11 to 19 of 20 option slots quoted" came from 5 days of one stock.** Across all 12,480 surfaces the typical figure is 17 of 20, which the Limits list now says.
+
+**"We beat Black–Scholes 5% of the time" is real, but it belongs to the ANN, not a PINN.** With the settings the ANN reads from each day's own quotes, Double Heston beat a same-day Black–Scholes fit on **4.8% of 12,265 stock-days** (589 of them). Carried to the next day, its settings beat Black–Scholes on 19.1%. This replaces the "0 of 210" line, as you asked.
+
+**The PINN's own results** are added, and they're better:
+
+- **Fidelity:** the Double Heston PINN reproduces the exact pricer to 1.1 × 10⁻⁵ (about 0.1 volatility points).
+- **Controlled test:** it beat a refitted one-factor Heston, which beat Black–Scholes, on 40 of 40 surfaces.
+- **Real NIFTY options:** on 10 high-volatility days (1,750 held-out quotes), the physics-informed calibrator's error was **2.48 volatility points against 2.98 for Black–Scholes**. It was the best model on 4 of the 10 days and took 1.2 s, where a classical fit took 25 s.
+
+**PINN against ANN, in 3D, computed rather than drawn** (`python3 website/tools/pinn_vs_ann.py`, about 3 minutes). Two identical networks saw the same 48 exact Double Heston prices, and the PINN also had to obey the model's pricing equation:
+
+| | ANN | PINN |
+|---|---|---|
+| Error on 2,000 fresh points | 5.7% | 0.8% |
+| How far it breaks the pricing equation | 35 times more | — |
+| Points priced impossibly below zero, on the 1,271-point slice drawn in 3D | 187 | 0 |
+
+**New home:** "From a speck of pollen to Wall Street", which draws a random walk across 12 milestones from Brown (1827), Bachelier (1900) and Einstein (1905) through Black–Scholes, Heston and Double Heston to PINNs (2019) and this project. It continues with "What we did" in seven steps and the 3D PINN-versus-ANN comparison. The new history and PINN papers are in References.
+
+**New Results page** (`results.html`): every dataset, every result with a good, mixed or bad reading (the negatives are kept), and a glossary.
+
+**Interface fixes:**
+
+- **Charts:** every chart now has a title and a "how to read it" line.
+- **Ticker:** equity prices only.
+- **Page icons:** a dock above the "Not trading advice" line, magnifying under the cursor. It sits in the page, not at the screen bottom where the Mac's own Dock is.
+- **Magnetic dashes:** short and straight at rest, growing longer near the cursor, with no tilt. The page keeps a clear strip beside the nav, so the names never cover content.
+- **Springboard scroll:** highlights and hover effects pause while you scroll, so the backlight no longer hangs.
+- **How it works:** the equations now use each theme's own type, and the page follows one sequence: the bend, the steps, the equations, the two clocks, the simulation, then the surface.
+- **Motion:** each theme has its own character. Springboard pops like apps opening, Glass settles slowly, Ferro rises like liquid, Amber powers on like a display and plots its lines in steps, Instrument sweeps in from the left, and Trading appears almost instantly, flashing repriced numbers green or red.
+
+**Best snapshots:** `website/snapshots/` holds 17 retina screens of the strongest moments, with `README.md` listing what each one shows.
+
+**Checks on this build:**
+
+- parity across all 54 combinations of 9 pages and 6 themes;
+- zero console messages;
+- all six themes pass the interaction test at 60 fps;
+- no overflow at 390 px or 1280 px.
+
+---
+
+
 ## Run it (one command)
 
 ```

@@ -52,3 +52,12 @@ NIGHT_PLAN.md has the architecture.
 2. `git log --oneline night-build` shows the last milestone.
 3. The next step is the first row that isn't marked done.
 4. Build each remaining theme with `renderPage()` from `core/layout.js`, so the content stays identical.
+
+- **Second pass** (`c7ecda4` and the next commit):
+  - data audit and ANN/PINN wording;
+  - 4.8% against Black-Scholes in place of 0 of 210;
+  - the PINN results;
+  - PINN vs ANN in 3D, computed by tools/pinn_vs_ann.py;
+  - the Einstein-to-Wall-Street home and the new Results page;
+  - titled charts, equity-only ticker, page dock, reworked dashes, Springboard scroll fix, equation type, motion per theme;
+  - snapshots in website/snapshots.
