@@ -138,7 +138,7 @@ addEventListener('scroll', () => {
   });
 }, { passive: true });
 
-// ---- while the page scrolls, cursor highlights fade and hover effects pause (html.scrolling), so
+// ---- while the page scrolls, cursor highlights fade (html.scrolling; clicks still work during momentum), so
 // nothing lags behind the content under a still cursor; they come back 160 ms after scrolling stops
 let scrollT = 0;
 addEventListener('scroll', () => {

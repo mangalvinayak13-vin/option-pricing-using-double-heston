@@ -238,7 +238,6 @@ html[data-mode="dark"] .tmenu {
   transition: opacity .35s ease; will-change: transform, opacity; }
 [data-glint]:hover > .glint { opacity: 1; }
 html.scrolling [data-glint] > .glint { opacity: 0 !important; transition: opacity .1s ease; }
-html.scrolling #app { pointer-events: none; }
 [data-glint] > :not(.glint) { position: relative; z-index: 1; }
 .press { transition: transform .45s var(--spring-snappy); }
 .press:active { transform: scale(.97); transition-duration: .08s; }
