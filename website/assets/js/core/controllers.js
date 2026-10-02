@@ -98,16 +98,30 @@ function dockMagnify(dock) {
 // short close delay so crossing from the summary into the body doesn't snap it shut. Touch stays
 // tap-to-open -- there's no hover to speak of there, and the <details> element's own click toggle
 // keeps working everywhere regardless (keyboard included), this only adds the hover affordance.
+// Only the triangle disc itself opens it: the <details> spans the card's full width, so listening on
+// it opened the explainer from anywhere along the triangle's row. Once open, the body keeps it open.
 function explainHover(scope) {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return null;
   const stops = [];
   $$('.xp', scope).forEach(el => {
+    const sum = el.querySelector(':scope > summary');
+    const body = el.querySelector(':scope > .xp-body');
+    if (!sum) return;
     let closeTimer = 0;
     const open = () => { clearTimeout(closeTimer); el.open = true; };
-    const close = () => { closeTimer = setTimeout(() => { el.open = false; }, 200); };
-    el.addEventListener('pointerenter', open);
-    el.addEventListener('pointerleave', close);
-    stops.push(() => { el.removeEventListener('pointerenter', open); el.removeEventListener('pointerleave', close); clearTimeout(closeTimer); });
+    const stay = () => { if (el.open) clearTimeout(closeTimer); };
+    const close = (e, wait = 200) => { clearTimeout(closeTimer); closeTimer = setTimeout(() => { el.open = false; }, wait); };
+    // leaving the disc downward is on the way into the body: give the gap between them longer
+    const leaveSum = e => close(e, e.clientY >= sum.getBoundingClientRect().bottom - 1 ? 700 : 200);
+    sum.addEventListener('pointerenter', open);
+    sum.addEventListener('pointerleave', leaveSum);
+    body?.addEventListener('pointerenter', stay);
+    body?.addEventListener('pointerleave', close);
+    stops.push(() => {
+      sum.removeEventListener('pointerenter', open); sum.removeEventListener('pointerleave', leaveSum);
+      body?.removeEventListener('pointerenter', stay); body?.removeEventListener('pointerleave', close);
+      clearTimeout(closeTimer);
+    });
   });
   return stops.length ? { stop: () => stops.forEach(f => f()) } : null;
 }
