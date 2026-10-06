@@ -131,6 +131,35 @@ def fetch_live_quotes() -> dict:
     return {"status": "live" if quotes else "empty", "asof": asof, "market_open": is_open, "holiday": holiday, "quotes": quotes}
 
 
+def fetch_intraday(sym: str, interval: str) -> dict:
+    """One session's minute candles, oldest first, as [time, open, high, low, close, volume]: today's so
+    far (Upstox v3 intraday), or -- before the open, at weekends and on holidays -- the last session's
+    (v3 historical minutes over the past week), with `today` saying which."""
+    asof = datetime.now(timezone.utc).isoformat()
+    key, token = INSTRUMENT_MAP.get(sym), _token()
+    if not key or not token or interval not in ("1", "5", "15"):
+        return {"status": "bad_request" if token else "no_token", "asof": asof, "sym": sym, "rows": []}
+    try:
+        import requests
+        from urllib.parse import quote
+        h = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        k, today = quote(key, safe=""), datetime.now(_IST).date()
+        r = requests.get(f"https://api.upstox.com/v3/historical-candle/intraday/{k}/minutes/{interval}", headers=h, timeout=8)
+        r.raise_for_status()
+        rows, is_today = r.json().get("data", {}).get("candles", []), True
+        if not rows:
+            r = requests.get(f"https://api.upstox.com/v3/historical-candle/{k}/minutes/{interval}/"
+                             f"{(today - timedelta(days=1)).isoformat()}/{(today - timedelta(days=8)).isoformat()}", headers=h, timeout=8)
+            r.raise_for_status()
+            rows, is_today = r.json().get("data", {}).get("candles", []), False
+    except Exception as e:
+        return {"status": "error", "error": type(e).__name__, "asof": asof, "sym": sym, "rows": []}
+    session = max((c[0][:10] for c in rows), default=None)
+    out = sorted([c[0][:16], c[1], c[2], c[3], c[4], c[5]] for c in rows if c[0][:10] == session)
+    return {"status": "live" if out else "empty", "asof": asof, "sym": sym, "interval": interval, "session": session,
+            "today": is_today, "rows": out}
+
+
 def fetch_candles(sym: str, since: str) -> dict:
     """Daily candles for one symbol from `since` (YYYY-MM-DD) to today, oldest first, as
     [date, open, high, low, close, volume]: Upstox v3 historical days up to yesterday, plus

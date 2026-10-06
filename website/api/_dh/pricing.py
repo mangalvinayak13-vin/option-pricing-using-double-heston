@@ -8,10 +8,12 @@ website/ folder. tools/check_pricer_copy.py fails if the two ever differ.
 Two jobs:
   price(body)          the model's side: price, implied vol, Greeks, the smile, model prices across the
                        chain, the Feller check and a 20,000-path Monte Carlo check, for a market the
-                       request describes (NIFTY level, time to expiry, rate, carry, listed strikes)
-  live_chain(token, r) the market's side, live: NIFTY options from Upstox for the monthly expiry at
-                       least 14 days away, the expected future level from put-call parity, and every
-                       implied volatility worked out with the project's own implied_vol
+                       request describes (underlying price, time to expiry, rate, carry, listed strikes)
+  live_chain(token, r, sym)
+                       the market's side, live: options on NIFTY 50, NIFTY BANK or any of the site's 40
+                       F&O stocks from Upstox, for the monthly expiry at least 14 days away, the expected
+                       future price from put-call parity, and every implied volatility worked out with
+                       the project's own implied_vol
 """
 from __future__ import annotations
 
@@ -27,14 +29,17 @@ import numpy as np
 _spec = importlib.util.spec_from_file_location("dh_models", Path(__file__).resolve().parent / "models.py")
 M = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(M)
+_ispec = importlib.util.spec_from_file_location("dh_instruments", Path(__file__).resolve().parent / "instruments.py")
+_instruments = importlib.util.module_from_spec(_ispec)
+_ispec.loader.exec_module(_instruments)
+INSTRUMENT_MAP = _instruments.INSTRUMENT_MAP
 
 KEYS = ["v0_1", "kappa1", "theta1", "xi1", "rho1", "v0_2", "kappa2", "theta2", "xi2", "rho2"]
 BOUNDS = {k: M.HESTON_BOUNDS[k] for k in ("v0", "kappa", "theta", "xi", "rho")}
 IST = timezone(timedelta(hours=5, minutes=30))
-NIFTY = "NSE_INDEX|Nifty 50"
-STEP = 50          # NIFTY strike spacing
-WINDOW = 1000      # live chain rows returned: today's level ± this
+SIDE = 20          # live chain rows returned: this many listed strikes either side of today's price
 MIN_DAYS = 14      # the contract: the monthly expiry at least this many days away
+SMILE_PAD = 4      # the smile runs this many strike spacings past the chain on each side, at half spacings
 
 
 # ------------------------------------------------------------------ the model's side
@@ -53,11 +58,18 @@ def check_market(m: dict) -> tuple:
     """(spot, t, r, q, strikes) from a request, within sane bounds, rounded so equal markets cache together."""
     spot, t, r, q = float(m["spot"]), float(m["t"]), float(m["r"]), float(m["q"])
     strikes = tuple(sorted({float(k) for k in m["strikes"]}))
-    if not (1000 < spot < 200000 and 0.5 / 365 <= t <= 2 and -0.05 <= r <= 0.2 and -0.2 <= q <= 0.2):
+    if not (10 < spot < 200000 and 0.5 / 365 <= t <= 2 and -0.05 <= r <= 0.2 and -0.3 <= q <= 0.3):
         raise ValueError("market outside the supported range")
     if not (3 <= len(strikes) <= 41 and all(0.5 * spot < k < 1.5 * spot for k in strikes)):
         raise ValueError("strikes outside the supported range")
     return round(spot, 2), round(t, 6), round(r, 6), round(q, 6), strikes
+
+
+def spacing(strikes) -> float:
+    """The listed strike spacing: the commonest gap between neighbouring strikes (50 for NIFTY, 100 for
+    NIFTY BANK, anything from 2.5 to 100 for a stock)."""
+    gaps = [round(b - a, 4) for a, b in zip(strikes, strikes[1:]) if b > a]
+    return max(set(gaps), key=gaps.count) if gaps else 1.0
 
 
 def _dh(p, k, kind, s, t, r, q):
@@ -90,16 +102,17 @@ def _price(key: tuple, market: tuple, strike: float, kind: str, mc: bool) -> dic
     else:
         greeks["vega"] = None
     # the smile at this expiry: out-of-the-money options, the market's convention
-    ks = np.arange(chain_strikes[0] - 400, chain_strikes[-1] + 401, 25.0)
+    sp = spacing(chain_strikes)
+    ks = np.arange(chain_strikes[0] - SMILE_PAD * sp, chain_strikes[-1] + SMILE_PAD * sp + sp / 4, sp / 2)
     calls = np.atleast_1d(M.double_heston_price(spot, ks, t, r, **p, kind="call", q=q))
     puts = np.atleast_1d(M.double_heston_price(spot, ks, t, r, **p, kind="put", q=q))
     smile = []
     for k, c, pu in zip(ks, calls, puts):
         kind_k, px = ("put", pu) if k < spot else ("call", c)
         smile.append([float(k), _iv(float(px), spot, float(k), t, r, kind_k, q) if px > 0.05 else None])
-    listed = {int(k) for k in chain_strikes}
-    chain = {int(k): {"call": round(float(c), 2), "put": round(float(pu), 2)}
-             for k, c, pu in zip(ks, calls, puts) if int(k) in listed}
+    listed = {round(k, 4) for k in chain_strikes}
+    chain = {f"{k:g}": {"call": round(float(c), 2), "put": round(float(pu), 2)}  # "22650", "402.5": as JS prints them
+             for k, c, pu in zip(ks, calls, puts) if round(float(k), 4) in listed}
     feller = {}
     for tag, (kap, th, xi) in (("slow", (p["kappa1"], p["theta1"], p["xi1"])), ("fast", (p["kappa2"], p["theta2"], p["xi2"]))):
         feller[tag] = {"lhs": 2 * kap * th, "rhs": xi * xi, "ok": bool(M.feller_condition(kap, th, xi))}
@@ -116,7 +129,8 @@ def price(body: dict) -> dict:
     p = clamp_params(body["params"])
     market = check_market(body["market"])
     strike = float(body["strike"])
-    if not (market[4][0] - 400 <= strike <= market[4][-1] + 400):
+    sp = spacing(market[4])
+    if not (market[4][0] - SMILE_PAD * sp <= strike <= market[4][-1] + SMILE_PAD * sp):
         raise ValueError("strike outside the listed range")
     kind = body.get("kind", "call")
     if kind not in ("call", "put"):
@@ -155,30 +169,38 @@ def _px(md: dict) -> tuple[float | None, str]:
     return (round(ltp, 2), "last") if ltp > 0 else (None, "none")
 
 
-def live_chain(token: str, r: float, now: datetime | None = None) -> dict:
+def live_chain(token: str, r: float, sym: str = "NIFTY 50", now: datetime | None = None) -> dict:
+    key = INSTRUMENT_MAP.get(sym)
+    if not key:
+        raise ValueError("unknown underlying")
     now = (now or datetime.now(IST)).astimezone(IST)
-    expiry = pick_expiry([c["expiry"] for c in _get("option/contract", token, {"instrument_key": NIFTY})], now.date())
-    raw = _get("option/chain", token, {"instrument_key": NIFTY, "expiry_date": expiry})
+    expiry = pick_expiry([c["expiry"] for c in _get("option/contract", token, {"instrument_key": key}) or []], now.date())
+    raw = sorted(_get("option/chain", token, {"instrument_key": key, "expiry_date": expiry}) or [], key=lambda x: x["strike_price"])
+    if not raw:
+        raise ValueError("no options listed")
     spot = float(raw[0]["underlying_spot_price"])
     close = datetime.fromisoformat(expiry).replace(hour=15, minute=30, tzinfo=IST)
     t = max((close - now).total_seconds() / (365 * 86400), 0.5 / 365)
+    # keep the regular strike grid (some names list odd strikes between), SIDE strikes either side of today's price
+    sp = spacing([float(x["strike_price"]) for x in raw])
+    grid = [x for x in raw if abs(float(x["strike_price"]) / sp - round(float(x["strike_price"]) / sp)) < 1e-6]
+    atm = min(range(len(grid)), key=lambda i: abs(float(grid[i]["strike_price"]) - spot))
     rows = []
-    for x in sorted(raw, key=lambda x: x["strike_price"]):
+    for x in grid[max(0, atm - SIDE):atm + SIDE + 1]:
         k = float(x["strike_price"])
-        if abs(k - spot) > WINDOW or k % STEP:
-            continue
-        row = {"strike": int(k)}
+        row = {"strike": int(k) if k == int(k) else k}
         for side, key in (("call", "call_options"), ("put", "put_options")):
             md = (x.get(key) or {}).get("market_data") or {}
             row[side], row[f"{side}_src"] = _px(md)
             row.update({f"{side}_bid": md.get("bid_price"), f"{side}_ask": md.get("ask_price"), f"{side}_ltp": md.get("ltp"),
                         f"{side}_oi": md.get("oi"), f"{side}_vol": md.get("volume")})
         rows.append(row)
-    # the expected NIFTY level at expiry, from put-call parity at the strike nearest today's level:
+    # the expected price at expiry, from put-call parity at the priced strike nearest today's price:
     # F = K + e^(rT) (C - P); the carry q then follows from F = S e^((r - q) T)
-    near = min((x for x in rows if x["call"] and x["put"]), key=lambda x: abs(x["strike"] - spot))
-    fwd = near["strike"] + math.exp(r * t) * (near["call"] - near["put"])
-    if not (0.97 < fwd / spot < 1.03):  # a stale or crossed quote: assume no carry rather than a wild one
+    priced = [x for x in rows if x["call"] and x["put"]]
+    near = min(priced, key=lambda x: abs(x["strike"] - spot)) if priced else None
+    fwd = near["strike"] + math.exp(r * t) * (near["call"] - near["put"]) if near else 0.0
+    if not (0.97 < fwd / spot < 1.03):  # no pair, or a stale or crossed quote: assume no carry rather than a wild one
         fwd = spot * math.exp(r * t)
     q = r - math.log(fwd / spot) / t
     for x in rows:
@@ -186,6 +208,6 @@ def live_chain(token: str, r: float, now: datetime | None = None) -> dict:
             px = x[side]
             x[f"{side}_iv"] = _iv(px, spot, x["strike"], t, r, side, q) if px and px > 0.05 else None
         x["mkt_iv"] = x["put_iv"] if x["strike"] < spot else x["call_iv"]
-    return {"expiry": expiry, "dte": (date.fromisoformat(expiry) - now.date()).days, "t": t, "spot": spot,
-            "forward": round(fwd, 2), "rate": r, "carry": q, "parity_strike": near["strike"],
+    return {"sym": sym, "expiry": expiry, "dte": (date.fromisoformat(expiry) - now.date()).days, "t": t, "spot": spot,
+            "step": sp, "forward": round(fwd, 2), "rate": r, "carry": q, "parity_strike": near["strike"] if near else None,
             "asof": datetime.now(timezone.utc).isoformat(), "rows": rows}

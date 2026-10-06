@@ -275,7 +275,7 @@
   ],
   "marketSmileLive": [
    "Market against model, by strike",
-   "Rings are live NSE prices, turned into implied volatility. The line is Double Heston at your settings. The dotted line marks where NIFTY is now."
+   "Rings are live NSE prices, turned into implied volatility. The line is Double Heston at your settings. The dotted line marks where the share or index is now."
   ]
  },
  "CONTRACT": "NIFTY 23,150 call",
@@ -554,7 +554,9 @@
   "slow": "Can touch zero: 2κθ = 0.02 is below ξ² = 0.09",
   "fast": "Can touch zero: 2κθ = 0.20 is below ξ² = 0.25"
  },
+ "FELLER_FAIL": "Can touch zero: 2κθ = {lhs} is below ξ² = {rhs}",
  "FELLER_NOTE": "At these settings, either part's jumpiness can touch zero. That's allowed: the simulator simply stops it at zero, so prices stay valid.",
+ "FELLER_OK": "Can't touch zero: 2κθ = {lhs} is above ξ² = {rhs}",
  "FINDING_LINE": "On 99% of 2,400 real NSE option surfaces, several different settings priced the options equally well.",
  "FINDING_SUB": "They sat 3.9 times further apart than two settings picked at random from the model's training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.",
  "FIND_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
@@ -747,7 +749,7 @@
  ],
  "GREEKS_NOTE": "Each number shows how the model's price changes when one thing moves, at your settings.",
  "GREEK_UNITS": {
-  "Delta": "₹ the option moves per ₹1 move in NIFTY",
+  "Delta": "₹ the option moves per ₹1 move in the share or index",
   "Gamma": "how much that changes per ₹1",
   "Vega": "₹ per 1 point more expected jumpiness",
   "Theta": "₹ lost each day as expiry nears",
@@ -765,6 +767,11 @@
   "to Wall Street”"
  ],
  "HIST_HEAD": "How far apart the equally good answers were",
+ "INTRA_CAP": "Each candle is {n} minutes of trading: the thick part runs from its opening price to its closing price, the thin line from its lowest price to its highest. Green closed higher, red lower. The dashed line is the previous day's close. While the market is open, new candles appear every 30 seconds.",
+ "INTRA_LOADING": "Loading the day's candles…",
+ "INTRA_NONE": "Minute candles aren't available for this name right now.",
+ "INTRA_TITLE": "Today's {n}-minute candles with trading volume",
+ "INTRA_TITLE_LAST": "{n}-minute candles from the last trading day, {day}",
  "JOURNEY": [
   [
    "1827",
@@ -976,9 +983,9 @@
  "MODELS_LEDE": "Each model keeps everything from the one before and lets one more thing move at random. Hover over the triangle on any card for an everyday picture.",
  "MODEL_EXPLAIN": "The model starts out assuming the price jumps about 20% a year. On 25 Sep 2026 the market was expecting only about 11.4%, so the model asks for more. Lower today's jumpiness (v₀) and the gap shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose all ten settings for you.",
  "MODEL_EXPLAIN_LIVE": "The model starts out assuming the price jumps about 20% a year. Right now the market is pricing about {iv}% for this option, so the model asks for more. Lower today's jumpiness (v₀) and the gap shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose all ten settings for you.",
- "MODEL_LEAD": "Pick a real NIFTY option. Price it with Double Heston, and compare it with what the market actually paid. Move any of the ten settings and the price updates straight away.",
+ "MODEL_LEAD": "Pick a real option on NIFTY, NIFTY BANK or one of 40 big NSE shares. Price it with Double Heston, and compare it with what the market actually paid. Move any of the ten settings and the price updates straight away.",
  "MODEL_SOURCE": "Option prices are NSE closing prices on 25 Sep 2026. The expected future NIFTY level is taken from the NIFTY October futures price, 23,263.60. The interest rate is the RBI 91-day Treasury bill rate, the same one the research used.",
- "MODEL_SOURCE_LIVE": "Option prices are live NSE prices from Upstox, updated every minute: halfway between the best buy and sell quotes, or the last trade when there is no quote. The expected future NIFTY level ({fwd}) comes from the call and put prices at the {k} strike. The interest rate is the RBI 91-day Treasury bill rate the research used.",
+ "MODEL_SOURCE_LIVE": "Option prices are live NSE prices from Upstox, updated every minute: halfway between the best buy and sell quotes, or the last trade when there is no quote. The expected future price ({fwd}) comes from the call and put prices at the {k} strike. The interest rate is the RBI 91-day Treasury bill rate the research used.",
  "NAMES": {
   "NIFTY 50": "Index",
   "NIFTY BANK": "Index",
@@ -1085,7 +1092,7 @@
  "PAIR_TYPICAL": "This price list had 6 equally good answers out of 16 starts. Their spread, 4.64, is exactly the typical spread across all 2,400 price lists. So this is the normal case, not the worst one.",
  "PA_HEAD": "What the physics buys: a PINN against an ANN",
  "PA_LEDE": "Two identical networks saw the same 48 exact Double Heston prices. The ANN learned from those prices alone. The PINN also had to obey the model's pricing equation at 4,096 points and the option's payoff at expiry. Below, both price surfaces at today's volatility, drawn in 3D against the exact pricer.",
- "PA_NOTE": "A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.",
+ "PA_NOTE": "A demonstration run for this site (about 3 minutes on a laptop): same architecture, same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.",
  "PA_NUMS": [
   [
    "0.8%",

@@ -428,7 +428,7 @@ PA_RESULT = (f"On 2,000 fresh points the PINN's error was {PA_TEST['pinn_rel_rms
              f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f} times less. Where it had no data, the ANN "
              f"guessed: on the slice above it priced {_NEG('ann')} of {_NPTS:,} points below zero by more than 0.2% of the "
              f"strike, which no option can be worth. The PINN priced {'none' if _NEG('pinn') == 0 else _NEG('pinn')}.")
-PA_NOTE = ("A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, "
+PA_NOTE = ("A demonstration run for this site (about 3 minutes on a laptop): same architecture, "
            "same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.")
 _PS = json.loads((_DATA_DIR / "pinn_vs_ann_steps.json").read_text())
 PA_STEPS = [c for c in _PS["checkpoints"] if c > 0]  # replay frames; step 0 is the same random start for both, far off the scale
@@ -824,7 +824,8 @@ UNIVERSE = ("NIFTY 50, NIFTY BANK, and the 40 most traded shares that have optio
 WATCH_HEAD, WATCH_NOTE, COVERS_HEAD = "Your list", "Click a name to see its chart", "What this site covers"
 
 # ------------------------------------------------------------------ price an option
-MODEL_LEAD = ("Pick a real NIFTY option. Price it with Double Heston, and compare it with what the market actually paid. "
+MODEL_LEAD = ("Pick a real option on NIFTY, NIFTY BANK or one of 40 big NSE shares. Price it with Double Heston, and "
+              "compare it with what the market actually paid. "
               "Move any of the ten settings and the price updates straight away.")
 MODEL_EXPLAIN = (f"The model starts out assuming the price jumps about 20% a year. On {LAST_DAY} the market was expecting "
                  f"only about {K['market_iv']:.1f}%, so the model asks for more. Lower today's jumpiness (v₀) and the gap "
@@ -837,7 +838,7 @@ PRICE_HEADS = {"price": "Our model says", "market": "The market paid", "gap": "D
                "sliders": "The slow part", "sliders-fast": "The fast part", "smile": "The smile for this expiry",
                "chain": f"Every strike for {EXPIRY}"}
 GREEKS_NOTE = "Each number shows how the model's price changes when one thing moves, at your settings."
-GREEK_UNITS = {"Delta": "₹ the option moves per ₹1 move in NIFTY", "Gamma": "how much that changes per ₹1",
+GREEK_UNITS = {"Delta": "₹ the option moves per ₹1 move in the share or index", "Gamma": "how much that changes per ₹1",
                "Vega": "₹ per 1 point more expected jumpiness", "Theta": "₹ lost each day as expiry nears",
                "Rho": "₹ per 1 point higher interest rate"}
 SLIDERS = [
@@ -849,6 +850,8 @@ SLIDERS = [
     ("fast", "ρ", "Link to price", -0.7, -0.99, 0.99),
 ]
 FELLER = {"slow": "Can touch zero: 2κθ = 0.02 is below ξ² = 0.09", "fast": "Can touch zero: 2κθ = 0.20 is below ξ² = 0.25"}
+FELLER_OK = "Can't touch zero: 2κθ = {lhs} is above ξ² = {rhs}"  # after a reprice, with the new numbers
+FELLER_FAIL = "Can touch zero: 2κθ = {lhs} is below ξ² = {rhs}"
 FELLER_NOTE = ("At these settings, either part's jumpiness can touch zero. That's allowed: the simulator simply stops it "
                "at zero, so prices stay valid.")
 CHAIN_NOTE = ("Each row is one strike price. The call and put columns are NSE closing prices. IV is the jumpiness those "
@@ -1162,10 +1165,19 @@ MODEL_EXPLAIN_LIVE = ("The model starts out assuming the price jumps about 20% a
                       "shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose "
                       "all ten settings for you.")
 MODEL_SOURCE_LIVE = ("Option prices are live NSE prices from Upstox, updated every minute: halfway between the best buy "
-                     "and sell quotes, or the last trade when there is no quote. The expected future NIFTY level ({fwd}) "
+                     "and sell quotes, or the last trade when there is no quote. The expected future price ({fwd}) "
                      "comes from the call and put prices at the {k} strike. The interest rate is the RBI 91-day Treasury "
                      "bill rate the research used.")
 LIVE_HOLIDAY = "NSE is closed today for {day}. Showing the last traded prices."
 CHART_NOTES = {**CHART_NOTES, "marketSmileLive": ("Market against model, by strike",
     "Rings are live NSE prices, turned into implied volatility. The line is Double Heston at your settings. The dotted "
-    "line marks where NIFTY is now.")}
+    "line marks where the share or index is now.")}
+
+# ------------------------------------------------------------------ Market: today's minute candles
+INTRA_TITLE = "Today's {n}-minute candles with trading volume"
+INTRA_TITLE_LAST = "{n}-minute candles from the last trading day, {day}"
+INTRA_CAP = ("Each candle is {n} minutes of trading: the thick part runs from its opening price to its closing price, the "
+             "thin line from its lowest price to its highest. Green closed higher, red lower. The dashed line is the "
+             "previous day's close. While the market is open, new candles appear every 30 seconds.")
+INTRA_LOADING = "Loading the day's candles…"
+INTRA_NONE = "Minute candles aren't available for this name right now."

@@ -1,14 +1,14 @@
 // The site's entry point. Loads the shared data once, renders the current page in the current theme,
 // and switches themes in place: the new theme's layout replaces the old one inside a view transition,
 // inputs come back from the store, and the scroll stays on the same section.
-import { THEMES, theme, setTheme, on, mode } from './core/state.js';
+import { THEMES, theme, setTheme, on, mode, store } from './core/state.js';
 import { initControls } from './core/switch.js';
 import { createDashNav } from './core/nav-dashes.js';
 import { createFerroNav } from './core/nav-ferro.js';
 import { observe, resetObservers, stopAllLoops, reduced } from './core/motion.js';
 import { mountCharts } from './core/charts.js';
 import { mountControllers } from './core/controllers.js';
-import { loadLiveChain } from './core/live-chain.js';
+import { loadLiveChain, DEFAULT_SYM } from './core/live-chain.js';
 
 const root = document.documentElement;
 const app = document.getElementById('app');
@@ -29,7 +29,7 @@ try {
   // navs list only the pages in the nav; a page outside it (Market) marks its parent page instead
   ctx = { page, C, D, P, PA, all, pages: all.filter(p => !C.NAV_PARENT[p.id]), navPage: C.NAV_PARENT[page] || page };
 } catch (e) {
-  app.innerHTML = `<div class="noscript"><h1>The site's data didn't load.</h1><p>Start the local server with <code>python3 website/serve.py</code> and open http://localhost:8765.</p></div>`;
+  app.innerHTML = `<div class="noscript"><h1>The site's data didn't load.</h1><p>Check your connection and reload the page.</p></div>`;
   throw e;
 }
 
@@ -96,13 +96,27 @@ async function switchTheme(id) {
 const controls = initControls({ onTheme: switchTheme });
 on(what => { if (what === 'mode') controls.sync(); });
 await render(theme());
-// Price an option opens on the saved chain, then re-renders on live NIFTY options when they arrive
-if (page === 'model') loadLiveChain(ctx).then(async live => {
-  if (!live || busy) return;
+// Price an option opens on the saved NIFTY chain, then re-renders on live options for the underlying last
+// picked (NIFTY 50 if that one can't be had) when they arrive
+async function rerender() {
   const a = anchor();
   await render(theme());
   restore(a);
-});
+}
+// the underlying picker: true once the page shows the new underlying's live chain, false if it couldn't
+ctx.switchUnderlying = async sym => {
+  if (busy || !(await loadLiveChain(ctx, sym))) return false;
+  await rerender();
+  return true;
+};
+// every other page wakes the pricing function once it's idle: a cold start loads numpy and scipy (about 8 s),
+// so by the time someone opens Price an option the live chain comes back in about a second
+if (page !== 'model') setTimeout(() => fetch('/api/price?warm=1').catch(() => {}), 1500);
+if (page === 'model') (async () => {
+  const live = (await loadLiveChain(ctx)) || (store.get('model.sym', DEFAULT_SYM) !== DEFAULT_SYM && (await loadLiveChain(ctx, DEFAULT_SYM)));
+  if (!live) store.set('model.sym', DEFAULT_SYM); // the saved chain is NIFTY's
+  else if (!busy) await rerender();
+})();
 document.body.dataset.ready = '1';
 document.fonts?.ready.then(() => { document.body.dataset.h = String(document.documentElement.scrollHeight); });
 export { THEMES, mode };

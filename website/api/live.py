@@ -133,18 +133,51 @@ def _candles(sym, since):
     return {"status": "live", "asof": asof, "sym": sym, "rows": [out[d] for d in sorted(out)]}
 
 
+def _intraday(sym, interval):
+    """GET /api/live?intraday=SYM&interval=1|5|15: one session's minute candles, oldest first, as
+    [time, open, high, low, close, volume] -- today's so far, or the last session's before the open, at
+    weekends and on holidays (`today` says which). Mirrors fetch_intraday in website/tools/live_quotes.py."""
+    asof = datetime.now(timezone.utc).isoformat()
+    key, token = INSTRUMENT_MAP.get(sym), os.getenv("UPSTOX_ACCESS_TOKEN")
+    if not key or not token or interval not in ("1", "5", "15"):
+        return {"status": "bad_request" if token else "no_token", "asof": asof, "sym": sym, "rows": []}
+    try:
+        import requests
+        h = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        k, today = quote(key, safe=""), datetime.now(_IST).date()
+        r = requests.get(f"https://api.upstox.com/v3/historical-candle/intraday/{k}/minutes/{interval}", headers=h, timeout=8)
+        r.raise_for_status()
+        rows, is_today = r.json().get("data", {}).get("candles", []), True
+        if not rows:
+            r = requests.get(f"https://api.upstox.com/v3/historical-candle/{k}/minutes/{interval}/"
+                             f"{(today - timedelta(days=1)).isoformat()}/{(today - timedelta(days=8)).isoformat()}", headers=h, timeout=8)
+            r.raise_for_status()
+            rows, is_today = r.json().get("data", {}).get("candles", []), False
+    except Exception as e:
+        return {"status": "error", "error": type(e).__name__, "asof": asof, "sym": sym, "rows": []}
+    session = max((c[0][:10] for c in rows), default=None)
+    out = sorted([c[0][:16], c[1], c[2], c[3], c[4], c[5]] for c in rows if c[0][:10] == session)
+    return {"status": "live" if out else "empty", "asof": asof, "sym": sym, "interval": interval, "session": session,
+            "today": is_today, "rows": out}
+
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         q = parse_qs(urlparse(self.path).query)
-        candles = "candles" in q
-        body = json.dumps(_candles(q["candles"][0], q.get("since", [""])[0]) if candles else _fetch()).encode()
+        # Vercel's edge caches each answer, shared across every visitor: quotes for 1s, so a page polling
+        # every 2s sees each tick while the real Upstox call rate stays near one a second whatever the
+        # traffic (plus a status check every 30s; well inside 50/s, 500/min); today's minute candles for
+        # 15s per symbol and interval; daily candles for 60s, since only today's candle moves.
+        if "candles" in q:
+            out, cache = _candles(q["candles"][0], q.get("since", [""])[0]), "public, s-maxage=60, stale-while-revalidate=30"
+        elif "intraday" in q:
+            out, cache = _intraday(q["intraday"][0], q.get("interval", ["5"])[0]), "public, s-maxage=15"
+        else:
+            out, cache = _fetch(), "public, s-maxage=1"
+        body = json.dumps(out).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
-        # Vercel's edge caches this, shared across every visitor: quotes for 1s, so a page polling every
-        # 2s sees each tick while the real Upstox call rate stays near one a second whatever the traffic
-        # (plus a status check every 30s; well inside 50/s, 500/min); candles for 60s per symbol, since
-        # only today's candle moves.
-        self.send_header("Cache-Control", "public, s-maxage=60, stale-while-revalidate=30" if candles else "public, s-maxage=1")
+        self.send_header("Cache-Control", cache)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)

@@ -10,7 +10,7 @@ import * as B from './blocks.js';
 import { esc, inr } from './util.js';
 import { store } from './state.js';
 import { icon } from './icons.js';
-import { longDate } from './live-chain.js';
+import { longDate, strikeText } from './live-chain.js';
 
 // a chart with its title and reading guide
 export function fig(ctx, name, h, o, { note = name, title } = {}) {
@@ -96,7 +96,7 @@ export function sections(page, ctx) {
         { key: 'top', kind: 'head', title: 'Market', lead: C.MARKET_SUB, action: ['model.html', C.CTA.model] },
         { key: 'live', kind: 'note', body: `<p class="b-live" data-bind="live-status">${esc(C.LIVE_LOADING)}</p>` },
         { key: 'chart', size: 'wide', body: `<div class="s-stock">${B.stockHead(ctx, sym)}</div><div class="s-ctrls">${B.marketControls()}</div>
-          <figure class="fig"><figcaption class="fig-t">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
+          <figure class="fig"><figcaption class="fig-t" data-bind="candles-title">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap" data-bind="candles-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
           <div class="s-stats">${B.stockStats(ctx, sym)}</div>` },
         { key: 'watch', title: C.WATCH_HEAD, ico: 'market', size: 'narrow', note: C.WATCH_NOTE, body: `<div class="s-scroll">${B.stocksList(ctx)}</div>` },
         { key: 'nifty', title: 'NIFTY 50', ico: 'market', size: 'half', note: `since ${C.FIRST_DAY}`, body: fig(ctx, 'indexLine', 260, { which: 'NIFTY' }, { title: 'NIFTY 50, closing level by day' }) },
@@ -119,7 +119,7 @@ export function sections(page, ctx) {
         { key: 'sliders-fast', title: C.PRICE_HEADS['sliders-fast'], ico: 'fast', size: 'half', note: `half of a shock gone in ${C.FAST_HL}`, body: `${B.fellerLine(ctx, 'fast')}${B.sliders(ctx, 'fast')}` },
         { key: 'reset', kind: 'note', size: 'full', body: `<div class="s-row-note"><span class="b-sub">${esc(C.FELLER_NOTE)}</span><button class="btn ghost" type="button" data-action="reset">Reset to starting settings</button></div>` },
         { key: 'chain', title: `${C.PRICE_HEADS.chain} ${longDate(K.expiry)}`, ico: 'market', size: 'full', body: `<p class="fig-t">${esc(K.live ? C.CHAIN_FIG_LIVE : C.CHAIN_FIG)}</p><div class="s-scroll-x">${B.chainTable(ctx)}</div><p class="fig-cap">${esc(C.CHAIN_NOTE)}</p>` },
-        { key: 'source', kind: 'note', size: 'full', fine: K.live ? C.MODEL_SOURCE_LIVE.replace('{fwd}', inr(K.forward)).replace('{k}', inr(K.parity_strike, 0)) : C.MODEL_SOURCE },
+        { key: 'source', kind: 'note', size: 'full', fine: K.live ? C.MODEL_SOURCE_LIVE.replace('{fwd}', inr(K.forward)).replace('{k}', K.parity_strike != null ? strikeText(K.parity_strike, inr) : 'nearest') : C.MODEL_SOURCE },
       ];
     }
     // How it works: centred, every formula on its theme's glass, then the ten settings and the charts
@@ -136,6 +136,8 @@ export function sections(page, ctx) {
         { key: 'skew', title: C.MATHS_HEADS.skew, ico: 'model', size: 'full', glass: true, lead: C.SKEW_NOTE, body: fig(ctx, 'skew', 320) + X(ctx, 'skew') },
         { key: 'fan', title: C.MATHS_HEADS.fan, ico: 'fast', size: 'full', glass: true, lead: C.FAN_NOTE, body: fig(ctx, 'fan', 420) + X(ctx, 'fan') },
         { key: 'surface', title: C.MATHS_HEADS.surface, ico: 'maths', size: 'full', glass: true, lead: C.SURFACE_NOTE, body: fig(ctx, 'surface', 420) + X(ctx, 'surface') },
+        // what a physics-informed network buys, in 3D: the same model, solved by two networks
+        { key: 'nn', title: C.PA_HEAD, ico: 'model', size: 'full', glass: true, lead: C.PA_LEDE, body: pinnAnn(ctx) },
       ];
     // the one place every result lives, all on glass: the answer, its evidence, the networks, then the full table
     case 'results': {
@@ -171,14 +173,17 @@ export function sections(page, ctx) {
         { key: 'terms', title: C.RESULTS_HEADS.terms, ico: 'about', size: 'full', glass: g, body: terms(ctx) },
       ];
     }
-    case 'about':
+    // the video panel appears once VIDEO_SRC is set; until then Method and Limits share the first row
+    case 'about': {
+      const video = !!C.VIDEO_SRC;
       return [
         { key: 'top', kind: 'head', title: 'About', lead: C.ABOUT_HEAD },
-        { key: 'video', title: C.ABOUT_HEADS.video, ico: 'video', size: 'wide', body: B.video(ctx) },
-        { key: 'method', title: C.ABOUT_HEADS.method, ico: 'maths', size: 'narrow', body: `<div class="s-paras">${C.METHOD.map(m => `<p>${esc(m)}</p>`).join('')}</div>` },
+        ...(video ? [{ key: 'video', title: C.ABOUT_HEADS.video, ico: 'video', size: 'wide', body: B.video(ctx) }] : []),
+        { key: 'method', title: C.ABOUT_HEADS.method, ico: 'maths', size: video ? 'narrow' : 'half', body: `<div class="s-paras">${C.METHOD.map(m => `<p>${esc(m)}</p>`).join('')}</div>` },
         { key: 'limits', title: C.ABOUT_HEADS.limits, ico: 'about', size: 'half', body: B.bulletList(C.LIMITS) },
-        { key: 'also', title: C.ABOUT_HEADS.also, ico: 'fast', size: 'half', lead: C.ALSO },
+        { key: 'also', title: C.ABOUT_HEADS.also, ico: 'fast', size: video ? 'half' : 'full', lead: C.ALSO },
       ];
+    }
     case 'team':
       return [
         { key: 'top', kind: 'head', title: C.TEAM_HEAD, lead: C.TEAM_INTRO },
