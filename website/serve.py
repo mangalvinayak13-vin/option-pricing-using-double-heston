@@ -87,14 +87,17 @@ class Handler(SimpleHTTPRequestHandler):
             q = parse_qs(urlparse(self.path).query)
             if "candles" in q:  # /api/live?candles=SYM&since=YYYY-MM-DD -> daily candles up to today
                 return self._json(200, live_quotes.fetch_candles(q["candles"][0], q.get("since", [""])[0]))
+            if "intraday" in q:  # /api/live?intraday=SYM&interval=1|5|15 -> one session's minute candles
+                return self._json(200, live_quotes.fetch_intraday(q["intraday"][0], q.get("interval", ["5"])[0]))
             return self._json(200, live_quotes_cached())
-        if self.path.startswith("/api/price"):  # ?chain=NIFTY&r=... -> the live option chain
+        if self.path.startswith("/api/price"):  # ?chain=SYM&r=... -> the live option chain (chain=NIFTY: NIFTY 50)
             q = parse_qs(urlparse(self.path).query)
             token = live_quotes._token()
-            if q.get("chain", [""])[0] != "NIFTY" or not token:
+            sym = {"NIFTY": "NIFTY 50"}.get(q.get("chain", [""])[0], q.get("chain", [""])[0])
+            if sym not in pricing.INSTRUMENT_MAP or not token:
                 return self._json(200, {"status": "no_token" if not token else "bad_request"})
             try:
-                return self._json(200, {"status": "live", **pricing.live_chain(token, float(q.get("r", ["0.0532"])[0]))})
+                return self._json(200, {"status": "live", **pricing.live_chain(token, float(q.get("r", ["0.0532"])[0]), sym)})
             except Exception as e:
                 return self._json(200, {"status": "error", "error": type(e).__name__})
         if self.path.startswith("/api/"):

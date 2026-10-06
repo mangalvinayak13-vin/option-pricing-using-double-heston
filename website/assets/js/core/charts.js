@@ -3,7 +3,7 @@
 // when it scrolls into view. Candles are always green up / red down with the price axis on the right.
 import { esc, inr, scale, ticks, uid, shortDate, clamp, median } from './util.js';
 import { whenInView, tween, ease, reduced } from './motion.js';
-import { longDate } from './live-chain.js';
+import { longDate, chainStep, strikeText, DEFAULT_SYM } from './live-chain.js';
 
 // ------------------------------------------------------------------ svg helpers
 const f1 = v => (Math.round(v * 10) / 10).toString();
@@ -142,18 +142,20 @@ registerChart('smileBend', (w, o, ctx) => {
 registerChart('marketSmile', (w, o, ctx, el) => {
   const D = ctx.D, K = D.contract;
   const res = el._res; // latest model result, if repriced
-  const lo = D.chain[0].strike - 50, hi = D.chain[D.chain.length - 1].strike + 50;
+  const step = chainStep(D.chain), sym = K.sym || DEFAULT_SYM;
+  const lo = D.chain[0].strike - step, hi = D.chain[D.chain.length - 1].strike + step;
   const mk = D.chain.filter(r => r.mkt_iv).map(r => [r.strike, r.mkt_iv]);
   const dh = res ? res.smile.filter(([k, v]) => v != null && k >= lo && k <= hi) : D.chain.map(r => [r.strike, r.dh_iv]).filter(p => p[1] != null);
   const all = [...mk.map(p => p[1]), ...dh.map(p => p[1])];
+  if (!all.length) all.push(10, 20); // nothing priced yet: an empty frame at a sensible height
   const y0 = Math.floor(Math.min(...all) - 1.5), y1 = Math.ceil(Math.max(...all) + 1.5);
   const h = o.h, left = 50, right = 16, top = 40, bottom = 44;
   const xs = scale(lo, hi, left, w - right), ys = scale(y0, y1, h - bottom, top);
   let b = '';
   for (const v of ticks(y0, y1, 4)) b += L(left, ys(v), w - right, ys(v)) + T(left - 10, ys(v) + 5, `${v}%`, '', 'end');
   b += L(left, h - bottom, w - right, h - bottom, 'axis');
-  for (const k of ticks(lo, hi, w < 600 ? 3 : 5).filter(k => k % 50 === 0)) b += T(xs(k), h - bottom + 22, inr(k, 0), '', 'middle');
-  b += T((left + w - right) / 2, h - 4, 'Strike (NIFTY, 27 Oct 2026 expiry)', '', 'middle');
+  for (const k of ticks(lo, hi, w < 600 ? 3 : 5).filter(k => Math.abs(k / step - Math.round(k / step)) < 1e-6)) b += T(xs(k), h - bottom + 22, strikeText(k, inr), '', 'middle');
+  b += T((left + w - right) / 2, h - 4, `Strike (${sym}, ${longDate(K.expiry)} expiry)`, '', 'middle');
   b += L(xs(K.spot), top, xs(K.spot), h - bottom, 'c-ref', 'style="stroke-dasharray:2 5"') + T(xs(K.spot) + 6, h - bottom - 8, `spot ${inr(K.spot)}`, '');
   const strike = o.strike || K.strike;
   b += L(xs(strike), top, xs(strike), h - bottom, 'axis', 'style="stroke:var(--ink);stroke-width:1.5;opacity:.5"');
@@ -165,18 +167,26 @@ registerChart('marketSmile', (w, o, ctx, el) => {
   const byK = new Map(mk);
   return {
     h, body: b, points: P,
-    label: `Implied volatility by strike for the ${longDate(K.expiry)} NIFTY expiry: ${K.live ? 'live market prices' : 'market closing prices'} against Double Heston`,
+    label: `Implied volatility by strike for the ${longDate(K.expiry)} ${sym} expiry: ${K.live ? 'live market prices' : 'market closing prices'} against Double Heston`,
     hover: { xs: dh.map(p => xs(p[0])), x0: left, x1: w - right, top, bottom: h - bottom, ys: i => [P[i][1], byK.has(dh[i][0]) ? ys(byK.get(dh[i][0])) : null],
       tipY: i => Math.min(P[i][1], byK.has(dh[i][0]) ? ys(byK.get(dh[i][0])) : 1e9) - 8,
-      html: i => `Strike <b>${inr(dh[i][0], 0)}</b>: model <b>${dh[i][1].toFixed(2)}%</b>${byK.has(dh[i][0]) ? `, market <b>${byK.get(dh[i][0]).toFixed(2)}%</b>` : ''}` },
+      html: i => `Strike <b>${strikeText(dh[i][0], inr)}</b>: model <b>${dh[i][1].toFixed(2)}%</b>${byK.has(dh[i][0]) ? `, market <b>${byK.get(dh[i][0]).toFixed(2)}%</b>` : ''}` },
   };
 });
 
 // ------------------------------------------------------------------ candles (and line mode)
 registerChart('candles', (w, o, ctx) => {
-  const sym = o.sym || 'RELIANCE';
-  let rows = ctx.D.equity[sym] || [];
-  if (o.range === '1M') rows = rows.slice(-21);
+  const sym = o.sym || 'RELIANCE', daily = ctx.D.equity[sym] || [];
+  // daily rows are [date, o, h, l, c, volume, previous close]; "Today" draws one session's minute
+  // candles (controllers.js fetches them) against the previous day's close
+  const intra = o.range === '1D', S = intra ? ctx.D.intraday?.[`${sym}|${o.interval || '5'}`] : null;
+  let rows;
+  if (intra) {
+    if (!S?.rows?.length) return { h: o.h, body: T(w / 2, o.h / 2, S ? ctx.C.INTRA_NONE : ctx.C.INTRA_LOADING, 't-ink', 'middle'), label: `${sym}: ${S ? ctx.C.INTRA_NONE : ctx.C.INTRA_LOADING}` };
+    const prevClose = [...daily].reverse().find(r => r[0] < S.session)?.[4] ?? S.rows[0][1];
+    rows = S.rows.map(r => [...r, prevClose]);
+  } else rows = o.range === '1M' ? daily.slice(-21) : daily;
+  const when = d => (intra ? d.slice(11, 16) : shortDate(d));
   const n = rows.length;
   const h = o.h, axisW = 86, top = 14, timeH = 28;
   const pw = w - axisW;
@@ -187,7 +197,7 @@ registerChart('candles', (w, o, ctx) => {
   const y = scale(lo, hi, pb, top);
   const sw = pw / (n + 1.5), bw = Math.max(2, sw * 0.62);
   const last = rows[n - 1][4], prev = rows[n - 1][6], yl = y(last);
-  const vmax = Math.max(...rows.map(r => r[5]));
+  const vmax = Math.max(...rows.map(r => r[5])) || 1; // an index has no traded volume of its own
   let b = '';
   for (const tv of ticks(lo, hi, 5)) { b += L(0, y(tv), pw, y(tv)); if (Math.abs(y(tv) - yl) > 22) b += T(pw + 12, y(tv) + 5, inr(tv, 0)); }
   const every = Math.max(1, Math.round(n / (w < 700 ? 4 : 6)));
@@ -210,7 +220,7 @@ registerChart('candles', (w, o, ctx) => {
     }
     const vh = v / vmax * volH;
     b += R(cx - bw / 2, h - timeH - vh, bw, vh, `${col}-f a-rise`, `style="--i:${i};opacity:.38"`);
-    if (i % every === 0) b += T(cx, h - 7, shortDate(dt), '', 'middle');
+    if (i % every === 0) b += T(cx, h - 7, when(dt), '', 'middle');
   });
   b += L(0, h - timeH, pw, h - timeH, 'axis');
   b += T(pw + 12, h - timeH - volH + 12, 'Volume', '', 'start', 'style="font-size:12.5px"');
@@ -220,9 +230,10 @@ registerChart('candles', (w, o, ctx) => {
     T(pw + 10, yl + 5.5, inr(last), '', 'start', 'style="fill:var(--on-up);font-weight:700"') + '</g>';
   return {
     h, body: b,
-    label: `${sym} daily ${o.mode === 'line' ? 'closing prices' : 'candlesticks'}, ${shortDate(rows[0][0])} to ${shortDate(rows[n - 1][0])} 2026, NSE closing data; green closed higher, red lower`,
+    label: intra ? `${sym} ${o.interval || 5}-minute ${o.mode === 'line' ? 'closing prices' : 'candlesticks'}, ${S.today ? 'today' : `last session, ${shortDate(S.session)}`}, ${when(rows[0][0])} to ${when(rows[n - 1][0])} IST; green closed higher, red lower`
+      : `${sym} daily ${o.mode === 'line' ? 'closing prices' : 'candlesticks'}, ${shortDate(rows[0][0])} to ${shortDate(rows[n - 1][0])}; green closed higher, red lower`,
     hover: { xs: xsC, x0: 0, x1: pw, top, bottom: h - timeH, ys: i => (o.mode === 'line' ? [y(rows[i][4])] : []), tipY: i => y(rows[i][2]) - 8,
-      html: i => { const r = rows[i]; const ch = r[4] - r[6]; return `<b>${shortDate(r[0])}</b>&nbsp; O ${inr(r[1])} H ${inr(r[2])} L ${inr(r[3])} C <b>${inr(r[4])}</b> <span style="color:${ch >= 0 ? 'var(--up)' : 'var(--down)'}">${ch >= 0 ? '▲' : '▼'} ${Math.abs(ch / r[6] * 100).toFixed(2)}%</span>`; } },
+      html: i => { const r = rows[i]; const ch = r[4] - r[6]; return `<b>${when(r[0])}</b>&nbsp; O ${inr(r[1])} H ${inr(r[2])} L ${inr(r[3])} C <b>${inr(r[4])}</b> <span style="color:${ch >= 0 ? 'var(--up)' : 'var(--down)'}">${ch >= 0 ? '▲' : '▼'} ${Math.abs(ch / r[6] * 100).toFixed(2)}%</span>`; } },
   };
 });
 

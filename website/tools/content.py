@@ -252,7 +252,7 @@ TEAM_INTRO = "Built for [Event] at [College]. Replace each placeholder with the 
 TEAM = [("[Name]", "[Role: e.g. model and pricer]"), ("[Name]", "[Role: e.g. data pipeline]"),
         ("[Name]", "[Role: e.g. website and design]"), ("[Name]", "[Role: e.g. research and report]")]
 SUPERVISOR = ("[Supervisor name]", "[Department], [College]")
-THANKS = ["NSE, for the public end-of-day files the research uses.", "Upstox, whose market-data API we plan to use for live prices.",
+THANKS = ["NSE, for the public end-of-day files the research uses.", "Upstox, whose market-data API supplies the live prices.",
           "The authors of NumPy, SciPy and pandas."]
 
 # ------------------------------------------------------------------ references -----------
@@ -429,7 +429,7 @@ PA_RESULT = (f"On 2,000 fresh points the PINN's error was {PA_TEST['pinn_rel_rms
              f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f} times less. Where it had no data, the ANN "
              f"guessed: on the slice above it priced {_NEG('ann')} of {_NPTS:,} points below zero by more than 0.2% of the "
              f"strike, which no option can be worth. The PINN priced {'none' if _NEG('pinn') == 0 else _NEG('pinn')}.")
-PA_NOTE = ("A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, "
+PA_NOTE = ("A demonstration run for this site (about 3 minutes on a laptop): same architecture, "
            "same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.")
 _PS = json.loads((_DATA_DIR / "pinn_vs_ann_steps.json").read_text())
 PA_STEPS = [c for c in _PS["checkpoints"] if c > 0]  # replay frames; step 0 is the same random start for both, far off the scale
@@ -728,3 +728,18 @@ LIVE_HOLIDAY = "Market closed today ({day}) — last traded price shown"
 CHART_NOTES = {**CHART_NOTES, "marketSmileLive": ("Market against model, by strike",
     "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted "
     "line marks NIFTY now.")}
+
+# ------------------------------------------------------------------ Price an option on any underlying; today's minute candles
+MODEL_LEAD = ("Pick a listed option on NIFTY 50, NIFTY BANK or one of 40 large NSE stocks, price it with Double Heston, "
+              "and set it against what the market is paying. Move any of the ten settings and the model reprices.")
+FELLER_OK = "Feller condition holds: 2κθ = {lhs} is above ξ² = {rhs}"
+FELLER_FAIL = "Feller condition fails: 2κθ = {lhs} is below ξ² = {rhs}"
+CHART_NOTES = {**CHART_NOTES, "marketSmileLive": ("Market against model, by strike",
+    "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted "
+    "line marks the underlying's price now.")}
+INTRA_TITLE = "Today's {n}-minute candles with volume"
+INTRA_TITLE_LAST = "{n}-minute candles, last session ({day})"
+INTRA_CAP = ("Each candle is {n} minutes: the body runs from open to close, the thin line from low to high. Green closed "
+             "higher, red lower. The dashed line is the previous day's close. New candles appear every 30 s while NSE is open.")
+INTRA_LOADING = "Loading the session's candles…"
+INTRA_NONE = "Minute candles aren't available for this name right now."

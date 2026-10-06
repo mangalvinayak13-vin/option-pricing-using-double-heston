@@ -5,7 +5,7 @@ import { sparkline } from './charts.js';
 import { icon } from './icons.js';
 import { store } from './state.js';
 import { DEFAULT_PARAMS, SLIDER_KEYS } from './model.js';
-import { longDate } from './live-chain.js';
+import { longDate, chainStep, strikeText, DEFAULT_SYM } from './live-chain.js';
 
 const w = (ctx, sym) => ctx.D.watch.find(x => x.sym === sym);
 
@@ -74,12 +74,14 @@ export function seg(name, options, value, label) {
 }
 
 export function marketControls() {
-  return seg('range', [['1M', '1 month'], ['3M', '3 months']], store.get('market.range', '3M'), 'Time range') +
+  const range = store.get('market.range', '3M');
+  return seg('range', [['1D', 'Today'], ['1M', '1 month'], ['3M', '3 months']], range, 'Time range') +
+    `<span data-show="intraday"${range === '1D' ? '' : ' hidden'}>${seg('interval', [['1', '1 min'], ['5', '5 min'], ['15', '15 min']], store.get('market.interval', '5'), 'Candle length')}</span>` +
     seg('mode', [['candles', 'Candles'], ['line', 'Line']], store.get('market.mode', 'candles'), 'Chart type');
 }
 
 export function candleChart(h = 460) {
-  const o = { sym: store.get('market.sym', 'RELIANCE'), range: store.get('market.range', '3M'), mode: store.get('market.mode', 'candles') };
+  const o = { sym: store.get('market.sym', 'RELIANCE'), range: store.get('market.range', '3M'), interval: store.get('market.interval', '5'), mode: store.get('market.mode', 'candles') };
   return `<div class="chart b-candles" data-chart="candles" data-h="${h}" data-o='${JSON.stringify(o)}'></div>`;
 }
 
@@ -87,9 +89,13 @@ export function candleChart(h = 460) {
 export function pricingForm(ctx, cls = 'b-form') {
   const K = ctx.D.contract, C = ctx.C;
   const strike = store.get('model.strike', K.strike), kind = store.get('model.kind', 'call');
-  const opts = ctx.D.chain.map(r => `<option value="${r.strike}"${r.strike === strike ? ' selected' : ''}>${inr(r.strike, 0)}${r.strike === K.strike ? ' (at the money)' : ''}</option>`).join('');
+  const opts = ctx.D.chain.map(r => `<option value="${r.strike}"${r.strike === strike ? ' selected' : ''}>${strikeText(r.strike, inr)}${r.strike === K.strike ? ' (at the money)' : ''}</option>`).join('');
+  // the underlying: the two indices first, then the 40 stocks A to Z
+  const sym = K.sym || DEFAULT_SYM, all = Object.keys(ctx.D.equity);
+  const syms = [...all.filter(s => C.NAMES[s] === 'Index'), ...all.filter(s => C.NAMES[s] !== 'Index').sort()];
+  const under = syms.map(s => `<option value="${esc(s)}"${s === sym ? ' selected' : ''}>${esc(s)}${C.NAMES[s] && C.NAMES[s] !== 'Index' && C.NAMES[s] !== s ? ` · ${esc(C.NAMES[s])}` : ''}</option>`).join('');
   return `<form class="${cls}" data-ctl="model-form" onsubmit="return false">
-    <div class="field"><span>Underlying</span><div class="b-fixed">NIFTY 50 <span class="b-sub num" data-bind="spot">${inr(K.spot)}</span></div></div>
+    <label class="field"><span>Underlying <span class="b-sub num" data-bind="spot">${inr(K.spot)}</span></span><select class="select" data-in="underlying">${under}</select></label>
     <div class="field"><span>Expiry</span><div class="b-fixed">${esc(longDate(K.expiry))} <span class="b-sub" data-bind="dte">${K.dte} days</span></div></div>
     <label class="field"><span>Strike</span><select class="select num" data-in="strike">${opts}</select></label>
     <div class="field"><span>Type</span>${seg('kind', [['call', 'Call'], ['put', 'Put']], kind, 'Option type')}</div>
@@ -109,7 +115,7 @@ export function priceReadouts(ctx) {
     mktIv: `<span class="num" data-bind="mkt-iv">${iv(row.call_iv)}</span>`,
     gap: gap != null ? `<b class="num" data-bind="gap" data-v="${gap}" data-count="${gap}" data-fmt="inr" data-pre="+₹">+₹${inr(gap)}</b>` : '<b class="num" data-bind="gap">–</b>',
     mc: `<span class="num" data-bind="mc">${K.mc != null ? `₹${inr(K.mc)} ± ${K.mc_se.toFixed(2)}` : '–'}</span>`,
-    contract: `<span data-bind="contract">NIFTY ${inr(K.strike, 0)} call</span>`,
+    contract: `<span data-bind="contract">${esc(K.sym || DEFAULT_SYM)} ${strikeText(K.strike, inr)} call</span>`,
     status: `<span class="b-status" data-bind="status" role="status" aria-live="polite">${priced ? 'Starting settings' : 'Pricing…'}</span>`,
   };
 }
@@ -117,14 +123,15 @@ export function priceReadouts(ctx) {
 export function chainTable(ctx, cols = ['Strike', 'Call', 'Call IV', 'Model call', 'Put', 'Put IV', 'Model put']) {
   const K = ctx.D.contract;
   const px = v => (v != null ? inr(v) : '–'), iv = v => (v != null ? `${v.toFixed(1)}%` : '–');
-  const rows = ctx.D.chain.filter(r => Math.abs(r.strike - K.strike) <= 250).map(r =>
-    `<tr data-strike="${r.strike}"${r.strike === store.get('model.strike', K.strike) ? ' class="sel"' : ''}><td class="num"><b>${inr(r.strike, 0)}</b></td>` +
+  const span = 5 * chainStep(ctx.D.chain) + 1e-9; // the at-the-money strike ± 5 listed strikes
+  const rows = ctx.D.chain.filter(r => Math.abs(r.strike - K.strike) <= span).map(r =>
+    `<tr data-strike="${r.strike}"${r.strike === store.get('model.strike', K.strike) ? ' class="sel"' : ''}><td class="num"><b>${strikeText(r.strike, inr)}</b></td>` +
     `<td class="num" data-bind="mk-call-${r.strike}">${px(r.call)}</td><td class="num b-sub" data-bind="mk-call-iv-${r.strike}">${iv(r.call_iv)}</td>` +
     `<td class="num b-model" data-bind="ch-call-${r.strike}">${px(r.dh_call)}</td>` +
     `<td class="num" data-bind="mk-put-${r.strike}">${px(r.put)}</td><td class="num b-sub" data-bind="mk-put-iv-${r.strike}">${iv(r.put_iv)}</td>` +
     `<td class="num b-model" data-bind="ch-put-${r.strike}">${px(r.dh_put)}</td></tr>`).join('');
   const what = K.live ? 'live market prices' : 'market closing prices';
-  return `<table class="b-tb b-chain"><caption class="vh">NIFTY option chain, ${esc(longDate(K.expiry))} expiry: ${what} and implied volatilities against the model</caption><thead><tr>${cols.map((c, i) => `<th scope="col"${i ? ' class="num"' : ''}>${c}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table class="b-tb b-chain"><caption class="vh">${esc(K.sym || DEFAULT_SYM)} option chain, ${esc(longDate(K.expiry))} expiry: ${what} and implied volatilities against the model</caption><thead><tr>${cols.map((c, i) => `<th scope="col"${i ? ' class="num"' : ''}>${c}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 export function sliders(ctx, factor) {
@@ -143,7 +150,7 @@ export function fellerLine(ctx, factor) {
 
 export function greeks(ctx, cls = 'b-greek') {
   const K = ctx.D.contract;
-  const units = { Delta: 'per ₹1 move in NIFTY', Gamma: 'change in delta per ₹1', Vega: '₹ per volatility point', Theta: '₹ per calendar day', Rho: '₹ per rate point' };
+  const units = { Delta: 'per ₹1 move in the underlying', Gamma: 'change in delta per ₹1', Vega: '₹ per volatility point', Theta: '₹ per calendar day', Rho: '₹ per rate point' };
   const val = { Delta: [K.delta, 3], Gamma: [K.gamma, 5], Vega: [K.vega, 1], Theta: [K.theta, 2], Rho: [K.rho, 1] };
   return Object.keys(units).map(n => `<div class="${cls}"><span class="b-lab">${n}</span><b class="num" data-bind="g-${n.toLowerCase()}"${val[n][0] != null ? ` data-v="${val[n][0]}"` : ''}>${val[n][0] != null ? fmt.num(val[n][0], val[n][1]) : '–'}</b><span class="b-sub">${units[n]}</span></div>`).join('');
 }
@@ -232,9 +239,9 @@ export function lineage(ctx, cls = 'b-lin') {
 export const bulletList = (items, cls = 'b-list') => `<ul class="${cls}">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
 
 export function video(ctx, { tint } = {}) {
-  return `<figure class="b-video"><button type="button" class="video-slot" data-video aria-label="Play the project video (to be added)">
+  return `<figure class="b-video"><button type="button" class="video-slot" data-video aria-label="Play the project video">
     ${icon('play', { size: 92, tint: tint || 'red' })}<span class="vs-cap">${esc(ctx.C.VIDEO_CAPTION.replace(' [Video to be added]', ''))}</span></button>
-    <figcaption class="b-sub">The explainer video goes here. Drop the file into website/assets/video/ and it will play in this frame; nothing loads until someone presses play.</figcaption></figure>`;
+    <figcaption class="b-sub">Press play to watch it here. Nothing loads until you do.</figcaption></figure>`;
 }
 
 export function teamCards(ctx, cls = 'b-person', { tint } = {}) {
@@ -260,7 +267,7 @@ export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, desc = true }
 }
 
 export function footer(ctx, cls = 'b-foot') {
-  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; live Upstox prices are planned for the same places.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
+  return `<footer class="${cls}"><span>Not trading advice. Research data: NSE closing prices to ${esc(ctx.C.LAST_DAY)}. Market prices and option quotes are live from Upstox while NSE is open.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
 }
 
 export function stockPicker(ctx) {

@@ -32,7 +32,7 @@ export function price(req) {
   return new Promise(resolve => waiting.set(id, resolve));
 }
 
-export const OFFLINE_HELP = 'Live repricing needs the local model server. Start it with: python3 website/serve.py';
+export const OFFLINE_HELP = "The pricer isn't answering right now. Try again in a moment.";
 
 // Feller check (2κθ > ξ²), same rule as the pricer's feller_condition
 export function feller(p, f) {

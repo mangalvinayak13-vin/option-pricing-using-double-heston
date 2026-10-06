@@ -257,7 +257,7 @@
   ],
   "marketSmileLive": [
    "Market against model, by strike",
-   "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks NIFTY now."
+   "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks the underlying's price now."
   ]
  },
  "CONTRACT": "NIFTY 23,150 call",
@@ -496,7 +496,9 @@
   "slow": "Feller condition fails: 2κθ = 0.02 is below ξ² = 0.09",
   "fast": "Feller condition fails: 2κθ = 0.20 is below ξ² = 0.25"
  },
+ "FELLER_FAIL": "Feller condition fails: 2κθ = {lhs} is below ξ² = {rhs}",
  "FELLER_NOTE": "Both factors can touch zero at these settings. The simulator uses full truncation, so prices stay valid.",
+ "FELLER_OK": "Feller condition holds: 2κθ = {lhs} is above ξ² = {rhs}",
  "FINDING_LINE": "On 99% of 2,400 real NSE option surfaces, several different settings priced the options equally well.",
  "FINDING_SUB": "They sat 3.9 times further apart than two settings picked at random from the model's training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.",
  "FIND_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
@@ -695,6 +697,11 @@
   "From a speck of pollen",
   "to Wall Street"
  ],
+ "INTRA_CAP": "Each candle is {n} minutes: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. The dashed line is the previous day's close. New candles appear every 30 s while NSE is open.",
+ "INTRA_LOADING": "Loading the session's candles…",
+ "INTRA_NONE": "Minute candles aren't available for this name right now.",
+ "INTRA_TITLE": "Today's {n}-minute candles with volume",
+ "INTRA_TITLE_LAST": "{n}-minute candles, last session ({day})",
  "JOURNEY": [
   [
    "1827",
@@ -851,6 +858,7 @@
  "MKT_MID": "Live mid quote",
  "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
  "MODEL_EXPLAIN_LIVE": "The starting settings assume 20% volatility. Right now the market is pricing this option at about {iv}%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
+ "MODEL_LEAD": "Pick a listed option on NIFTY 50, NIFTY BANK or one of 40 large NSE stocks, price it with Double Heston, and set it against what the market is paying. Move any of the ten settings and the model reprices.",
  "MODEL_SOURCE": "Option prices: NSE closing prices, 25 Sep 2026. Forward from NIFTY October futures (23,263.60). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
  "MODEL_SOURCE_LIVE": "Option prices: live NSE quotes from Upstox, refreshed each minute (mid of the best bid and ask, or the last trade without a quote). Forward {fwd} from put–call parity at the {k} strike. Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
  "NAMES": {
@@ -959,7 +967,7 @@
  "PAIR_TYPICAL": "This surface had 6 equally good fits out of 16 starts, and their spread, 4.64, is the median of all 2,400 surfaces. It's the typical case, not the worst.",
  "PA_HEAD": "What the physics buys: a PINN against an ANN",
  "PA_LEDE": "Two identical networks saw the same 48 exact Double Heston prices. The ANN learned from those prices alone. The PINN also had to obey the model's pricing equation at 4,096 points and the option's payoff at expiry. Below, both price surfaces at today's volatility, drawn in 3D against the exact pricer.",
- "PA_NOTE": "A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.",
+ "PA_NOTE": "A demonstration run for this site (about 3 minutes on a laptop): same architecture, same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.",
  "PA_NUMS": [
   [
    "0.8%",
@@ -1564,7 +1572,7 @@
  ],
  "THANKS": [
   "NSE, for the public end-of-day files the research uses.",
-  "Upstox, whose market-data API we plan to use for live prices.",
+  "Upstox, whose market-data API supplies the live prices.",
   "The authors of NumPy, SciPy and pandas."
  ],
  "TICKER_MODEL": [

@@ -10,7 +10,7 @@ import * as B from './blocks.js';
 import { esc, inr } from './util.js';
 import { store } from './state.js';
 import { icon } from './icons.js';
-import { longDate } from './live-chain.js';
+import { longDate, strikeText } from './live-chain.js';
 
 // a chart with its title and reading guide
 export function fig(ctx, name, h, o, { note = name, title } = {}) {
@@ -93,7 +93,7 @@ export function sections(page, ctx) {
         { key: 'top', kind: 'head', title: 'Market', lead: C.MARKET_SUB, action: ['model.html', C.CTA.model] },
         { key: 'live', kind: 'note', body: `<p class="b-live" data-bind="live-status">${esc(C.LIVE_LOADING)}</p>` },
         { key: 'chart', size: 'wide', body: `<div class="s-stock">${B.stockHead(ctx, sym)}</div><div class="s-ctrls">${B.marketControls()}</div>
-          <figure class="fig"><figcaption class="fig-t">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
+          <figure class="fig"><figcaption class="fig-t" data-bind="candles-title">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap" data-bind="candles-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
           <div class="s-stats">${B.stockStats(ctx, sym)}</div>` },
         { key: 'watch', title: 'Watchlist', ico: 'market', size: 'narrow', note: 'Pick one to chart it', body: `<div class="s-scroll">${B.stocksList(ctx)}</div>` },
         { key: 'nifty', title: 'NIFTY 50', ico: 'market', size: 'half', note: `since ${C.FIRST_DAY}`, body: fig(ctx, 'indexLine', 260, { which: 'NIFTY' }, { title: 'NIFTY 50, closing level by day' }) },
@@ -104,7 +104,7 @@ export function sections(page, ctx) {
     case 'model': {
       const R = B.priceReadouts(ctx);
       return [
-        { key: 'top', kind: 'head', title: 'Price an option', action: ['market.html', C.MARKET_BUTTON], lead: 'Pick a listed NIFTY option, price it with Double Heston, and set it against what the market paid. Move any of the ten settings and the model reprices.' },
+        { key: 'top', kind: 'head', title: 'Price an option', action: ['market.html', C.MARKET_BUTTON], lead: C.MODEL_LEAD },
         { key: 'form', title: 'The option', ico: 'model', size: 'full', body: B.pricingForm(ctx) },
         { key: 'price', title: 'Double Heston', ico: 'model', size: 'narrow', body: `<div class="s-bignum s-model">${R.dh}</div><p class="s-fine">Implied volatility ${R.dhIv}. Monte Carlo check, 20,000 paths: ${R.mc}</p>` },
         { key: 'market', title: K.live ? 'Market price' : 'Market close', ico: 'market', size: 'narrow', body: `<div class="s-bignum">${R.mkt}</div><p class="s-fine">Implied volatility ${R.mktIv}. ${K.live ? '<span data-bind="mkt-when"></span>' : `NSE close, ${esc(C.LAST_DAY)}`}.</p>` },
@@ -116,7 +116,7 @@ export function sections(page, ctx) {
         { key: 'sliders-fast', title: 'Fast factor', ico: 'fast', size: 'half', note: `half-life at κ 5.0: ${C.FAST_HL}`, body: `${B.fellerLine(ctx, 'fast')}${B.sliders(ctx, 'fast')}` },
         { key: 'reset', kind: 'note', size: 'full', body: `<div class="s-row-note"><span class="b-sub">${esc(C.FELLER_NOTE)}</span><button class="btn ghost" type="button" data-action="reset">Reset to starting settings</button></div>` },
         { key: 'chain', title: `Option chain, ${longDate(K.expiry)}`, ico: 'market', size: 'full', body: `<p class="fig-t">${esc(K.live ? C.CHAIN_FIG_LIVE : C.CHAIN_FIG)}</p><div class="s-scroll-x">${B.chainTable(ctx)}</div><p class="fig-cap">Each row is one strike. Call and put columns are NSE ${K.live ? 'live' : 'closing'} prices; IV is the implied volatility they imply; the model columns are Double Heston at your settings. Pick a row to price that strike.</p>` },
-        { key: 'source', kind: 'note', size: 'full', fine: K.live ? C.MODEL_SOURCE_LIVE.replace('{fwd}', inr(K.forward)).replace('{k}', inr(K.parity_strike, 0)) : C.MODEL_SOURCE },
+        { key: 'source', kind: 'note', size: 'full', fine: K.live ? C.MODEL_SOURCE_LIVE.replace('{fwd}', inr(K.forward)).replace('{k}', K.parity_strike != null ? strikeText(K.parity_strike, inr) : 'nearest') : C.MODEL_SOURCE },
       ];
     }
     // How it works: centred, every formula on its theme's glass, then the ten settings and the charts
@@ -133,6 +133,8 @@ export function sections(page, ctx) {
         { key: 'skew', title: 'Skew by time to expiry', ico: 'model', size: 'full', glass: true, lead: C.SKEW_NOTE, body: fig(ctx, 'skew', 320) + X(ctx, 'skew') },
         { key: 'fan', title: 'Simulated paths', ico: 'fast', size: 'full', glass: true, lead: C.FAN_NOTE, body: fig(ctx, 'fan', 420) + X(ctx, 'fan') },
         { key: 'surface', title: 'The whole surface', ico: 'maths', size: 'full', glass: true, lead: C.SURFACE_NOTE, body: fig(ctx, 'surface', 420) + X(ctx, 'surface') },
+        // what a physics-informed network buys, in 3D: the same model, solved by two networks
+        { key: 'nn', title: C.PA_HEAD, ico: 'model', size: 'full', glass: true, lead: C.PA_LEDE, body: pinnAnn(ctx) },
       ];
     // the one place every result lives, all on glass: the answer, its evidence, the networks, then the full table
     case 'results': {
@@ -168,14 +170,17 @@ export function sections(page, ctx) {
         { key: 'terms', title: 'What the words mean', ico: 'about', size: 'full', glass: g, body: terms(ctx) },
       ];
     }
-    case 'about':
+    // the video panel appears once VIDEO_SRC is set; until then Method and Limits share the first row
+    case 'about': {
+      const video = !!C.VIDEO_SRC;
       return [
         { key: 'top', kind: 'head', title: 'About', lead: C.ABOUT_HEAD },
-        { key: 'video', title: 'The explainer video', ico: 'video', size: 'wide', body: B.video(ctx) },
-        { key: 'method', title: 'Method and data', ico: 'maths', size: 'narrow', body: `<div class="s-paras">${C.METHOD.map(m => `<p>${esc(m)}</p>`).join('')}</div>` },
+        ...(video ? [{ key: 'video', title: 'The explainer video', ico: 'video', size: 'wide', body: B.video(ctx) }] : []),
+        { key: 'method', title: 'Method and data', ico: 'maths', size: video ? 'narrow' : 'half', body: `<div class="s-paras">${C.METHOD.map(m => `<p>${esc(m)}</p>`).join('')}</div>` },
         { key: 'limits', title: 'Limits', ico: 'about', size: 'half', body: B.bulletList(C.LIMITS) },
-        { key: 'also', title: 'Also explored', ico: 'fast', size: 'half', lead: C.ALSO },
+        { key: 'also', title: 'Also explored', ico: 'fast', size: video ? 'half' : 'full', lead: C.ALSO },
       ];
+    }
     case 'team':
       return [
         { key: 'top', kind: 'head', title: C.TEAM_HEAD, lead: C.TEAM_INTRO },

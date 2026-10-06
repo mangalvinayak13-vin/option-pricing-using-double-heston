@@ -178,7 +178,9 @@ export function createPA3D(host, PA) {
     let last = performance.now();
     const still = reduced();
     const tick = now => {
-      const dt = (now - last) / 1000;
+      // rAF's timestamp is the frame's start, which can fall before the performance.now() taken above:
+      // never let time run backwards, or pos dips below 0 and frames[-1] doesn't exist
+      const dt = Math.max(0, (now - last) / 1000);
       if (still) { if (dt < 0.7) { replay = requestAnimationFrame(tick); return; } pos = Math.floor(pos) + 1; last = now; }
       else { pos += dt / 0.6; last = now; }
       if (pos >= frames.length - 1) { pos = frames.length - 1; drawAll(); stopReplay(); return; }

@@ -2,12 +2,12 @@
 // worker), the market page (symbol, range, chart type), and the Results page (stock picker).
 // Every choice goes into the store, so it survives a theme change.
 import { store } from './state.js';
-import { inr, fmt, esc, arrow, debounce, $, $$ } from './util.js';
+import { inr, fmt, esc, arrow, debounce, shortDate, $, $$ } from './util.js';
 import { retarget } from './motion.js';
 import { renderChart, morphPath } from './charts.js';
 import { price, DEFAULT_PARAMS, OFFLINE_HELP, feller } from './model.js';
 import { stockLine } from './blocks.js';
-import { marketOf, refreshLiveChain, istTime as hhmm } from './live-chain.js';
+import { marketOf, refreshLiveChain, istTime as hhmm, strikeText, DEFAULT_SYM } from './live-chain.js';
 import { createPA3D } from './pa3d.js';
 
 export function mountControllers(scope, ctx) {
@@ -154,7 +154,7 @@ function videoSlots(scope, ctx) {
     const fig = btn.closest('figure');
     if (!src) {
       const cap = fig?.querySelector('figcaption');
-      if (cap) { cap.textContent = 'The video hasn\'t been added yet. Put the file in website/assets/video/ and set VIDEO_SRC in website/tools/content.py.'; cap.setAttribute('role', 'status'); }
+      if (cap) { cap.textContent = 'The video isn\'t available yet.'; cap.setAttribute('role', 'status'); } // About hides the slot until VIDEO_SRC is set
       return;
     }
     const v = document.createElement('video');
@@ -216,7 +216,7 @@ function modelPage(scope, ctx) {
     }
     bind('spot').forEach(el => { el.textContent = inr(K.spot); });
     bind('dte').forEach(el => { el.textContent = `${K.dte} days`; });
-    bind('contract').forEach(el => { el.textContent = `NIFTY ${inr(strike, 0)} ${kind}`; });
+    bind('contract').forEach(el => { el.textContent = `${K.sym || DEFAULT_SYM} ${strikeText(strike, inr)} ${kind}`; });
     $$('.b-chain tr[data-strike]', scope).forEach(tr => tr.classList.toggle('sel', +tr.dataset.strike === strike));
     return px;
   }
@@ -250,8 +250,10 @@ function modelPage(scope, ctx) {
     for (const f of ['slow', 'fast']) {
       const fe = res.feller[f];
       bind(`feller-${f}`).forEach(el => {
-        el.textContent = fe.ok ? `Feller condition holds: 2κθ = ${fe.lhs.toFixed(3)} is above ξ² = ${fe.rhs.toFixed(3)}`
-          : `Feller condition fails: 2κθ = ${fe.lhs.toFixed(3)} is below ξ² = ${fe.rhs.toFixed(3)}`;
+        // each site words this its own way (content FELLER_OK / FELLER_FAIL), the technical wording otherwise
+        const tpl = (fe.ok ? ctx.C.FELLER_OK : ctx.C.FELLER_FAIL)
+          || `Feller condition ${fe.ok ? 'holds' : 'fails'}: 2κθ = {lhs} is ${fe.ok ? 'above' : 'below'} ξ² = {rhs}`;
+        el.textContent = tpl.replace('{lhs}', fe.lhs.toFixed(3)).replace('{rhs}', fe.rhs.toFixed(3));
         el.dataset.ok = String(fe.ok);
       });
     }
@@ -291,6 +293,16 @@ function modelPage(scope, ctx) {
     });
   });
   $$('[data-in="strike"]', scope).forEach(sel => sel.addEventListener('change', () => { strike = +sel.value; run(); }));
+  // a new underlying loads its live chain and re-renders the page; if it can't, the page stays as it is
+  $$('[data-in="underlying"]', scope).forEach(sel => sel.addEventListener('change', async () => {
+    const sym = sel.value, was = ctx.D.contract.sym || DEFAULT_SYM;
+    setStatus(`Loading ${sym} options…`, 'busy');
+    sel.disabled = true;
+    if (await ctx.switchUnderlying?.(sym)) return; // the page has re-rendered on the new chain
+    sel.disabled = false;
+    sel.value = was;
+    setStatus(`Live options for ${sym} aren't available right now.`, 'error');
+  }));
   $$('[data-seg="kind"]', scope).forEach(s => s.addEventListener('seg', e => { kind = e.detail; run(); }));
   $$('[data-action="reset"]', scope).forEach(b => b.addEventListener('click', () => {
     params = { ...DEFAULT_PARAMS };
@@ -318,9 +330,21 @@ function modelPage(scope, ctx) {
 // ------------------------------------------------------------------ the market page
 function marketPage(scope, ctx) {
   let sym = store.get('market.sym', 'RELIANCE'), range = store.get('market.range', '3M'), mode = store.get('market.mode', 'candles');
+  let interval = store.get('market.interval', '5');
+  const C = ctx.C;
+  const captions = () => {
+    const S = ctx.D.intraday?.[`${sym}|${interval}`];
+    const [t, cap] = range === '1D'
+      ? [(S?.session && !S.today ? C.INTRA_TITLE_LAST.replace('{day}', shortDate(S.session)) : C.INTRA_TITLE).replace('{n}', interval), C.INTRA_CAP.replace('{n}', interval)]
+      : C.CHART_NOTES.candles;
+    $$('[data-bind="candles-title"]', scope).forEach(el => { el.textContent = t; });
+    $$('[data-bind="candles-cap"]', scope).forEach(el => { el.textContent = cap; });
+    $$('[data-show="intraday"]', scope).forEach(el => { el.hidden = range !== '1D'; });
+  };
   const redraw = () => {
-    store.set('market.sym', sym); store.set('market.range', range); store.set('market.mode', mode);
-    $$('.chart[data-chart="candles"]', scope).forEach(el => { el._opts = { sym, range, mode }; replay(el, ctx); });
+    store.set('market.sym', sym); store.set('market.range', range); store.set('market.mode', mode); store.set('market.interval', interval);
+    $$('.chart[data-chart="candles"]', scope).forEach(el => { el._opts = { sym, range, mode, interval }; replay(el, ctx); });
+    captions();
     const r = ctx.D.equity[sym].at(-1), ch = r[4] - r[6], [a, c] = arrow(ch);
     const set = (k, v) => $$(`[data-bind="${k}"]`, scope).forEach(el => { el.textContent = v; });
     set('m-sym', sym); set('m-name', ctx.C.NAMES[sym] || '');
@@ -335,9 +359,26 @@ function marketPage(scope, ctx) {
       b.closest('tr, li')?.classList.toggle('sel', on);
     });
   };
-  $$('button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); extend(sym); }));
-  $$('[data-seg="range"]', scope).forEach(s => s.addEventListener('seg', e => { range = e.detail; redraw(); }));
+  $$('button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); extend(sym); intraday(); }));
+  $$('[data-seg="range"]', scope).forEach(s => s.addEventListener('seg', e => { range = e.detail; redraw(); intraday(); }));
+  $$('[data-seg="interval"]', scope).forEach(s => s.addEventListener('seg', e => { interval = e.detail; redraw(); intraday(); }));
   $$('[data-seg="mode"]', scope).forEach(s => s.addEventListener('seg', e => { mode = e.detail; redraw(); }));
+
+  // "Today": one session's minute candles from /api/live?intraday= (today's, or the last session's before
+  // the open, at weekends and on holidays), redrawn quietly every 30 s while today's session is trading
+  const intraday = async (quiet = false) => {
+    if (range !== '1D') return;
+    const s = sym, iv = interval, key = `${s}|${iv}`;
+    ctx.D.intraday ??= {};
+    try {
+      const r = await fetch(`/api/live?intraday=${encodeURIComponent(s)}&interval=${iv}`);
+      const d = r.ok ? await r.json() : null;
+      ctx.D.intraday[key] = d && d.status === 'live' ? d : { rows: [] };
+    } catch { ctx.D.intraday[key] = { rows: [] }; }
+    if (stopped || s !== sym || iv !== interval || range !== '1D') return;
+    $$('.chart[data-chart="candles"]', scope).forEach(el => { if (quiet) renderChart(el, ctx, false); else replay(el, ctx); });
+    captions();
+  };
 
   // The saved history ends at the last NSE file; fill every trading day since then, today's candle
   // included, from Upstox daily candles (/api/live?candles=). Re-asked each minute while the page is
@@ -373,8 +414,12 @@ function marketPage(scope, ctx) {
   let stopped = false;
   const refresh = () => [...new Set([sym, 'NIFTY 50', 'NIFTY BANK'])].forEach(extend);
   refresh();
+  intraday();
   const timer = setInterval(refresh, 60000);
-  return { stop() { stopped = true; clearInterval(timer); } };
+  const intraTimer = setInterval(() => {
+    if (!document.hidden && ctx.D.intraday?.[`${sym}|${interval}`]?.today) intraday(true);
+  }, 30000);
+  return { stop() { stopped = true; clearInterval(timer); clearInterval(intraTimer); } };
 }
 
 // ------------------------------------------------------------------ the Results page stock picker
