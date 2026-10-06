@@ -15,7 +15,7 @@ POST /api/price  {"strike": 23150, "kind": "call", "params": {v0_1, kappa1, thet
 GET  /api/price?chain=NIFTY&r=0.0532 -> the live NIFTY option chain (see api/_dh/pricing.py).
 
 GET  /api/live   -> live last price/change for NIFTY 50, NIFTY BANK and the 40 watchlist stocks,
-   via the Upstox market-quote API (website/tools/live_quotes.py), cached server-side for 5s.
+   via the Upstox market-quote API (website/tools/live_quotes.py), cached server-side for 1s.
 """
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ _LIVE_CACHE: dict = {"t": 0.0, "data": None}
 _LIVE_LOCK = threading.Lock()
 
 
-def live_quotes_cached(max_age=5.0) -> dict:
+def live_quotes_cached(max_age=1.0) -> dict:
     now = time.monotonic()
     with _LIVE_LOCK:
         if _LIVE_CACHE["data"] is not None and now - _LIVE_CACHE["t"] < max_age:

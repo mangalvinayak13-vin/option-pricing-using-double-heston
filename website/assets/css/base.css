@@ -59,6 +59,11 @@ table { border-collapse: collapse; }
   font-weight: 600; transform: translateY(-160%); transition: transform var(--dur-2) var(--spring-snappy); }
 .skip:focus { transform: none; }
 .up { color: var(--up); } .dn { color: var(--down); }
+/* a live price that just moved: a short green or red wash behind the number (controllers.js tick) */
+@keyframes tick-up { from { background-color: color-mix(in srgb, var(--up) 38%, transparent); } }
+@keyframes tick-dn { from { background-color: color-mix(in srgb, var(--down) 38%, transparent); } }
+html.motion .tick-up { animation: tick-up 1.2s ease-out; border-radius: 4px; }
+html.motion .tick-dn { animation: tick-dn 1.2s ease-out; border-radius: 4px; }
 #app { min-height: 100vh; }
 .wrap { width: 100%; max-width: calc(var(--maxw) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
 .noscript { padding: 40px; font-size: 20px; }

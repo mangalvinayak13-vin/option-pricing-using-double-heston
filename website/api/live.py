@@ -1,41 +1,28 @@
 """Vercel serverless function: GET /api/live -- live last price/change for the site's 42-symbol
 universe (NIFTY 50, NIFTY BANK, 40 stocks), via the Upstox market-quote API.
 
-Self-contained on purpose (the instrument map is embedded below, not read from
-website/tools/upstox_instrument_map.json) -- Vercel's Python builder only reliably bundles what a
-function's own file references, and a relative file read from a sibling directory at runtime is
-not something to depend on here. The map was generated once by website/.shots/work/build_map.py
-from Upstox's public NSE instrument master and only changes if a new symbol joins the watchlist.
+The instrument map lives in api/_dh/instruments.py, shared with the pricing function (api/price.py);
+files under api/_dh ship with every function, as the pricer's own does.
 
 Reads the token from the UPSTOX_ACCESS_TOKEN environment variable (set in the Vercel project's
 own settings, never committed). The response is cached at Vercel's edge for 5s via Cache-Control,
 so the real Upstox call rate stays near one per 5 seconds regardless of visitor traffic -- see
 website/tools/live_quotes.py, which website/serve.py uses locally; this file mirrors its logic
-rather than importing it, for the same bundling reason.
+rather than importing it, because website/tools doesn't ship with the function.
 """
+import importlib.util
 import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler
+from pathlib import Path
 from urllib.parse import parse_qs, quote, urlparse
 
-INSTRUMENT_MAP = {
-    "ADANIPOWER": "NSE_EQ|INE814H01029", "ASHOKLEY": "NSE_EQ|INE208A01029", "BAJFINANCE": "NSE_EQ|INE296A01032",
-    "BANKBARODA": "NSE_EQ|INE028A01039", "BEL": "NSE_EQ|INE263A01024", "BHARTIARTL": "NSE_EQ|INE397D01024",
-    "BHEL": "NSE_EQ|INE257A01026", "BSE": "NSE_EQ|INE118H01025", "CANBK": "NSE_EQ|INE476A01022",
-    "COALINDIA": "NSE_EQ|INE522F01014", "DIXON": "NSE_EQ|INE935N01020", "ETERNAL": "NSE_EQ|INE758T01015",
-    "HAL": "NSE_EQ|INE066F01020", "HCLTECH": "NSE_EQ|INE860A01027", "HDFCBANK": "NSE_EQ|INE040A01034",
-    "HINDALCO": "NSE_EQ|INE038A01020", "HINDUNILVR": "NSE_EQ|INE030A01027", "HINDZINC": "NSE_EQ|INE267A01025",
-    "ICICIBANK": "NSE_EQ|INE090A01021", "INFY": "NSE_EQ|INE009A01021", "ITC": "NSE_EQ|INE154A01025",
-    "JIOFIN": "NSE_EQ|INE758E01017", "KALYANKJIL": "NSE_EQ|INE303R01014", "KOTAKBANK": "NSE_EQ|INE237A01036",
-    "LT": "NSE_EQ|INE018A01030", "MARUTI": "NSE_EQ|INE585B01010", "MCX": "NSE_EQ|INE745G01043",
-    "NATIONALUM": "NSE_EQ|INE139A01034", "NIFTY 50": "NSE_INDEX|Nifty 50", "NIFTY BANK": "NSE_INDEX|Nifty Bank",
-    "ONGC": "NSE_EQ|INE213A01029", "PFC": "NSE_EQ|INE134E01011", "PNB": "NSE_EQ|INE160A01022",
-    "RELIANCE": "NSE_EQ|INE002A01018", "SBICARD": "NSE_EQ|INE018E01016", "SBIN": "NSE_EQ|INE062A01020",
-    "TATAPOWER": "NSE_EQ|INE245A01021", "TATASTEEL": "NSE_EQ|INE081A01020", "TCS": "NSE_EQ|INE467B01029",
-    "TMPV": "NSE_EQ|INE155A01022", "VEDL": "NSE_EQ|INE205A01025", "WIPRO": "NSE_EQ|INE075A01022",
-}
+_spec = importlib.util.spec_from_file_location("dh_instruments", Path(__file__).resolve().parent / "_dh" / "instruments.py")
+_instruments = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_instruments)
+INSTRUMENT_MAP = _instruments.INSTRUMENT_MAP
 _REVERSE_MAP = {v: k for k, v in INSTRUMENT_MAP.items()}
 _IST = timezone(timedelta(hours=5, minutes=30))
 
@@ -49,6 +36,7 @@ def _market_open(now=None):
 
 
 _HOLIDAYS = {"day": None, "list": []}
+_STATUS = {"state": None, "at": None}
 
 
 def _holiday_today(token, today):
@@ -68,6 +56,8 @@ def _market_state(token):
     when that can't be read. Mirrors market_state in website/tools/live_quotes.py."""
     import requests
     now = datetime.now(_IST)
+    if _STATUS["state"] and (now - _STATUS["at"]).total_seconds() < 30:  # NSE's status changes a few times a day
+        return _STATUS["state"]
     try:
         holiday = _holiday_today(token, now.date())
     except Exception:
@@ -76,9 +66,11 @@ def _market_state(token):
         r = requests.get("https://api.upstox.com/v2/market/status/NSE", headers={"Authorization": f"Bearer {token}",
                          "Accept": "application/json"}, timeout=4)
         r.raise_for_status()
-        return r.json()["data"]["status"] == "NORMAL_OPEN", holiday
+        state = (r.json()["data"]["status"] == "NORMAL_OPEN", holiday)
     except Exception:
-        return (not holiday and _market_open(now)), holiday
+        state = ((not holiday and _market_open(now)), holiday)
+    _STATUS.update(state=state, at=now)
+    return state
 
 
 def _fetch():
@@ -148,10 +140,11 @@ class handler(BaseHTTPRequestHandler):
         body = json.dumps(_candles(q["candles"][0], q.get("since", [""])[0]) if candles else _fetch()).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
-        # Vercel's edge caches this, shared across every visitor: quotes for 5s, so the real Upstox
-        # call rate stays ~1 per 5s regardless of traffic (well inside 500/min, 2000/30min); candles
-        # for 60s per symbol, since only today's candle moves.
-        self.send_header("Cache-Control", f"public, s-maxage={60 if candles else 5}, stale-while-revalidate=30")
+        # Vercel's edge caches this, shared across every visitor: quotes for 1s, so a page polling every
+        # 2s sees each tick while the real Upstox call rate stays near one a second whatever the traffic
+        # (plus a status check every 30s; well inside 50/s, 500/min); candles for 60s per symbol, since
+        # only today's candle moves.
+        self.send_header("Cache-Control", "public, s-maxage=60, stale-while-revalidate=30" if candles else "public, s-maxage=1")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
