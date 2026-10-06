@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:11:47Z"
+  },
+  "title": "DH Design 04 — Springboard",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1619,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1601,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2102,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 1820,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2370,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 2770,
+      "w": 1440,
+      "h": 2832,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 2770,
+      "w": 1440,
+      "h": 1297,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 2770,
+      "w": 1440,
+      "h": 900,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 2770,
+      "w": 1440,
+      "h": 1138,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "04 · Springboard: An iPhone home screen for the site: widgets of mixed sizes, coloured app icons, a frosted dock."
+    },
+    "row2": {
+      "x": 0,
+      "y": 2470,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Springboard. An iPhone home screen for the site: widgets of mixed sizes, coloured app icons, a frosted dock.\n\nLayout: 8-column widget grid (small, medium, large tiles), large iOS titles, grouped lists for tables and settings.\nThe memorable thing: Each page is an app with its own Apple system colour; the home screen is a grid of live widgets.\nType: Figtree 800 for large titles and widget numbers; 500–700 for text and lists.\nLight: bg #F2F2F7, surf #FFFFFF, ink #1C1C1E, muted #6C6C72, acc #FF9500, line #D8D8DE\nDark: bg #000000, surf #1C1C1E, ink #F5F5F7, muted #98989F, acc #FF9F0A, line #38383A\nMagnet rail on the right edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

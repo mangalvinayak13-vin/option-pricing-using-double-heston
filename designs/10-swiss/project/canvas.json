@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:25:25Z"
+  },
+  "title": "DH Design 10 — Swiss",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 2263,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 2320,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 3308,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2028,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2374,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 3708,
+      "w": 1440,
+      "h": 3506,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 3708,
+      "w": 1440,
+      "h": 1807,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 3708,
+      "w": 1440,
+      "h": 1160,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 3708,
+      "w": 1440,
+      "h": 1158,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "10 · Swiss: A strict 12-column grid with black hairlines: giant flush-left headlines, giant red numerals, one red."
+    },
+    "row2": {
+      "x": 0,
+      "y": 3408,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Swiss. A strict 12-column grid with black hairlines: giant flush-left headlines, giant red numerals, one red.\n\nLayout: Every section is a hairline row: a 3-column label on the left, content in the remaining 9 columns.\nThe memorable thing: Page titles at 170 px and the headline numbers at 220 px in red, all hung on one 12-column grid.\nType: Instrument Sans 700 at display sizes with tight tracking; 400–500 for text. One family, many sizes.\nLight: bg #FFFFFF, surf #F4F4F4, ink #121212, muted #595959, acc #D23B16, line #121212\nDark: bg #111111, surf #1A1A1A, ink #F2F2F2, muted #A3A3A3, acc #FF5A2E, line #EDEDED\nMagnet rail on the left edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

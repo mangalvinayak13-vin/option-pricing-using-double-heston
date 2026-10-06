@@ -1,0 +1,12 @@
+{
+  "surfaces_analysed": 8,
+  "starts_per_surface": 8,
+  "equivalence_tolerance": 0.1,
+  "median_price_equivalent_count": 5.5,
+  "share_with_multiple_equivalents": 1.0,
+  "median_dispersion": 4.615699887050763,
+  "median_max_dispersion": 6.9020878363233,
+  "median_best_price_rmse": 0.0012764973188082256,
+  "share_with_any_param_near_bound": 1.0,
+  "interpretation": "Dispersion is in units of the training distribution's own parameter spread. Near 0 means the surface pins the parameters; near or above 1 means price-equivalent solutions sit as far apart as unrelated ones."
+}

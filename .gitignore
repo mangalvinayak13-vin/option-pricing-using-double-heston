@@ -131,3 +131,12 @@ outputs/regular_pinn_recovery/residual_test/**/*.safetensors
 
 # Local staging for the design canvas artifact (not project source)
 .design_canvas/
+
+# Design boards: generated screenshots, previews and PDFs (rebuild with designs/gen/build.py and pdf.py)
+designs/*.pdf
+designs/gen/shots/
+designs/gen/preview/
+designs/gen/pdf_tmp/
+
+# Website: screenshots from the local visual checks
+website/.shots/

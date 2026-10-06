@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:05:47Z"
+  },
+  "title": "DH Design 02 — Front Panel",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 3037,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 2272,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 2569,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2419,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2381,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 3437,
+      "w": 1440,
+      "h": 3301,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 3437,
+      "w": 1440,
+      "h": 1644,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 3437,
+      "w": 1440,
+      "h": 1271,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 3437,
+      "w": 1440,
+      "h": 1411,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "02 · Front Panel: Chart-led editorial: every page opens on one large numbered figure, with the words set around it."
+    },
+    "row2": {
+      "x": 0,
+      "y": 3137,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Front Panel. Chart-led editorial: every page opens on one large numbered figure, with the words set around it.\n\nLayout: 12-column editorial grid, no boxes; question left, a large figure right; generous vertical rhythm.\nThe memorable thing: Figure 1 on every page: the chart is the headline, captions carry the argument.\nType: Bricolage Grotesque 800 for headlines and figures' numbers; Geist 400–700 for text, tables and charts.\nLight: bg #F4F5F0, surf #FFFFFF, ink #111311, muted #5B625B, acc #1B6B50, line #C9CEC3\nDark: bg #0F1311, surf #151A17, ink #E9EEEA, muted #8E9892, acc #4FD1A5, line #2A332E\nMagnet rail on the right edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

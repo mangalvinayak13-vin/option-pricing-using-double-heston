@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:08:54Z"
+  },
+  "title": "DH Design 03 — Trading Desk",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1491,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1231,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 1364,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 1484,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2345,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 2745,
+      "w": 1440,
+      "h": 2274,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 2745,
+      "w": 1440,
+      "h": 1018,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 2745,
+      "w": 1440,
+      "h": 900,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 2745,
+      "w": 1440,
+      "h": 900,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "03 · Trading Desk: A broker terminal: dense panes on 1-px seams, condensed numerals, the option as an order ticket."
+    },
+    "row2": {
+      "x": 0,
+      "y": 2445,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Trading Desk. A broker terminal: dense panes on 1-px seams, condensed numerals, the option as an order ticket.\n\nLayout: Full-bleed pane grid (watchlist, chart, ticket) with tabbed pane headers; compact rows; nothing floats.\nThe memorable thing: The option ticket beside the candles: market close against the model price, one tap to price.\nType: Barlow Condensed 600 for prices and headings (numbers fit dense panes); Barlow 400–700 for text.\nLight: bg #E6E9ED, surf #FFFFFF, ink #14171A, muted #59616D, acc #5A3FE6, line #D5DAE0\nDark: bg #0B0E11, surf #12161B, ink #EAECEF, muted #8A94A2, acc #9B87FF, line #262D36\nMagnet rail on the left edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}

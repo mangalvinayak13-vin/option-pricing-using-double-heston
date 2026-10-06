@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trading Desk: References</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>body{margin:0;background:#0B0E11}a{color:inherit;text-decoration:none}.dh{position:relative;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:'Barlow',Helvetica,sans-serif;overflow:hidden;transition:background-color .2s ease,color .2s ease}.up{color:var(--up)}.dn{color:var(--down)}.mu{color:var(--muted)}.bo{color:var(--body)}.dh.t-light{--bg:#E6E9ED;--surf:#FFFFFF;--raised:#F3F5F7;--line:#D5DAE0;--grid:#ECEFF2;--ink:#14171A;--body:#3B424A;--muted:#59616D;--acc:#5A3FE6;--on-acc:#FFFFFF;--up:#0B8A58;--down:#D1283F;--on-up:#FFFFFF;--track-off:#E3E3E6;--ferro:#0A0A0B;--ferro-hi:#A9AFB6}.dh.t-dark{--bg:#0B0E11;--surf:#12161B;--raised:#1A2027;--line:#262D36;--grid:#1C222A;--ink:#EAECEF;--body:#B7BDC6;--muted:#8A94A2;--acc:#9B87FF;--on-acc:#0B0E11;--up:#0ECB81;--down:#F6465D;--on-up:#04120B;--track-off:#39393D;--ferro:#050505;--ferro-hi:#EEF1F6}
+.gsw-wrap{position:absolute;top:8px;right:20px;z-index:30;display:flex;align-items:center;gap:10px;height:32px;
+  font-size:14px;font-weight:500;color:var(--muted)}
+.gsw{position:relative;width:52px;height:32px;padding:0;border:0;border-radius:16px;cursor:pointer;
+  background:var(--track-off);transition:background-color .2s ease}
+.gsw:focus-visible{outline:3px solid #0A84FF;outline-offset:3px}
+.t-dark .gsw{background:#30D158}.t-light .gsw[aria-checked=true]{background:#34C759}
+.gsw .knob{position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:14px;background:#FFFFFF;
+  box-shadow:0 3px 8px rgba(0,0,0,.18),0 1px 1px rgba(0,0,0,.12);transition:transform .32s cubic-bezier(.3,1.4,.5,1),width .18s ease}
+.t-dark .gsw .knob{transform:translateX(20px)}
+.gsw:active .knob{width:38px;background:rgba(255,255,255,.42);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),inset 0 -6px 10px rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.22);
+  backdrop-filter:blur(1px) saturate(1.15) brightness(1.08);-webkit-backdrop-filter:blur(1px) saturate(1.15) brightness(1.08)}
+.t-dark .gsw:active .knob{transform:translateX(10px)}
+@media (prefers-reduced-motion: reduce){.gsw .knob{transition:transform .2s linear}.gsw:active .knob{width:28px}}
+
+.mag{position:absolute;top:260px;z-index:25;width:84px;height:360px}
+.mag.l{left:0}.mag.r{right:0}
+.mag .mag-bar{position:absolute;top:40px;width:7px;height:280px;border-radius:4px;
+  background:linear-gradient(90deg,#3A3B3E,#8C8F95 45%,#2A2B2E);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.mag.l .mag-bar{left:8px}.mag.r .mag-bar{right:8px}
+.mag .mag-bead{position:absolute;width:13px;height:13px;border-radius:7px;background:radial-gradient(circle at 35% 30%,var(--ferro-hi) 0 18%,var(--ferro) 45%);
+  box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.mag.l .mag-bead{left:5px}.mag.r .mag-bead{right:5px}
+.mag .mag-fluid{position:absolute;top:0;width:84px;height:360px;opacity:0;transform:scaleX(.2);transition:opacity .22s ease,transform .32s cubic-bezier(.2,1.2,.4,1)}
+.mag.l .mag-fluid{left:0;transform-origin:0 50%}.mag.r .mag-fluid{right:0;transform-origin:100% 50%}
+.mag .mag-links{position:absolute;top:44px;display:flex;flex-direction:column;gap:2px;opacity:0;pointer-events:none;
+  transition:opacity .2s ease .06s;padding:10px 12px;border-radius:14px;background:var(--surf);box-shadow:0 10px 30px rgba(0,0,0,.25);
+  border:1px solid var(--line);min-width:180px}
+.mag.l .mag-links{left:92px}.mag.r .mag-links{right:92px}
+.mag .mag-links a{display:block;padding:7px 10px;border-radius:9px;font-size:15px;font-weight:500;color:var(--ink);white-space:nowrap}
+.mag .mag-links a[aria-current]{background:var(--raised);color:var(--acc)}
+.mag:hover .mag-fluid,.mag:focus-within .mag-fluid{opacity:1;transform:scaleX(1)}
+.mag:hover .mag-links,.mag:focus-within .mag-links{opacity:1;pointer-events:auto}
+.t-dark .mag-fluid{filter:drop-shadow(0 0 4px rgba(242,244,248,.28)) drop-shadow(0 0 12px rgba(242,244,248,.10))}
+@media (prefers-reduced-motion: reduce){.mag .mag-fluid{transform:none;transition:opacity .2s}}
+
+.top{height:52px;display:flex;align-items:center;gap:22px;padding:0 250px 0 112px;background:var(--surf);border-bottom:1px solid var(--line);font-size:15px}
+.top .brand{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;letter-spacing:.01em}
+.top .brand span{color:var(--acc)}
+.srch{display:flex;align-items:center;gap:8px;height:34px;width:260px;padding:0 12px;border-radius:6px;background:var(--raised);color:var(--muted);font-size:14px}
+.ix{display:flex;gap:18px;font-size:14px;color:var(--muted)}.ix b{color:var(--ink);font-weight:600}
+.st{margin-left:auto;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px}.st i{width:8px;height:8px;border-radius:4px;background:var(--muted)}
+.desk{display:grid;gap:1px;background:var(--line);padding:1px;margin-left:96px}
+.pane{background:var(--surf);min-width:0;display:flex;flex-direction:column}
+.ph{height:40px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+.ph b{color:var(--ink);font-weight:600;font-size:15px}
+.tabs{display:flex;gap:2px}.tabs span{padding:5px 10px;border-radius:5px;font-size:13px;font-weight:600;color:var(--muted)}.tabs span.on{background:var(--raised);color:var(--ink)}
+.pb{padding:16px}
+.big{font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1}
+.pgt{padding:26px 20px 22px 112px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;background:var(--bg)}
+.pgt h1{margin:0;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:56px;line-height:1}
+.pgt p{margin:0;font-size:18px;line-height:1.5;color:var(--body);max-width:720px}
+.p{margin:0;font-size:17px;line-height:1.58;color:var(--body)}
+.b-tick{height:36px;display:flex;align-items:center;padding:0 250px 0 112px;background:var(--bg);border-bottom:1px solid var(--line);font-size:14px;white-space:nowrap}
+.b-tick-in{flex:1;min-width:0;display:flex;gap:26px;overflow:hidden}.b-ti{display:inline-flex;gap:8px}.b-ti-lab{color:var(--muted)}
+.b-tb{width:100%;border-collapse:collapse;font-size:15px}
+.b-tb th{text-align:right;font-weight:500;font-size:13px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--line)}
+.b-tb td{white-space:nowrap;text-align:right;padding:7px 12px;border-bottom:1px solid var(--grid);font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:500}
+.b-tb th:first-child,.b-tb td:first-child{text-align:left}.b-tb td b{font-family:'Barlow',sans-serif;font-size:15px}
+.b-tb tr.sel td{background:var(--raised)}.b-tb tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--acc)}
+.b-model{color:var(--acc)}.b-sub{color:var(--muted)}
+.b-lab{font-size:13px;font-weight:500;color:var(--muted)}
+.b-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}
+.b-form label,.b-form fieldset{display:flex;flex-direction:column;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.b-form select,.b-form input{height:40px;border-radius:6px;border:1px solid var(--line);background:var(--raised);color:var(--ink);font:500 16px 'Barlow',sans-serif;padding:0 10px}
+.b-seg{display:grid;grid-template-columns:1fr 1fr;height:40px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.b-seg span{display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--muted)}.b-seg span.on{background:var(--up);color:var(--on-up)}
+.b-btn{height:44px;border-radius:6px;border:0;background:var(--acc);color:var(--on-acc);font:700 17px 'Barlow',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 18px}
+.b-btn.sec{background:var(--raised);color:var(--ink);border:1px solid var(--line)}
+.b-form .b-btn{grid-column:1/-1}.b-form label:nth-child(1),.b-form label:nth-child(2){grid-column:1/-1}
+.b-sl{display:grid;grid-template-columns:28px 1fr 70px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--grid)}
+.b-sl b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--acc)}.b-sl label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.b-sl input{width:100%;accent-color:#9B87FF}.b-sl output{text-align:right;font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:600}
+.b-greek{display:flex;flex-direction:column;gap:4px;padding:14px 16px;background:var(--surf)}.b-greek b{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:600}
+.b-num{display:flex;flex-direction:column;gap:6px;padding:16px;background:var(--surf)}.b-num b{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:600;line-height:1;color:var(--acc)}
+.b-num span{font-size:14px;line-height:1.4;color:var(--muted)}
+.b-eq{display:flex;flex-direction:column;gap:8px;padding:16px;border-bottom:1px solid var(--grid)}
+.b-eqn{font-family:'Barlow',sans-serif;font-size:24px;font-weight:500;line-height:1.4}
+.b-steps{list-style:none;margin:0;padding:0}.b-steps li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px 16px;border-bottom:1px solid var(--grid)}
+.b-steps .b-n{font-family:'Barlow Condensed',sans-serif;font-size:30px;color:var(--acc);line-height:1}.b-steps li>span{display:flex;flex-direction:column;gap:5px}
+.b-steps li>span>b{font-size:17px}.b-steps li>span>span{font-size:15px;line-height:1.5;color:var(--body)}
+.b-lin{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line)}
+.b-lin li{background:var(--surf);padding:16px;display:flex;flex-direction:column;gap:6px}.b-lin .b-y{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:600}
+.b-lin li.now .b-y{color:var(--acc)}.b-lin li>span{display:flex;flex-direction:column;gap:2px}.b-lin li>span>span{color:var(--muted);font-size:15px}
+.b-list{margin:0;padding:6px 16px 16px 34px;display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:1.5;color:var(--body)}
+.b-video{margin:0}.b-video button{width:100%;aspect-ratio:16/9;border:0;background:var(--raised);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.b-video figcaption{padding:12px 16px;font-size:14px;color:var(--muted)}
+.b-person{display:flex;flex-direction:column;gap:6px;padding:16px;background:var(--surf)}.b-person .b-ph{height:160px;background:var(--raised);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.b-person b{font-size:19px}.b-person>span:last-child{color:var(--muted);font-size:15px}
+.b-refs{background:var(--surf)}.b-refs h2{margin:0;height:40px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600}
+.b-refs ol{list-style:none;margin:0;padding:0}.b-refs li{display:grid;grid-template-columns:48px 1fr;gap:8px;padding:11px 16px;border-bottom:1px solid var(--grid);font-size:15px;line-height:1.45}
+.b-refs .b-rn{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--acc)}.b-refs .b-rt{color:var(--body)}
+.b-chip{padding:5px 10px;border-radius:5px;font-size:13px;font-weight:600;color:var(--muted);border:1px solid var(--line)}.b-chip.on{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+.b-links{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px;background:var(--line)}
+.b-links a{display:flex;align-items:center;gap:10px;padding:14px;background:var(--surf)}.b-links a>span{display:flex;flex-direction:column;gap:1px}
+.b-links b{font-size:15px}.b-links a>span>span{color:var(--muted);font-size:13px}
+.ft{padding:16px 20px 22px 112px;display:flex;justify-content:space-between;font-size:14px;color:var(--muted);background:var(--bg)}
+</style>
+</helmet>
+<div class="dh {{theme}}" style="width: 1440px; height: 900px;">
+<div class="gsw-wrap"><span>Dark mode</span><button type="button" class="gsw" role="switch" aria-checked="{{dark}}" aria-label="Dark mode" onClick="{{toggle}}"><span class="knob"></span></button></div>
+<nav class="mag l" aria-label="Pages"><span class="mag-bar"></span><svg class="mag-fluid" width="84" height="360" viewBox="0 0 84 360" aria-hidden="true"><defs><linearGradient id="rReferencesg" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" style="stop-color:var(--ferro)"></stop><stop offset=".55" style="stop-color:var(--ferro)"></stop><stop offset="1" style="stop-color:var(--ferro-hi);stop-opacity:.35"></stop></linearGradient></defs><g><path d="M12,44 Q16,58 19.1,66 L19.6,68.5 C22.8,73.4 27.2,80.8 31.0,82.2 C27.2,83.6 22.8,78.6 22.3,83.5 L24.3,97.2 C30.4,102.7 42.9,108.8 53.6,110.2 C42.9,111.6 30.4,108.7 26.3,114.2 L27.5,125.9 C36.1,132.1 55.0,136.7 71.4,138.1 C55.0,139.5 36.1,138.8 28.9,144.9 L29.4,154.6 C39.4,161.5 63.0,164.6 83.3,166.0 C63.0,167.4 39.4,168.8 30.0,175.6 L30.0,184.4 C39.4,191.2 63.0,192.6 83.3,194.0 C63.0,195.4 39.4,198.5 29.4,205.4 L28.9,215.1 C36.1,221.2 55.0,220.5 71.4,221.9 C55.0,223.3 36.1,227.9 27.5,234.1 L26.3,245.8 C30.4,251.3 42.9,248.4 53.6,249.8 C42.9,251.2 30.4,257.3 24.3,262.8 L22.3,276.5 C22.8,281.4 27.2,276.4 31.0,277.8 C27.2,279.2 22.8,286.6 19.6,291.5 L19.1,294 Q16,302 12,316 Z" style="fill:url(#rReferencesg);stroke:var(--ferro-hi);stroke-width:1;stroke-opacity:.45"></path><path d="M19.0,71.5 C23.0,73.8 26.5,80.4 29.6,81.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,100.6 C31.0,103.2 40.9,108.4 49.6,109.6" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,129.7 C36.9,132.6 52.0,136.3 65.4,137.5" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,158.8 C40.5,162.0 59.2,164.2 75.8,165.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M27.8,188.6 C40.5,191.7 59.2,192.2 75.8,193.4" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M26.3,218.9 C36.9,221.7 52.0,220.1 65.4,221.3" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M23.4,249.2 C31.0,251.7 40.9,248.0 49.6,249.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><path d="M19.0,279.5 C23.0,281.8 26.5,276.0 29.6,277.2" style="fill:none;stroke:var(--ferro-hi);stroke-width:1.8;stroke-linecap:round;opacity:.9"></path><ellipse cx="18" cy="150" rx="3" ry="16" style="fill:var(--ferro-hi);opacity:.5"></ellipse></g></svg><span class="mag-bead" style="top:316px"></span><div class="mag-links"><a href="Main.dc.html">Home</a><a href="Market.dc.html">Market</a><a href="Model.dc.html">The model</a><a href="Maths.dc.html">How it works</a><a href="Finding.dc.html">The finding</a><a href="About.dc.html">About</a><a href="Team.dc.html">Team</a><a href="References.dc.html" aria-current=page>References</a></div></nav>
+
+<header class="top"><a class="brand" href="Main.dc.html">DH<span>/</span>desk</a><label class="srch"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5.2" style="fill:none;stroke:var(--muted);stroke-width:1.8"></circle><path d="M11,11 L15,15" style="stroke:var(--muted);stroke-width:1.8;stroke-linecap:round"></path></svg>Search 42 stocks</label><span class="ix"><span>NIFTY <b>23,140.50</b> <span class="up">▲ 0.34%</span></span><span>BANK <b>55,580.40</b> <span class="up">▲ 0.26%</span></span></span><span class="st"><i></i>Closed, last close 25 Sep 2026</span></header>
+<div class="pgt"><h1>References</h1><p>The papers behind the model and its methods, and where the data comes from.</p></div>
+<div class="desk" style="grid-template-columns:1fr 1fr;align-items:start"><section class="b-refs"><h2>Models</h2><ol><li><span class="b-rn">[1]</span><span><b>Black, F. and Scholes, M. (1973)</b> <span class="b-rt">The pricing of options and corporate liabilities.</span> <span class="b-sub">Journal of Political Economy 81(3).</span></span></li><li><span class="b-rn">[2]</span><span><b>Heston, S. L. (1993)</b> <span class="b-rt">A closed-form solution for options with stochastic volatility with applications to bond and currency options.</span> <span class="b-sub">Review of Financial Studies 6(2).</span></span></li><li><span class="b-rn">[3]</span><span><b>Christoffersen, P., Heston, S. and Jacobs, K. (2009)</b> <span class="b-rt">The shape and term structure of the index option smirk: why multifactor stochastic volatility models work so well.</span> <span class="b-sub">Management Science 55(12).</span></span></li></ol></section><section class="b-refs"><h2>Numerical methods</h2><ol><li><span class="b-rn">[4]</span><span><b>Gil-Pelaez, J. (1951)</b> <span class="b-rt">Note on the inversion theorem.</span> <span class="b-sub">Biometrika 38.</span></span></li><li><span class="b-rn">[5]</span><span><b>Feller, W. (1951)</b> <span class="b-rt">Two singular diffusion problems.</span> <span class="b-sub">Annals of Mathematics 54.</span></span></li><li><span class="b-rn">[6]</span><span><b>Albrecher, H., Mayer, P., Schoutens, W. and Tistaert, J. (2007)</b> <span class="b-rt">The little Heston trap.</span> <span class="b-sub">Wilmott Magazine.</span></span></li><li><span class="b-rn">[7]</span><span><b>Lord, R., Koekkoek, R. and van Dijk, D. (2010)</b> <span class="b-rt">A comparison of biased simulation schemes for stochastic volatility models.</span> <span class="b-sub">Quantitative Finance 10(2).</span></span></li><li><span class="b-rn">[8]</span><span><b>Glasserman, P. (2003)</b> <span class="b-rt">Monte Carlo Methods in Financial Engineering.</span> <span class="b-sub">Springer.</span></span></li></ol></section><section class="b-refs"><h2>History</h2><ol><li><span class="b-rn">[9]</span><span><b>Bachelier, L. (1900)</b> <span class="b-rt">Théorie de la spéculation.</span> <span class="b-sub">Annales scientifiques de l'École normale supérieure 17.</span></span></li></ol></section><section class="b-refs"><h2>Data and software</h2><ol><li><span class="b-rn">[10]</span><span><b>National Stock Exchange of India</b> <span class="b-rt">Bhavcopy end-of-day files, cash market and F&amp;O, July to September 2026.</span> <span class="b-sub">nseindia.com.</span></span></li><li><span class="b-rn">[11]</span><span><b>Reserve Bank of India</b> <span class="b-rt">91-day Treasury bill yields.</span> <span class="b-sub">rbi.org.in.</span></span></li><li><span class="b-rn">[12]</span><span><b>Upstox</b> <span class="b-rt">Market data API (quotes, candles, option chains).</span> <span class="b-sub">upstox.com/developer.</span></span></li><li><span class="b-rn">[13]</span><span><b>NumPy, SciPy, pandas</b> <span class="b-rt">Numerical and data libraries used by the pricer and the research.</span> <span class="b-sub">numpy.org, scipy.org, pandas.pydata.org.</span></span></li></ol></section></div>
+<footer class="ft"><span>Not trading advice. Prices are NSE closing prices; live Upstox prices replace them during market hours.</span><span>github.com/mangalvinayak13-vin/option-pricing-using-double-heston</span></footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+const s = this.state || {};
+const dark = s.dark !== undefined ? s.dark : (this.props.dark ?? true);
+return { theme: dark ? 't-dark' : 't-light', dark: dark, toggle: () => this.setState({ dark: !dark }) };
+}
+}
+</script>
+</body>
+</html>

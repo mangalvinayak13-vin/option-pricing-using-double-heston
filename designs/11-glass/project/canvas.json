@@ -1,0 +1,122 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-30T14:28:06Z"
+  },
+  "title": "DH Design 11 — Glass",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 3410,
+      "title": "Home",
+      "is_interactive": true
+    },
+    "Market.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 3517,
+      "title": "Market",
+      "is_interactive": true
+    },
+    "Model.dc.html": {
+      "x": 3040,
+      "y": 0,
+      "w": 1440,
+      "h": 3751,
+      "title": "The model",
+      "is_interactive": true
+    },
+    "Maths.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 1440,
+      "h": 2473,
+      "title": "How it works",
+      "is_interactive": true
+    },
+    "Components.dc.html": {
+      "x": 6080,
+      "y": 0,
+      "w": 1440,
+      "h": 2370,
+      "title": "Components: navigation, switch, icons, charts",
+      "is_interactive": true
+    },
+    "Finding.dc.html": {
+      "x": 0,
+      "y": 4151,
+      "w": 1440,
+      "h": 4828,
+      "title": "The finding",
+      "is_interactive": true
+    },
+    "About.dc.html": {
+      "x": 1520,
+      "y": 4151,
+      "w": 1440,
+      "h": 2447,
+      "title": "About",
+      "is_interactive": true
+    },
+    "Team.dc.html": {
+      "x": 3040,
+      "y": 4151,
+      "w": 1440,
+      "h": 1313,
+      "title": "Team",
+      "is_interactive": true
+    },
+    "References.dc.html": {
+      "x": 4560,
+      "y": 4151,
+      "w": 1440,
+      "h": 1823,
+      "title": "References",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Market.dc.html",
+    "Model.dc.html",
+    "Maths.dc.html",
+    "Components.dc.html",
+    "Finding.dc.html",
+    "About.dc.html",
+    "Team.dc.html",
+    "References.dc.html"
+  ],
+  "notes": {
+    "title": {
+      "x": 0,
+      "y": -300,
+      "kind": "title1",
+      "maxW": 7520,
+      "text": "11 · Glass: An Apple product page: huge centred type, alternating bands, one frosted-glass panel over a glowing curve."
+    },
+    "row2": {
+      "x": 0,
+      "y": 3851,
+      "kind": "title1",
+      "maxW": 5960,
+      "text": "The finding, About, Team, References"
+    },
+    "plan": {
+      "x": 0,
+      "y": -1000,
+      "w": 1200,
+      "maxH": 560,
+      "color": "orange",
+      "text": "Glass. An Apple product page: huge centred type, alternating bands, one frosted-glass panel over a glowing curve.\n\nLayout: Full-width alternating bands, centred; stats in tiles of different spans; one glass stage per page.\nThe memorable thing: The smile chart floating in frosted glass over a soft glow of its own curve.\nType: Albert Sans 700 at 56–86 px with tight tracking for headlines; 500 for subheads; 400 for text.\nLight: bg #FFFFFF, surf #F5F5F7, ink #1D1D1F, muted #6E6E73, acc #0071E3, line #D2D2D7\nDark: bg #000000, surf #161617, ink #F5F5F7, muted #A1A1A6, acc #2997FF, line #333336\nMagnet rail on the right edge. Live prices on these boards are NSE closing prices from 25 Sep 2026; every chart is drawn from real data or the project's pricer."
+    }
+  },
+  "designSystems": []
+}
