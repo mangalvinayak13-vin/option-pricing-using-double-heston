@@ -180,6 +180,8 @@
    "mkt_iv": 10.81
   }
  ],
+ "CHAIN_FIG": "NSE closing prices and implied volatilities, with the model's price for each strike",
+ "CHAIN_FIG_LIVE": "Live NSE prices and implied volatilities, with the model's price for each strike",
  "CHART_NOTES": {
   "smileBend": [
    "Implied volatility by strike, 30 days to expiry",
@@ -252,6 +254,10 @@
   "journey": [
    "A random walk, drawn as the timeline unfolds",
    "A simulated Brownian path: each step is a random kick, the motion Einstein explained and finance borrowed."
+  ],
+  "marketSmileLive": [
+   "Market against model, by strike",
+   "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks NIFTY now."
   ]
  },
  "CONTRACT": "NIFTY 23,150 call",
@@ -806,6 +812,7 @@
  ],
  "LIVE_CLOSED": "Market closed — last traded price shown",
  "LIVE_FALLBACK": "Live prices unavailable right now — the numbers above are NSE's last close.",
+ "LIVE_HOLIDAY": "Market closed today ({day}) — last traded price shown",
  "LIVE_LOADING": "Checking for live prices…",
  "LIVE_OPEN": "Live, updated {time} IST",
  "MARKET_BUTTON": "Market prices",
@@ -840,8 +847,12 @@
   "Research data: official NSE end-of-day files. Every dataset, its size and what it was used for is listed on the Results page.",
   "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat volatility, which a true best fit can never lose to."
  ],
+ "MKT_LAST": "Last trade",
+ "MKT_MID": "Live mid quote",
  "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
+ "MODEL_EXPLAIN_LIVE": "The starting settings assume 20% volatility. Right now the market is pricing this option at about {iv}%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
  "MODEL_SOURCE": "Option prices: NSE closing prices, 25 Sep 2026. Forward from NIFTY October futures (23,263.60). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
+ "MODEL_SOURCE_LIVE": "Option prices: live NSE quotes from Upstox, refreshed each minute (mid of the best bid and ask, or the last trade without a quote). Forward {fwd} from put–call parity at the {k} strike. Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
  "NAMES": {
   "NIFTY 50": "Index",
   "NIFTY BANK": "Index",

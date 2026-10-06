@@ -10,6 +10,7 @@ import * as B from './blocks.js';
 import { esc, inr } from './util.js';
 import { store } from './state.js';
 import { icon } from './icons.js';
+import { longDate } from './live-chain.js';
 
 // a chart with its title and reading guide
 export function fig(ctx, name, h, o, { note = name, title } = {}) {
@@ -106,16 +107,16 @@ export function sections(page, ctx) {
         { key: 'top', kind: 'head', title: 'Price an option', action: ['market.html', C.MARKET_BUTTON], lead: 'Pick a listed NIFTY option, price it with Double Heston, and set it against what the market paid. Move any of the ten settings and the model reprices.' },
         { key: 'form', title: 'The option', ico: 'model', size: 'full', body: B.pricingForm(ctx) },
         { key: 'price', title: 'Double Heston', ico: 'model', size: 'narrow', body: `<div class="s-bignum s-model">${R.dh}</div><p class="s-fine">Implied volatility ${R.dhIv}. Monte Carlo check, 20,000 paths: ${R.mc}</p>` },
-        { key: 'market', title: 'Market close', ico: 'market', size: 'narrow', body: `<div class="s-bignum">${R.mkt}</div><p class="s-fine">Implied volatility ${R.mktIv}. NSE close, ${esc(C.LAST_DAY)}.</p>` },
+        { key: 'market', title: K.live ? 'Market price' : 'Market close', ico: 'market', size: 'narrow', body: `<div class="s-bignum">${R.mkt}</div><p class="s-fine">Implied volatility ${R.mktIv}. ${K.live ? '<span data-bind="mkt-when"></span>' : `NSE close, ${esc(C.LAST_DAY)}`}.</p>` },
         { key: 'gap', title: 'Model minus market', ico: 'finding', size: 'narrow', body: `<div class="s-bignum">${R.gap}</div><p class="s-fine">${R.status}</p>` },
-        { key: 'explain', kind: 'note', size: 'full', lead: C.MODEL_EXPLAIN },
-        { key: 'smile', title: 'The smile at this expiry', ico: 'model', size: 'wide', body: fig(ctx, 'marketSmile', 380) },
+        { key: 'explain', kind: 'note', size: 'full', lead: K.live ? C.MODEL_EXPLAIN_LIVE.replace('{iv}', K.market_iv != null ? K.market_iv.toFixed(1) : '–') : C.MODEL_EXPLAIN },
+        { key: 'smile', title: 'The smile at this expiry', ico: 'model', size: 'wide', body: fig(ctx, 'marketSmile', 380, undefined, { note: K.live ? 'marketSmileLive' : 'marketSmile' }) },
         { key: 'greeks', title: 'Greeks', ico: 'maths', size: 'narrow', body: `<div class="s-greeks">${B.greeks(ctx)}</div><p class="s-fine">How the model's price changes when one input moves, at your settings.</p>` },
         { key: 'sliders', title: 'Slow factor', ico: 'slow', size: 'half', note: `half-life at κ 0.5: ${C.SLOW_HL}`, body: `${B.fellerLine(ctx, 'slow')}${B.sliders(ctx, 'slow')}` },
         { key: 'sliders-fast', title: 'Fast factor', ico: 'fast', size: 'half', note: `half-life at κ 5.0: ${C.FAST_HL}`, body: `${B.fellerLine(ctx, 'fast')}${B.sliders(ctx, 'fast')}` },
         { key: 'reset', kind: 'note', size: 'full', body: `<div class="s-row-note"><span class="b-sub">${esc(C.FELLER_NOTE)}</span><button class="btn ghost" type="button" data-action="reset">Reset to starting settings</button></div>` },
-        { key: 'chain', title: 'Option chain, 27 Oct 2026', ico: 'market', size: 'full', body: `<p class="fig-t">NSE closing prices and implied volatilities, with the model's price for each strike</p><div class="s-scroll-x">${B.chainTable(ctx)}</div><p class="fig-cap">Each row is one strike. Call and put columns are NSE closing prices; IV is the implied volatility they imply; the model columns are Double Heston at your settings. Pick a row to price that strike.</p>` },
-        { key: 'source', kind: 'note', size: 'full', fine: C.MODEL_SOURCE },
+        { key: 'chain', title: `Option chain, ${longDate(K.expiry)}`, ico: 'market', size: 'full', body: `<p class="fig-t">${esc(K.live ? C.CHAIN_FIG_LIVE : C.CHAIN_FIG)}</p><div class="s-scroll-x">${B.chainTable(ctx)}</div><p class="fig-cap">Each row is one strike. Call and put columns are NSE ${K.live ? 'live' : 'closing'} prices; IV is the implied volatility they imply; the model columns are Double Heston at your settings. Pick a row to price that strike.</p>` },
+        { key: 'source', kind: 'note', size: 'full', fine: K.live ? C.MODEL_SOURCE_LIVE.replace('{fwd}', inr(K.forward)).replace('{k}', inr(K.parity_strike, 0)) : C.MODEL_SOURCE },
       ];
     }
     // How it works: centred, every formula on its theme's glass, then the ten settings and the charts

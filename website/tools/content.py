@@ -713,3 +713,18 @@ RESULT_INFO = {
 assert set(RESULT_INFO) == {r[0] for r in RESULTS}, "every result needs a direction and an explanation"
 RESULTS_DIRECTION = "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture."
 KEY_BETTER = ["higher", "lower", "", ""]  # beat-rate, PINN vs BS, 99% (a finding, not a score), 3.9× (ditto)
+
+# ------------------------------------------------------------------ Price an option, on live NIFTY options
+CHAIN_FIG = "NSE closing prices and implied volatilities, with the model's price for each strike"
+CHAIN_FIG_LIVE = "Live NSE prices and implied volatilities, with the model's price for each strike"
+MKT_MID, MKT_LAST = "Live mid quote", "Last trade"
+MODEL_EXPLAIN_LIVE = ("The starting settings assume 20% volatility. Right now the market is pricing this option at about "
+                      "{iv}%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit "
+                      "button: the Results page explains why a computer can't pick all ten settings for you.")
+MODEL_SOURCE_LIVE = ("Option prices: live NSE quotes from Upstox, refreshed each minute (mid of the best bid and ask, or "
+                     "the last trade without a quote). Forward {fwd} from put–call parity at the {k} strike. Rate: RBI "
+                     "91-day T-bill, 15 Jul observation carried forward, as in the research.")
+LIVE_HOLIDAY = "Market closed today ({day}) — last traded price shown"
+CHART_NOTES = {**CHART_NOTES, "marketSmileLive": ("Market against model, by strike",
+    "Rings are live NSE prices turned into implied volatility; the line is Double Heston at your settings. The dotted "
+    "line marks NIFTY now.")}

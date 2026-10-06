@@ -66,7 +66,7 @@ export function rafThrottle(fn) {
 let uidN = 0;
 export const uid = (p = 'u') => `${p}${(++uidN).toString(36)}`;
 
-export const shortDate = d => `${+d.slice(8, 10)} ${{ '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct' }[d.slice(5, 7)]}`;
+export const shortDate = d => `${+d.slice(8, 10)} ${'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ')[+d.slice(5, 7) - 1]}`;
 
 export const $ = (sel, el = document) => el.querySelector(sel);
 export const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
