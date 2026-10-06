@@ -377,7 +377,6 @@ FACTORS = (f"Each factor gets knocked about and drifts back to its long-run leve
 
 # ------------------------------------------------------------------ home: from Einstein's random walk to Wall Street
 JOURNEY_HEAD = "Twelve steps from a jiggling grain to option prices"
-HERO_TITLE = ("From a speck of pollen", "to Wall Street")  # Home's headline, in the two parts every theme sets
 HERO_KEYS = ("from", "to")  # Amber's readout labels for those two parts
 A_NO = "Reading its settings? No."
 JOURNEY_LEDE = ("Option pricing grew out of physics. The same random jiggling that Einstein explained in 1905 became "
@@ -440,6 +439,77 @@ PA_REPLAY = (f"Replay the training and the difference grows. The ANN's impossibl
 PA_NUMS = [(f"{PA_TEST['pinn_rel_rmse'] * 100:.1f}%", "PINN error, share of the average price"),
            (f"{PA_TEST['ann_rel_rmse'] * 100:.1f}%", "ANN error on the same points"),
            (f"{PA_TEST['ann_pde_residual_rms'] / PA_TEST['pinn_pde_residual_rms']:.0f}×", "smaller pricing-equation error for the PINN")]
+
+# ------------------------------------------------------------------ Home, simpler version: the physics behind it
+# Home is only: the line in quotes, where it starts (Einstein, 1905, with context), the project's two aims, and the
+# four models from Brownian motion to Double Heston. Written for readers who have just finished class 12.
+# The line is the site's own, not a quotation: Einstein's name sits under it as where the story starts.
+HERO_TITLE = ("“From a speck of pollen", "to Wall Street”")
+HERO_BY = "Where it starts: Albert Einstein, 1905"
+HERO_LEAD = ("In 1827 the botanist Robert Brown saw tiny specks from pollen jiggling in still water, and nobody could "
+             "say why. In 1905 Albert Einstein explained it: water molecules, far too small to see, hit each speck from "
+             "every side at random. That random jiggle, called Brownian motion, is where every model on this page starts.")
+EINSTEIN_HEAD = "What Einstein worked out"
+EQ_EINSTEIN = "⟨x²⟩ = 2Dt"
+EINSTEIN = ("A speck kicked at random doesn't travel in a straight line. Einstein showed that, on average, the square of "
+            "the distance it wanders grows in step with time. So the typical distance grows with the square root of "
+            "time: wait four times as long and it goes only twice as far.")
+EINSTEIN_SYMS = [("⟨x²⟩", "Average of the distance squared"), ("D", "How easily it spreads: set by the water's temperature, its stickiness and the speck's size"),
+                 ("t", "Time")]
+EINSTEIN_NEXT = ("Five years before Einstein, Louis Bachelier in Paris had already used the same random walk for share "
+                 "prices. In 1923 Norbert Wiener wrote one random kick as exact maths, called dW. Every equation below is "
+                 "built from that dW.")
+AIMS_HEAD = "What this project sets out to show"
+AIMS = [
+    ("Double Heston, grown step by step from Brownian motion",
+     "Start with Einstein's random kick. Use it for a share price, and you get geometric Brownian motion. Price an option "
+     "from it, and you get Black–Scholes. Let the price's jumpiness take random kicks of its own, and you get Heston. Give "
+     "that jumpiness two speeds, one fast and one slow, and you get Double Heston. The four steps are below."),
+    ("A PINN to read the model's ten settings",
+     "Double Heston has ten settings. Finding them from a day's prices by trial and error takes seconds to minutes, and "
+     "can still land on settings that break the model's own rules. A PINN (physics-informed neural network) is a neural "
+     "network that must also obey the model's pricing equation, a diffusion equation from the same family as Einstein's. "
+     f"On real NIFTY options it was off by {PINN_NIFTY['ft_3']:.2f} volatility points, against {PINN_NIFTY['bs']:.2f} for "
+     f"Black–Scholes, and took {PINN_NIFTY_SECONDS[0]:.1f} seconds instead of {PINN_NIFTY_SECONDS[1]:.0f}. In a "
+     f"side-by-side test, a plain network priced {_NEG('ann')} of {_NPTS:,} points below zero, which no option can be "
+     f"worth. The PINN priced {'none' if _NEG('pinn') == 0 else _NEG('pinn')}."),
+]
+MODELS_HEAD = "Four models, one step at a time"
+MODELS_LEDE = ("Each model keeps everything from the one before and lets one more thing move at random. Hover over the "
+               "triangle on any card for an everyday picture.")
+MODELS = [  # (key, year, who, name, settings, plain equation, in words, what it fixed, what still breaks)
+    ("gbm", "1965", "Paul Samuelson, after Louis Bachelier (1900)", "Geometric Brownian motion", "2 settings: μ and σ",
+     "dS = μ S dt + σ S dW",
+     "In each tiny moment, the price grows by a steady percentage (μ) plus a random kick (σ dW). The kick is Einstein's "
+     "Brownian kick, but measured in percent of the price, not in rupees.",
+     "Bachelier's kicks were in rupees, so his prices could fall below zero. Kicks in percent never take a price below zero.",
+     "It describes the share. It doesn't yet say what an option on the share is worth."),
+    ("bs", "1973", "Fischer Black, Myron Scholes and Robert Merton", "Black–Scholes", "1 setting: σ",
+     "∂V/∂t + ½σ²S² ∂²V/∂S² + rS ∂V/∂S − rV = 0",
+     "Take the same share. Mix the option with just the right amount of share and the random kicks cancel out. A mix "
+     "with no risk must earn the same as a bank deposit, at rate r. That one idea gives this equation for the option's "
+     "price V, and μ drops out. Change the variables and it turns into the heat equation, the same equation that "
+     "describes Einstein's spreading specks.",
+     "A fair price for an option, from one formula.",
+     "It keeps the jumpiness σ fixed for ever, so every strike gets the same volatility: a flat line. After the 1987 "
+     "crash, real prices bent instead. Insurance against a fall started costing more."),
+    ("heston", "1993", "Steven Heston", "Heston", "5 settings: v₀, θ, κ, ξ, ρ",
+     "dS = r S dt + √v S dW,   dv = κ (θ − v) dt + ξ √v dZ,   corr(dW, dZ) = ρ",
+     "Now the jumpiness itself (v, the variance) takes random kicks of its own, dZ. A spring pulls it back toward its "
+     "normal level θ at speed κ, and ξ sets how hard it is shaken. ρ links the two kicks: when it is negative, falls in "
+     "price come with rising jumpiness.",
+     "The bend. Insurance against a fall now costs more, as it does in real markets.",
+     "It has one clock. A scare that fades in weeks and a mood that lasts a year can't share one speed, so options "
+     "expiring next week and next year don't fit together."),
+    ("dh", "2009", "Peter Christoffersen, Steven Heston and Kris Jacobs", "Double Heston", "10 settings: five for each part",
+     f"{EQ_PRICE},   {EQ_VAR}",
+     f"Two jumpiness levels, each on its own spring: a fast one, which loses half of any shock in {FAST_HL}, and a slow "
+     f"one, which takes {SLOW_HL}. Four random kicks drive it: two on the price and one on each jumpiness.",
+     f"Short and long expiries together. On all 2,400 real NSE price lists we tested, it beat one fixed volatility, with "
+     f"{FLAT_BETTER * 100:.0f}% less error on a typical one.",
+     f"On {SHARE * 100:.0f}% of those price lists, several different sets of ten settings fitted equally well, so the "
+     "prices alone can't tell you which is right. That is why we built a PINN to read them."),
+]
 
 # ------------------------------------------------------------------ results (stats) page
 RESULTS_HEAD = "Every result, and the data behind it"
@@ -603,6 +673,18 @@ SETTINGS = [  # (symbol, name, what it controls, what raising it does, slow star
 
 # ------------------------------------------------------------------ "Explain simply": (everyday picture, what it means here)
 EXPLAIN = {
+    # Home: Einstein and the four models
+    "einstein": ("A crowd leaving a cricket stadium. Each person turns left or right at random. After one minute the crowd "
+                 "has spread a little; after four minutes, only twice as far, not four times.",
+                 "Random steps partly cancel out, so spreading grows with the square root of time."),
+    "m-gbm": ("A speck in water whose kicks grow with its size: a ₹2,000 share gets bigger rupee kicks than a ₹20 one, but "
+              "the same kicks in percent.", "That is why the price can never fall below zero."),
+    "m-bs": ("Two friends bet in opposite directions on the same match. Whatever happens, together they neither win nor lose.",
+             "Mix the option and the share the right way and the risk cancels, so the mix must earn what a bank pays."),
+    "m-heston": ("The weather has moods. A calm week can turn stormy, and storms die down again.",
+                 "In Heston the jumpiness changes too, and is always pulled back toward normal, like a ball on a spring."),
+    "m-dh": ("A cup of chai and a big kettle, both just boiled. The cup cools in minutes; the kettle stays warm for hours.",
+             f"The fast part forgets a shock in weeks (half gone in {FAST_HL}); the slow part takes {SLOW_HL}."),
     # the formulas
     "f-price": ("Think of a boat on a river. The current carries it steadily downstream: that's the drift, r − q. Two kinds "
                 "of waves rock it at once, short choppy ones and long swells. How rough each kind is right now is v₁ and v₂.",
@@ -712,3 +794,356 @@ RESULT_INFO = {
 assert set(RESULT_INFO) == {r[0] for r in RESULTS}, "every result needs a direction and an explanation"
 RESULTS_DIRECTION = "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture."
 KEY_BETTER = ["higher", "lower", "", ""]  # beat-rate, PINN vs BS, 99% (a finding, not a score), 3.9× (ditto)
+
+
+# ================================================================== simpler wording (branch simple-text)
+# The same pages, sections and numbers, reworded for readers who have just finished class 12: short sentences,
+# one idea each, "jumpiness" for volatility, one everyday picture per hard idea. Every number below is still
+# computed from the verified data above; only the words around it change. Source: the "Double Heston site,
+# simpler text" doc. Home's physics-only text sits with the PINN block above.
+PAGES = [
+    ("home", "index.html", "Home", "the physics behind it"),
+    ("market", "market.html", "Market", "real NSE prices"),
+    ("model", "model.html", "The model", "price an option"),
+    ("maths", "how-it-works.html", "How it works", "the equations"),
+    ("results", "results.html", "Results", "what we found, every number"),
+    ("about", "about.html", "About", "video, method, limits"),
+    ("team", "team.html", "Team", "who built it"),
+    ("references", "references.html", "References", "papers and data"),
+]
+
+# ------------------------------------------------------------------ market
+MARKET_SUB = (f"The daily charts use NSE's official closing prices from {FIRST_DAY} to {LAST_DAY}, which is {N_DAYS} "
+              "trading days. The price and change next to each name are live from Upstox while the market is open.")
+LIVE_CLOSED = "The market is closed. Showing the last traded price."
+LIVE_FALLBACK = "Live prices aren't available right now. These are NSE's last closing prices."
+UNIVERSE = ("NIFTY 50, NIFTY BANK, and the 40 most traded shares that have options. Every share we show an implied "
+            "volatility for is on this list.")
+WATCH_HEAD, WATCH_NOTE, COVERS_HEAD = "Your list", "Click a name to see its chart", "What this site covers"
+
+# ------------------------------------------------------------------ price an option
+MODEL_LEAD = ("Pick a real NIFTY option. Price it with Double Heston, and compare it with what the market actually paid. "
+              "Move any of the ten settings and the price updates straight away.")
+MODEL_EXPLAIN = (f"The model starts out assuming the price jumps about 20% a year. On {LAST_DAY} the market was expecting "
+                 f"only about {K['market_iv']:.1f}%, so the model asks for more. Lower today's jumpiness (v₀) and the gap "
+                 "shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose all "
+                 "ten settings for you.")
+MODEL_SOURCE = (f"Option prices are NSE closing prices on {LAST_DAY}. The expected future NIFTY level is taken from the "
+                f"NIFTY October futures price, {inr(K['forward'])}. The interest rate is the RBI 91-day Treasury bill "
+                "rate, the same one the research used.")
+PRICE_HEADS = {"price": "Our model says", "market": "The market paid", "gap": "Difference", "greeks": "How the price reacts",
+               "sliders": "The slow part", "sliders-fast": "The fast part", "smile": "The smile for this expiry",
+               "chain": f"Every strike for {EXPIRY}"}
+GREEKS_NOTE = "Each number shows how the model's price changes when one thing moves, at your settings."
+GREEK_UNITS = {"Delta": "₹ the option moves per ₹1 move in NIFTY", "Gamma": "how much that changes per ₹1",
+               "Vega": "₹ per 1 point more expected jumpiness", "Theta": "₹ lost each day as expiry nears",
+               "Rho": "₹ per 1 point higher interest rate"}
+SLIDERS = [
+    ("slow", "v₀", "Today's jumpiness", 0.02, 0.0005, 1.0), ("slow", "κ", "Speed back to normal", 0.5, 0.1, 10.0),
+    ("slow", "θ", "Normal jumpiness", 0.02, 0.0005, 1.0), ("slow", "ξ", "Jumpiness of the jumpiness", 0.3, 0.05, 2.0),
+    ("slow", "ρ", "Link to price", -0.7, -0.99, 0.99),
+    ("fast", "v₀", "Today's jumpiness", 0.02, 0.0005, 1.0), ("fast", "κ", "Speed back to normal", 5.0, 0.1, 10.0),
+    ("fast", "θ", "Normal jumpiness", 0.02, 0.0005, 1.0), ("fast", "ξ", "Jumpiness of the jumpiness", 0.5, 0.05, 2.0),
+    ("fast", "ρ", "Link to price", -0.7, -0.99, 0.99),
+]
+FELLER = {"slow": "Can touch zero: 2κθ = 0.02 is below ξ² = 0.09", "fast": "Can touch zero: 2κθ = 0.20 is below ξ² = 0.25"}
+FELLER_NOTE = ("At these settings, either part's jumpiness can touch zero. That's allowed: the simulator simply stops it "
+               "at zero, so prices stay valid.")
+CHAIN_NOTE = ("Each row is one strike price. The call and put columns are NSE closing prices. IV is the jumpiness those "
+              "prices imply. The model columns are Double Heston at your settings. Click a row to price that strike.")
+
+# ------------------------------------------------------------------ how it works
+MATHS_INTRO = ("An option's price depends on how jumpy the share will be before the option expires. Black–Scholes assumes "
+               "the jumpiness never changes. Double Heston (2009) lets it change, and splits it into two parts that move "
+               "on their own: a fast part for sudden scares and a slow part for long moods. Below is the whole model, one "
+               "formula at a time, each with an everyday picture.")
+BEND_HEAD = "A ruler can't draw a smile"
+BEND = ("Black–Scholes uses the same jumpiness for every strike, so its line is flat, like a line drawn with a ruler. Real "
+        "prices bend: insurance against a fall costs more than a bet on a rise. In Double Heston, jumpiness tends to rise "
+        "when prices fall, so its line bends the same way.")
+FORMULAS_LEDE = ("Each card shows the formula, what its letters mean, and what it does. Hover over the triangle for an "
+                 "everyday picture.")
+FORMULAS = [
+    ("price", "The price is pushed around by two kinds of jumpiness", EQ_PRICE,
+     "In each tiny moment, the share price drifts up a little (interest rate minus dividend) and gets two random kicks. "
+     "How big each kick is depends on one of the two jumpiness levels.",
+     [("S", "share price"), ("r", "interest rate"), ("q", "dividend"), ("v₁, v₂", "the slow and fast jumpiness"),
+      ("dW₁, dW₂", "two separate random kicks"), ("dt", "a tiny step of time")]),
+    ("variance", "Each kind of jumpiness drifts back to normal", EQ_VAR,
+     "Each jumpiness is pulled back toward its normal level (theta, θ) at a speed (kappa, κ), while being shaken at "
+     "random by an amount (xi, ξ). Its shakes are linked to the price's kicks by rho (ρ). When rho is negative, falls come "
+     "with rising jumpiness. That is what tilts the smile.",
+     [("vᵢ", "today's jumpiness of part i"), ("θᵢ", "its normal level"), ("κᵢ", "how fast it returns"),
+      ("ξᵢ", "how hard it gets shaken"), ("dZᵢ", "its own random kick"), ("ρᵢ", "the link between price and jumpiness"),
+      ("i", "1 for the slow part, 2 for the fast one")]),
+    ("cf", "Two separate parts multiply", EQ_CF,
+     "Phi (φ) is a short \"fingerprint\" of everywhere the price could end up. The two parts don't depend on each other, "
+     "so the model's fingerprint is just the two fingerprints multiplied. That keeps pricing fast.",
+     [("φ(u)", "the model's fingerprint"), ("φ₁, φ₂", "each part's own fingerprint")]),
+    ("call", "One integral gives the price", EQ_CALL,
+     "A call is worth what you expect to receive above the strike, minus what you expect to pay, converted back into "
+     "today's rupees. P₂ is the chance the option ends up worth using; P₁ is the same chance counted in shares. Both come "
+     "out of the fingerprint through one integral. Our code uses a safer version of the 1993 formula that doesn't break "
+     "for long-dated options.",
+     [("C", "call price"), ("F", "expected future share price"), ("K", "strike"), ("T", "time to expiry, in years"),
+      ("e^(−rT)", "converts to today's rupees"), ("P₁, P₂", "the two chances"), ("Re", "real part of a complex number")]),
+    ("mc", "Check it by simulation", "C ≈ e^(−rT) · (1/N) Σₙ max(S_T⁽ⁿ⁾ − K, 0)",
+     f"The slow way to the same answer: play out 20,000 possible futures for the price and both jumpiness levels, average "
+     f"what the call pays at the end, and convert to today's rupees. For the NIFTY {inr(K['strike'], 0)} call this gives "
+     f"₹{inr(K['mc'])} ± {K['mc_se']:.2f}, against ₹{inr(K['dh'])} from the formula: inside the simulation's own margin "
+     "of error.",
+     [("N", "number of futures played out, 20,000"), ("S_T⁽ⁿ⁾", "the share price at expiry in future n"),
+      ("max(S − K, 0)", "what a call pays at expiry")]),
+    ("feller", "When jumpiness can't touch zero", EQ_FELLER,
+     "If 2κθ is bigger than ξ², that part's jumpiness never reaches zero. Real markets often break this rule. When a "
+     "simulated jumpiness would go below zero, our simulator holds it at zero for that step, so prices stay valid.",
+     [("κᵢ, θᵢ, ξᵢ", "the speed, normal level and shake of part i")]),
+]
+FORMULAS = [(k, t, plain, what, [(sym, m[:1].upper() + m[1:]) for sym, m in syms]) for k, t, plain, what, syms in FORMULAS]
+SETTINGS_LEDE = ("Each of the two parts has the same five settings, so the model has ten. Here is what each one controls "
+                 "and what turning it up does. The starting values are the ones Price an option opens with.")
+SETTINGS = [
+    ("v₀", "Today's jumpiness", "How jumpy the share is right now. 0.02 means about 14% a year.",
+     "Options cost more now, short-dated ones most.", "0.02", "0.02"),
+    ("θ", "Normal jumpiness", "The level jumpiness settles back to.", "Long-dated options cost more.", "0.02", "0.02"),
+    ("κ", "Speed back to normal", f"How fast jumpiness calms down after a shock. Half of a shock is gone in {SLOW_HL} for "
+     f"the slow part and {FAST_HL} for the fast one.", "Shocks fade faster, so this part matters less for long-dated options.",
+     "0.5", "5.0"),
+    ("ξ", "Jumpiness of the jumpiness", "How much the jumpiness itself jumps around.",
+     "The smile curves more: options far from today's price cost more.", "0.3", "0.5"),
+    ("ρ", "Link to price", "Whether jumpiness rises when the price falls (negative) or rises (positive). Runs from −1 to 1.",
+     "Closer to −1: insurance against falls gets dearer, so the smile tilts more.", "−0.7", "−0.7"),
+]
+SETTINGS_UP = "Turn it up:"
+FACTORS_HEAD = "Two clocks: one fast, one slow"
+TWO_CLOCKS = ("Each part is a jumpiness that gets knocked about and then calms down. One calms down slowly and one "
+              "quickly. That lets the model price next week's options and next year's options differently.")
+FACTORS = (f"Each part gets knocked about and drifts back to its normal level. The fast one (κ 5.0) loses half of any "
+           f"shock in {FAST_HL}. The slow one (κ 0.5) takes {SLOW_HL}.")
+SKEW_NOTE = ("How much more insurance against a fall costs than a bet on a rise, in volatility points. That extra cost "
+             "shrinks the further away the expiry is.")
+FAN_NOTE = (f"60 of 400 simulated one-year paths, all starting at 100. The shading covers the middle 50% and the middle 90% "
+            f"of the 400. The same simulator checks our calculator: 20,000 paths price the NIFTY {inr(K['strike'], 0)} call "
+            f"at ₹{inr(K['mc'])} ± {K['mc_se']:.2f}, against ₹{inr(K['dh'])} from the formula.")
+SURFACE_NOTE = (f"Implied volatility for every strike and every expiry, at the starting settings. Low strikes, which are "
+                f"insurance against falls, carry the most. The tilt is steepest for options that expire soon: "
+                f"{_S1M[0]:.1f}% down to {_S1M[-1]:.1f}% across strikes at one month, and {_S1Y[0]:.1f}% to "
+                f"{_S1Y[-1]:.1f}% at one year. \"≈ 0\" marks options worth almost nothing, where no volatility can be read.")
+MATHS_HEADS = {"factors": "The two parts, moving", "skew": "Why the lopsidedness fades with time",
+               "fan": "Many possible futures", "surface": "The whole picture at once", "settings-list": "Five settings for each part"}
+
+# ------------------------------------------------------------------ results
+RESULTS_PAGE_HEAD = "It beat the one-number method on every price list we tested. Knowing why takes more than a perfect match."
+RESULTS_PAGE_LEDE = ("Everything the project found is on this page. First the win in numbers, then the proof behind it, "
+                     "then what our two kinds of neural network did. At the end, every result sits in one table with the "
+                     "data it came from. That includes the results that didn't work, because they're how you know the "
+                     "ones that did are real.")
+KEY_NUMS = [
+    (f"{DH_BEAT_ALL * 100:.0f}%", f"of 2,400 real price lists: Double Heston beat one fixed jumpiness on every one, with "
+                                  f"{FLAT_BETTER * 100:.0f}% less error on a typical one"),
+    (f"{PINN_NIFTY['ft_3']:.2f} vs {PINN_NIFTY['bs']:.2f}", "our PINN against Black–Scholes on real NIFTY options, in volatility points"),
+    (f"{SHARE * 100:.0f}%", "of those price lists had several equally good answers: a finding, not a flaw"),
+    (f"{RATIO:.1f}×", "how far apart those answers were, compared with two settings picked at random"),
+]
+EVIDENCE_HEAD = "The proof"
+TWIST = "Ask the model which of its ten settings made the bend, though, and the prices can't tell you. Here is how we know."
+PROOF1_HEAD = "Test 1: questions where we already knew the answer"
+PROOF1 = (f"We made {CB['surfaces_calibrated']} price lists ourselves, from settings we chose, so we knew the right answer. "
+          f"Then we asked a standard search program to find those settings again, starting from "
+          f"{CB['starts_per_surface']} places each time. It matched the prices almost perfectly: a typical error of "
+          f"9.16 × 10⁻⁸. But the settings it found scored {CB['mean_median_skill']:.2f}. On this score 1.00 means \"no "
+          "better than always guessing the average\", and lower is better.")
+PROOF1_NUMS = [("9.16 × 10⁻⁸", "typical price error"), (f"{CB['mean_median_skill']:.2f}", "how well it found the settings (1.00 = just guessing)"),
+               (f"{CB['price_equivalent_subset']['mean_median_skill']:.2f}", f"the same, on the {CB['price_equivalent_subset']['n']} closest price matches")]
+PROOF1_NET = (f"Our ANN reads the settings straight from prices. It scores {NET['mean_skill']:.2f} on a related version of "
+              f"the same score, where the search program scores {CB['mean_skill']:.2f}. It does better by playing safe and "
+              f"staying close to typical values. The one setting it reads well is today's jumpiness (v₀, "
+              f"{NET['param_skill']['v0_s']:.2f}).")
+PROOF2_HEAD = "Test 2: real NSE prices, no answer assumed"
+PROOF2 = (f"We took 2,400 real price lists: NSE's 40 most traded shares over 60 days. For each one, we started the search "
+          f"from 16 different places. On {SHARE * 100:.0f}% of them, more than one set of settings matched the prices "
+          f"equally well (within 10% of the best match). Those equally good answers were typically "
+          f"{AMB['median_dispersion']:.2f} apart, against {RAND:.2f} for two settings picked at random: "
+          f"{RATIO:.1f} times as far.")
+PROOF2_NUMS = [(f"{SHARE * 100:.0f}%", "of 2,400 price lists had several equally good answers"),
+               (f"{RATIO:.1f}×", "further apart than two random picks"),
+               (f"{FLAT_BETTER * 100:.0f}%", "less error than one fixed jumpiness, on a typical price list")]
+HIST_HEAD = "How far apart the equally good answers were"
+PER_PARAM = ("Split by setting, the pattern makes sense. Today's jumpiness (v₀) is pinned down: equally good answers agree "
+             "on it more closely than random picks would. The speed back to normal (κ) is not pinned down at all. The best "
+             f"answer's speed got stuck at the edge of the allowed range on {NB['kappa_s'] * 100:.0f}% of price lists for "
+             f"the slow part and {NB['kappa_f'] * 100:.0f}% for the fast part.")
+PAIR_HEAD = "One example: Bharti Airtel"
+PAIR_LEDE = (f"Here is Bharti Airtel's price list at the close on 21 Aug 2026, matched twice. Both matches miss the market "
+             f"by ₹{PAIR_ERR[0]:.2f} an option on average. But one says a jumpiness shock takes "
+             f"{half_life(PA['kappa_s'])} to fade by half. The other says just {half_life(PB['kappa_f'])} to "
+             f"{half_life(PB['kappa_s'])}.")
+PAIR_MAGNETS = ("Iron filings over hidden magnets: different arrangements of magnets can make the very same pattern. The "
+                "prices are the pattern; the ten settings are the hidden magnets.")
+PAIR_TYPICAL = (f"This price list had {PAIR['equivalents']} equally good answers out of 16 starts. Their spread, "
+                f"{PAIR['median_dispersion']:.2f}, is exactly the typical spread across all 2,400 price lists. So this is "
+                "the normal case, not the worst one.")
+PAIR_NOTE = ("Each spike's height is that setting's size on its own scale. A star (*) means the setting was pushed against "
+             "the upper limit the search was allowed.")
+PAIR_PART_HEAD = f"Where people trade, they agree. A year out, they're {PAIR_GAP_1Y:.1f} points apart."
+PAIR_PART = (f"That day, Bharti Airtel had options expiring in 4 days and 39 days. Both answers price those alike. Now ask "
+             f"them about a one-year option, which isn't traded. Answer A says {_term('a', 365):.1f}% jumpiness; answer B "
+             f"says {_term('b', 365):.1f}%. The prices give no reason to prefer either.")
+PAIR_SIX = (f"Bharti Airtel, 21 Aug 2026: 16 starts gave {PAIR['equivalents']} answers within 10% of the best price error. "
+            "Each spike is one answer. Where the spikes bunch together, the prices pin that setting down. Where they "
+            "scatter, they don't.")
+RESULTS_HEADS = {"pool": "Bharti Airtel, 39-day options", "magnets": "The ten settings of each answer",
+                 "six": "All six equally good answers", "stock": "One share, day by day",
+                 "heldout": "The ANN on days it had never seen", "backtest": "The ANN against Black–Scholes",
+                 "pinn": "The PINN on real NIFTY options", "results": "Every result", "data": "The data",
+                 "terms": "What the words mean"}
+
+
+def _rel_line():
+    import statistics
+    dh = statistics.median(r[1] for r in REL_STOCK) * 100
+    fl = statistics.median(r[2] for r in REL_STOCK) * 100
+    ds = statistics.median(r[3] for r in REL_STOCK)
+    return (f"Take RELIANCE. Its best Double Heston match beat one fixed jumpiness on all 60 of its days. The typical "
+            f"error was {dh:.2f}% of the share price, against {fl:.2f}%. On the same days, the equally good answers sat "
+            f"a typical {ds:.1f} apart.")
+
+
+REL_LINE = _rel_line()
+NN_HEAD = "Two kinds of neural network: an ANN and a PINN"
+ANN_TEXT = ("Our ANN is an ordinary neural network. It learns to read the ten settings from prices purely from examples. "
+            "It produced the settings behind the 210-share studies on this site.")
+PINN_TEXT = ("Our PINNs (physics-informed neural networks) are also trained on the model's own pricing equation, so their "
+             "answers must obey the physics, not just copy examples. The Double Heston PINN learned from exact prices "
+             "plus the equation at 18,000 points. It matches our exact calculator to 1.1 × 10⁻⁵, about 0.1 volatility "
+             "points, on 8,192 points it had never seen. On 40 test price lists it beat the simpler one-part Heston every "
+             "time, and Heston in turn beat Black–Scholes.")
+HELDOUT = (f"On 8 later trading days it had never seen, the ANN's prices were off by "
+           f"{G8['median_network_relative'] * 100:.1f}% on a typical option. The best possible match was off by "
+           f"{G8['median_best_fit_relative'] * 100:.1f}%: a gap of {G8['median_gap_pp']:.1f} points.")
+BACKTEST = (f"This is a tough contest. Black–Scholes gets re-matched fresh to each day's own prices, while Double Heston "
+            f"uses settings our ANN read from that day's quotes. Even so, Double Heston priced the day's options better on "
+            f"{BT_SAME_DAY * 100:.1f}% of {BT_PAIRS:,} share-days ({BT_SAME_DAY_N:,} of them). A fairer contest carries "
+            f"both models' settings forward one day without updating either. There, Double Heston won on "
+            f"{BT_NEXT_DAY * 100:.1f}%.")
+PINN_MARKET = (f"We tested it on 10 high-jumpiness days in April 2026: 1,750 NIFTY option prices it had never seen. Our "
+               f"PINN was typically off by {PINN_NIFTY['ft_3']:.2f} volatility points. Black–Scholes was off by "
+               f"{PINN_NIFTY['bs']:.2f}, and a classical Double Heston search by {PINN_NIFTY['dh_cold']:.2f}. The PINN "
+               f"took {PINN_NIFTY_SECONDS[0]:.1f} seconds instead of {PINN_NIFTY_SECONDS[1]:.0f}, and was the best model "
+               f"on {PINN_NIFTY_BEST} of the 10 days.")
+RESULTS_LEDE = ("All the project's numbers in one place: what we measured, on which data, and whether it is good news. "
+                "The results that didn't work are kept, because they are part of the answer.")
+RESULTS_DIRECTION = "▲ means a higher number is better news; ▼ means a lower one is. Hover over a triangle for an everyday picture."
+_RENAME = {"Double Heston against one flat volatility": "Double Heston against one fixed jumpiness",
+           "Fitting simulated prices": "Matching made-up prices", "Reading the settings back": "Finding the settings again",
+           "Several equally good fits": "Several equally good answers", "How far apart they sat": "How far apart they were",
+           "Today's level": "Today's jumpiness", "ANN, reading the settings": "ANN reading the settings",
+           "ANN on dates it never saw": "ANN on days it never saw", "PINN fidelity": "PINN accuracy",
+           "PINN calibrator on NIFTY": "PINN on NIFTY", "PINN against ANN (demonstration)": "PINN against ANN (demo)"}
+_WHAT = {
+    "Double Heston against one fixed jumpiness": "Typical error of the best match on 2,400 real price lists. It was ahead on every one.",
+    "Matching made-up prices": f"Typical error of a search program on {CB['surfaces_calibrated']} made-up price lists.",
+    "Finding the settings again": "How close it got to the true settings. 1.00 is just guessing; lower is better.",
+    "Several equally good answers": "Share of 2,400 real price lists with more than one equally good set of settings.",
+    "How far apart they were": f"Typical gap between equally good answers ({AMB['median_dispersion']:.2f}) against two random picks ({RAND:.2f}).",
+    "Today's jumpiness": "Gap between equally good answers for the slow part's level, against about 0.95 at random. Pinned down.",
+    "Speeds back to normal": "Gap for the slow part's speed, against about 0.90 at random. Not pinned down at all.",
+    "ANN reading the settings": f"Score on {NET['test_samples']:,} made-up price lists, against {CB['mean_skill']:.2f} for the search program.",
+    "ANN on days it never saw": f"Typical pricing error on 8 later days, against {G8['median_best_fit_relative'] * 100:.1f}% for the best match.",
+    "ANN settings against Black–Scholes": f"Share-days where Double Heston with the ANN's settings priced better than a fresh same-day Black–Scholes ({BT_SAME_DAY_N:,} of {BT_PAIRS:,}).",
+    "Next day, against Black–Scholes": "Share-days where yesterday's settings beat yesterday's Black–Scholes on today's prices.",
+    "PINN accuracy": "PINN's error against the exact calculator on 8,192 unseen points (0.1 volatility points).",
+    "PINN, controlled test": "Price lists where the PINN beat one-part Heston, which beat Black–Scholes.",
+    "PINN on NIFTY": f"Typical error on 1,750 unseen prices, against {PINN_NIFTY['bs']:.2f} for Black–Scholes. Best on {PINN_NIFTY_BEST} of 10 days.",
+    "PINN against ANN (demo)": "Error of two identical networks, with and without the pricing equation.",
+}
+RESULT_INFO = {_RENAME.get(n, n): v for n, v in RESULT_INFO.items()}
+RESULTS = [(_RENAME.get(n, n), v, _WHAT[_RENAME.get(n, n)], verdict) for n, v, _, verdict in RESULTS]
+assert set(RESULT_INFO) == {r[0] for r in RESULTS}, "every result needs a direction and an explanation"
+DATA_SETS = [
+    ("Market charts", f"{N_DAYS} trading days", f"NSE closing prices, {FIRST_DAY} to {LAST_DAY}, for NIFTY 50, NIFTY BANK and the Market page shares."),
+    ("NIFTY option prices", f"{len(D['chain'])} strikes", f"NIFTY options expiring {EXPIRY}, at the {LAST_DAY} close, only ones that actually traded."),
+    ("Real price lists", "12,480", "210 NSE shares × 60 trading days. 12,600 tried; 120 failed our data checks. Each aims for 20 prices; a typical one has 17."),
+    ("Equally-good-answers study", "2,400", "The 40 most traded of those shares over the same 60 days, each searched from 16 starting points."),
+    ("Made-up price lists", f"{CB['surfaces_calibrated']}", "Made by our own calculator from settings we chose, so the right answer is known."),
+    ("ANN test set", f"{NET['test_samples']:,}", "Made-up price lists the ANN never saw while learning."),
+    ("Unseen days", "8 days", "Later trading days the ANN never saw, used to test it on real prices."),
+    ("Next-day test", f"{BT_PAIRS:,} share-days", "Every share and every pair of back-to-back trading days: one day's settings used to price the next."),
+    ("PINN training", "100,000 + 18,000", "Exact Double Heston prices to learn from, plus points where the pricing equation itself must hold."),
+    ("NIFTY, high jumpiness", "10 days, 1,750 prices", "The 10 NIFTY days of 2026 with the highest recent jumpiness, picked by a rule fixed before any testing."),
+]
+TERMS = [
+    ("Price list (option surface)", "All of one share's option prices on one day, across strikes and expiries."),
+    ("Setting", "One of Double Heston's ten numbers. Each part has today's level, normal level, speed back to normal, jumpiness of the jumpiness, and link to price."),
+    ("Equally good answer", "A set of settings whose error is within 10% of the best one found for that price list."),
+    ("Gap between answers", "How far apart two sets of settings are, measured so that every setting counts equally."),
+    ("Recovery score", "The error in the settings divided by the error from always guessing the typical value. 1.00 is no better than guessing; lower is better."),
+    ("Volatility point", "One percentage point of implied volatility, for example 15% against 16%."),
+    ("Share-day", "One share on one trading day."),
+    ("Unseen (held out)", "Data kept back while the model was being built, so it can be tested fairly."),
+]
+
+# ------------------------------------------------------------------ about, team, references
+ABOUT_HEAD = "A B.Tech physics project about one question, and an honest answer."
+VIDEO_CAPTION = "A short narrated video about the model and what we found, made from our project report. [Video to be added]"
+ABOUT_HEADS = {"video": "The video", "method": "How we did it", "limits": "What the model can't do", "also": "We also looked at"}
+METHOD = [
+    "Prices come from the Double Heston formula and are double-checked by simulating thousands of possible futures.",
+    "The research data is NSE's official end-of-day files. The Results page lists every dataset, its size and what it was used for.",
+    "We found and fixed three bugs in our data pipeline, then re-ran every real-market result. We checked each one against "
+    "one fixed jumpiness, which a true best match should never lose to.",
+]
+LIMITS = [
+    "It has no sudden jumps, so it still underestimates the biggest one-day moves.",
+    "Dividends are possible but set to zero, and one interest rate is used for every expiry.",
+    "It ignores trading costs. Real trades pay the gap between the buying and selling price.",
+    "End-of-day data has closing prices only, not live buying and selling quotes.",
+    "A typical price list has 17 of the 20 prices we aim for (between 10 and 20 on 80% of price lists).",
+]
+ALSO = ("Can smarter forecasts (called EWMA and GARCH) predict next month's jumpiness better than simply assuming it will "
+        "look like last month? We tested this over 60 shares and ten years, always predicting forward in time.")
+TEAM = [("[Name]", "Model and calculator"), ("[Name]", "Data"), ("[Name]", "Website and design"), ("[Name]", "Research and report")]
+SUPERVISOR_HEAD = "Guide"
+THANKS = ["NSE, for the free end-of-day files the research uses.", "Upstox, for the market data behind the live prices.",
+          "The people who make NumPy, SciPy and pandas, the free tools we built on."]
+REFS_LEAD = "The research papers behind the model and its maths, the history it grew from, and where our data comes from."
+FOOTER = (f"Not trading advice. Charts use NSE closing prices up to {LAST_DAY}; prices beside each name are live from "
+          "Upstox while the market is open.")
+
+# chart titles and how-to-read lines that the doc reworded
+CHART_NOTES = {**CHART_NOTES,
+    "smileBend": ("Implied volatility by strike, 30 days to expiry",
+                  "Across is the strike, as a percentage of today's price. Up is implied volatility. The dashed line is "
+                  "Black–Scholes; the solid line is Double Heston at its starting settings."),
+    "marketSmile": ("Market against model, by strike",
+                    "Rings are real NSE closing prices, turned into implied volatility. The line is Double Heston at your "
+                    "settings. The dotted line marks where NIFTY is today."),
+    "candles": ("Daily candles with trading volume",
+                "Each candle is one day. The thick part runs from the day's opening price to its closing price; the thin "
+                "line from its lowest price to its highest. Green closed higher than it opened, red lower. The bars "
+                "underneath show how much was traded. The tag on the right is the last closing price."),
+    "indexLine": ("Closing level by day", "One point per trading day. Hover over the line to see the date and level."),
+}
+
+# everyday pictures the doc changed to Indian ones
+EXPLAIN = {**EXPLAIN,
+    "decay": ("A cup of chai and a big kettle, both just boiled. The cup is cold in minutes; the kettle stays warm for "
+              "hours. Same rule, different speeds.", f"Half of a shock to the fast part is gone in {FAST_HL}; in the slow part it takes {SLOW_HL}."),
+    "fan": ("Like a cyclone forecast cone: tomorrow's path is fairly certain, next month's much less.",
+            "The shaded bands show how far simulated prices spread over a year. Averaging what an option pays across "
+            "paths like these gives the simulation price."),
+    "proof2": ("Iron filings over hidden magnets: different arrangements can make the very same pattern.",
+               f"On {SHARE * 100:.0f}% of real price lists, more than one set of settings matched equally well, and those "
+               f"sets were {RATIO:.1f} times as far apart as two random picks."),
+    "params": ("Every thermometer agrees on how warm the room is now. None of them can tell you how fast it would cool if "
+               "the heater went off.", "Today's jumpiness (v₀) is pinned down by prices; the speeds back to normal (κ) are not."),
+    "part": ("Two maps that match street for street in the city centre but disagree about the villages nobody visits.",
+             "Where options trade, the two answers agree. Beyond them, where no price can check them, they part."),
+    "stock": ("A weighing scale that shows your weight correctly every morning but reports a different height each day.",
+              "The price error stays small day after day while the gap between equally good answers stays large."),
+    "heldout": ("A student who did well on the practice papers but slipped in the board exam.",
+                f"On 8 later days the ANN's prices were off by {G8['median_network_relative'] * 100:.1f}%, against "
+                f"{G8['median_best_fit_relative'] * 100:.1f}% for the best possible match."),
+    "backtest": ("A new gadget that beats a ruler freshly redrawn every morning about one day in twenty.",
+                 f"With the ANN's settings, Double Heston priced better than a same-day Black–Scholes on {BEAT_BS_NUM} of share-days."),
+}

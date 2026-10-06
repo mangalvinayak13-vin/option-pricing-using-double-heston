@@ -12,8 +12,8 @@ const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 
 const renderers = ctx => ({
   hero: s => `<section class="tr-hero" data-sec="${s.key}" data-anim><div class="tr-hero-in">
-      <p class="tr-q">${esc(s.q)}</p><h1 class="tr-h1">${esc(s.title)} <span>${esc(s.title2)}</span></h1>
-      <p class="tr-lede">${esc(s.lead)}</p><div class="tr-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div></div></section>`,
+      ${s.q ? `<p class="tr-q">${esc(s.q)}</p>` : ''}<h1 class="tr-h1">${esc(s.title)} <span>${esc(s.title2)}</span></h1>${s.by ? `<p class="hero-by tr-by">${esc(s.by)}</p>` : ''}
+      <p class="tr-lede">${esc(s.lead)}</p>${s.ctas?.length ? `<div class="tr-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div>` : ''}</div></section>`,
   head: s => (s.level === 2
     ? `<header class="tr-pgt tr-pgt2" data-sec="${s.key}"><h2>${esc(s.title)}</h2>${s.lead ? `<p>${esc(s.lead)}</p>` : ''}</header>`
     : `<header class="tr-pgt" data-sec="${s.key}"><h1>${esc(s.title)}</h1>${s.lead ? `<p>${esc(s.lead)}</p>` : ''}</header>`),

@@ -29,9 +29,9 @@ const ico = k => (k ? icon(k, { size: 38, tint: 'chrome' }) : '');
 
 const renderers = ctx => ({
   hero: s => `<section class="fe-plate-wrap wrap" data-sec="${s.key}"><div class="fe-plate" data-anim><span class="fe-shine" aria-hidden="true"></span>
-      <p class="fe-q">${esc(s.q)}</p><h1 class="fe-h1">${esc(s.title)} <span class="fe-liquid">${esc(s.title2)}</span></h1>
+      ${s.q ? `<p class="fe-q">${esc(s.q)}</p>` : ''}<h1 class="fe-h1">${esc(s.title)} <span class="fe-liquid">${esc(s.title2)}</span></h1>${s.by ? `<p class="hero-by fe-by">${esc(s.by)}</p>` : ''}
       <p class="fe-lede">${esc(s.lead)}</p>
-      <div class="fe-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div></div></section>`,
+      ${s.ctas?.length ? `<div class="fe-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div>` : ''}</div></section>`,
   head: s => (s.level === 2
     ? `${ridge()}<header class="fe-head fe-head2 wrap" data-sec="${s.key}"><h2>${esc(s.title)}</h2>${s.lead ? `<p class="fe-lede">${esc(s.lead)}</p>` : ''}</header>`
     : `<header class="fe-head wrap" data-sec="${s.key}"><h1 class="fe-h1">${esc(s.title)}</h1>${s.lead ? `<p class="fe-lede">${esc(s.lead)}</p>` : ''}</header>`),

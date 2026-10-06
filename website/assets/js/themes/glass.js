@@ -26,10 +26,10 @@ function tile(ctx, s, i) {
 
 const renderers = ctx => ({
   hero: s => `<header class="gl-hero wrap" data-sec="${s.key}" data-anim>
-      <p class="gl-q">${esc(s.q)}</p>
-      <h1 class="gl-h1"><span>${esc(s.title)}</span> <span class="gl-grad">${esc(s.title2)}</span></h1>
+      ${s.q ? `<p class="gl-q">${esc(s.q)}</p>` : ''}
+      <h1 class="gl-h1"><span>${esc(s.title)}</span> <span class="gl-grad">${esc(s.title2)}</span></h1>${s.by ? `<p class="hero-by gl-by">${esc(s.by)}</p>` : ''}
       <p class="gl-lede">${esc(s.lead)}</p>
-      <div class="gl-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="gl-link" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}${CHEV}</a></div></header>`,
+      ${s.ctas?.length ? `<div class="gl-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="gl-link" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}${CHEV}</a></div>` : ''}</header>`,
   head: s => `<header class="${s.level === 2 ? 'gl-h2' : 'gl-head'} wrap" data-sec="${s.key}" data-anim>${s.level === 2 ? `<h2>${esc(s.title)}</h2>` : `<h1 class="gl-h1">${esc(s.title)}</h1>`}${s.lead ? `<p class="gl-lede">${esc(s.lead)}</p>` : ''}</header>`,
   panel: (s, i) => tile(ctx, s, i),
   note: s => `<div class="gl-notes gl-s12" data-sec="${s.key}">${inner(s)}</div>`,

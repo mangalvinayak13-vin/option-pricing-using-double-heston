@@ -134,7 +134,7 @@ export function fellerLine(ctx, factor) {
 
 export function greeks(ctx, cls = 'b-greek') {
   const K = ctx.D.contract;
-  const units = { Delta: 'per ₹1 move in NIFTY', Gamma: 'change in delta per ₹1', Vega: '₹ per volatility point', Theta: '₹ per calendar day', Rho: '₹ per rate point' };
+  const units = ctx.C.GREEK_UNITS;
   const val = { Delta: [K.delta, 3], Gamma: [K.gamma, 5], Vega: [K.vega, 1], Theta: [K.theta, 2], Rho: [K.rho, 1] };
   return Object.keys(units).map(n => `<div class="${cls}"><span class="b-lab">${n}</span><b class="num" data-bind="g-${n.toLowerCase()}" data-v="${val[n][0]}">${fmt.num(val[n][0], val[n][1])}</b><span class="b-sub">${units[n]}</span></div>`).join('');
 }
@@ -162,6 +162,7 @@ const mi = s => `<mi>${s}</mi>`, mo = s => (/[()]/.test(s) ? `<mo stretchy="fals
 const sub = (b, s) => `<msub>${b}${s}</msub>`, sup = (b, s) => `<msup>${b}${s}</msup>`;
 const sqrt = x => `<msqrt>${x}</msqrt>`, d = s => `<mi mathvariant="normal">d</mi>${s}`;
 const vi = k => sub(mi('v'), mn(k));
+const pd = s => `<mrow><mi>∂</mi>${s}</mrow>`;
 const MATH = {
   price: `${d(mi('S'))}${mo('=')}${mo('(')}${mi('r')}${mo('−')}${mi('q')}${mo(')')}${mi('S')}${d(mi('t'))}${mo('+')}${sqrt(vi(1))}${mi('S')}${d(sub(mi('W'), mn(1)))}${mo('+')}${sqrt(vi(2))}${mi('S')}${d(sub(mi('W'), mn(2)))}`,
   variance: `${d(sub(mi('v'), mi('i')))}${mo('=')}${sub(mi('κ'), mi('i'))}${mo('(')}${sub(mi('θ'), mi('i'))}${mo('−')}${sub(mi('v'), mi('i'))}${mo(')')}${d(mi('t'))}${mo('+')}${sub(mi('ξ'), mi('i'))}${sqrt(sub(mi('v'), mi('i')))}${d(sub(mi('Z'), mi('i')))}` +
@@ -170,6 +171,14 @@ const MATH = {
   call: `${mi('C')}${mo('=')}${sup(mi('e'), `<mrow>${mo('−')}${mi('r')}${mi('T')}</mrow>`)}${mo('[')}${mi('F')}${sub(mi('P'), mn(1))}${mo('−')}${mi('K')}${sub(mi('P'), mn(2))}${mo(']')}` +
     `<mspace width="1em"/>${sub(mi('P'), mi('j'))}${mo('=')}<mfrac>${mn(1)}${mn(2)}</mfrac>${mo('+')}<mfrac>${mn(1)}${mi('π')}</mfrac>` +
     `<msubsup>${mo('∫')}${mn(0)}${mi('∞')}</msubsup><mi mathvariant="normal">Re</mi>${mo('[')}<mfrac><mrow>${sup(mi('e'), `<mrow>${mo('−')}${mi('i')}${mi('u')}<mi mathvariant="normal">ln</mi>${mo('(')}${mi('K')}${mo('/')}${mi('F')}${mo(')')}</mrow>`)}${sub(mi('φ'), mi('j'))}${mo('(')}${mi('u')}${mo(')')}</mrow><mrow>${mi('i')}${mi('u')}</mrow></mfrac>${mo(']')}${d(mi('u'))}`,
+  // Home: Einstein's spreading, and the three models before Double Heston
+  einstein: `${mo('⟨')}${sup(mi('x'), mn(2))}${mo('⟩')}${mo('=')}${mn(2)}${mi('D')}${mi('t')}`,
+  gbm: `${d(mi('S'))}${mo('=')}${mi('μ')}${mi('S')}${d(mi('t'))}${mo('+')}${mi('σ')}${mi('S')}${d(mi('W'))}`,
+  bs: `<mfrac>${pd(mi('V'))}${pd(mi('t'))}</mfrac>${mo('+')}<mfrac>${mn(1)}${mn(2)}</mfrac>${sup(mi('σ'), mn(2))}${sup(mi('S'), mn(2))}` +
+    `<mfrac><mrow>${sup(mi('∂'), mn(2))}${mi('V')}</mrow><mrow>${mi('∂')}${sup(mi('S'), mn(2))}</mrow></mfrac>${mo('+')}${mi('r')}${mi('S')}<mfrac>${pd(mi('V'))}${pd(mi('S'))}</mfrac>${mo('−')}${mi('r')}${mi('V')}${mo('=')}${mn(0)}`,
+  heston: `${d(mi('S'))}${mo('=')}${mi('r')}${mi('S')}${d(mi('t'))}${mo('+')}${sqrt(mi('v'))}${mi('S')}${d(mi('W'))}` +
+    `<mspace width="1em"/>${d(mi('v'))}${mo('=')}${mi('κ')}${mo('(')}${mi('θ')}${mo('−')}${mi('v')}${mo(')')}${d(mi('t'))}${mo('+')}${mi('ξ')}${sqrt(mi('v'))}${d(mi('Z'))}` +
+    `<mspace width="1em"/><mi mathvariant="normal">corr</mi>${mo('(')}${d(mi('W'))}${mo(',')}${d(mi('Z'))}${mo(')')}${mo('=')}${mi('ρ')}`,
   feller: `${mn(2)}${sub(mi('κ'), mi('i'))}${sub(mi('θ'), mi('i'))}${mo('>')}${sup(sub(mi('ξ'), mi('i')), mn(2))}`,
   mc: `${mi('C')}${mo('≈')}${sup(mi('e'), `<mrow>${mo('−')}${mi('r')}${mi('T')}</mrow>`)}<mfrac>${mn(1)}${mi('N')}</mfrac>` +
     `<munderover>${mo('∑')}<mrow>${mi('n')}${mo('=')}${mn(1)}</mrow>${mi('N')}</munderover>` +
@@ -198,11 +207,33 @@ export function formula(ctx, [k, , plain, what, symbols]) {
     ${explain(ctx.C.EXPLAIN[`f-${k}`])}</div>`;
 }
 
+// Home: Einstein's result, as a formula card
+export function einstein(ctx) {
+  const C = ctx.C;
+  return `<div class="b-f"><div class="b-eqn"><math display="block" displaystyle="true" alttext="${esc(C.EQ_EINSTEIN)}">${MATH.einstein}</math></div>
+    <p class="b-f-what">${esc(C.EINSTEIN)}</p>
+    <dl class="b-symkey">${C.EINSTEIN_SYMS.map(([sym, m]) => `<div><dt>${esc(sym)}</dt><dd>${esc(m)}</dd></div>`).join('')}</dl>
+    <p class="b-f-what">${esc(C.EINSTEIN_NEXT)}</p>${explain(C.EXPLAIN.einstein)}</div>`;
+}
+
+// Home: one of the four models, from Brownian motion to Double Heston
+export function modelCard(ctx, [k, year, who, , settings, plain, words, fixed, breaks]) {
+  // one equation per line, so a card never clips the end of a long system
+  const eq = (k === 'dh' ? [MATH.price, MATH.variance] : [MATH[k]]).flatMap(m => m.split('<mspace width="1em"/>'));
+  const last = k === 'dh' ? "What the prices can't tell you" : 'What still breaks';
+  return `<div class="b-m">
+    <p class="b-m-who"><b class="num">${esc(year)}</b> ${esc(who)}</p>
+    <div class="b-eqn">${eq.map(m => `<math display="block" displaystyle="true" alttext="${esc(plain)}">${m}</math>`).join('')}</div>
+    <p class="b-f-what">${esc(words)}</p>
+    <dl class="b-m-dl"><div><dt>What it fixed</dt><dd>${esc(fixed)}</dd></div><div><dt>${last}</dt><dd>${esc(breaks)}</dd></div></dl>
+    <p class="b-m-set">${esc(settings)}</p>${explain(ctx.C.EXPLAIN[`m-${k}`])}</div>`;
+}
+
 // the ten settings: five rows, each with both factors' starting values and its dropdown
 export function settings(ctx) {
   return `<ol class="b-set">${ctx.C.SETTINGS.map(([sym, name, ctl, up, slow, fast]) => `<li>
     <b class="b-set-sym">${esc(sym)}</b>
-    <div class="b-set-txt"><h4>${esc(name)}</h4><p>${esc(ctl)}</p><p class="b-set-up"><span>Raise it:</span> ${esc(up)}</p>
+    <div class="b-set-txt"><h4>${esc(name)}</h4><p>${esc(ctl)}</p><p class="b-set-up"><span>${esc(ctx.C.SETTINGS_UP)}</span> ${esc(up)}</p>
       <p class="b-set-start num">Starts at ${esc(slow)} (slow) and ${esc(fast)} (fast)</p>${explain(ctx.C.EXPLAIN[`s-${sym}`])}</div></li>`).join('')}</ol>`;
 }
 export function equations(ctx, cls = 'b-eq') {
@@ -251,7 +282,7 @@ export function pageLinks(ctx, { size = 60, cls = 'b-links', tint, desc = true }
 }
 
 export function footer(ctx, cls = 'b-foot') {
-  return `<footer class="${cls}"><span>Not trading advice. Prices are NSE closing prices from ${esc(ctx.C.LAST_DAY)}; live Upstox prices are planned for the same places.</span><span>Double Heston, a B.Tech physics project</span></footer>`;
+  return `<footer class="${cls}"><span>${esc(ctx.C.FOOTER)}</span><span>Double Heston, a B.Tech physics project</span></footer>`;
 }
 
 export function stockPicker(ctx) {

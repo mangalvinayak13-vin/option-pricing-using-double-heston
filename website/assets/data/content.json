@@ -1,14 +1,31 @@
 {
- "ABOUT_HEAD": "A B.Tech physics project about one question and an honest answer.",
- "ALSO": "Whether EWMA or GARCH forecasts of next month's volatility beat simply assuming it looks like last month, tested walk-forward over 60 stocks and ten years.",
- "ANN_TEXT": "Our ANN (a standard artificial neural network) learns to read the ten settings from prices purely from examples. It produced the settings behind the 210-stock studies on this site.",
+ "ABOUT_HEAD": "A B.Tech physics project about one question, and an honest answer.",
+ "ABOUT_HEADS": {
+  "video": "The video",
+  "method": "How we did it",
+  "limits": "What the model can't do",
+  "also": "We also looked at"
+ },
+ "AIMS": [
+  [
+   "Double Heston, grown step by step from Brownian motion",
+   "Start with Einstein's random kick. Use it for a share price, and you get geometric Brownian motion. Price an option from it, and you get Black–Scholes. Let the price's jumpiness take random kicks of its own, and you get Heston. Give that jumpiness two speeds, one fast and one slow, and you get Double Heston. The four steps are below."
+  ],
+  [
+   "A PINN to read the model's ten settings",
+   "Double Heston has ten settings. Finding them from a day's prices by trial and error takes seconds to minutes, and can still land on settings that break the model's own rules. A PINN (physics-informed neural network) is a neural network that must also obey the model's pricing equation, a diffusion equation from the same family as Einstein's. On real NIFTY options it was off by 2.48 volatility points, against 2.98 for Black–Scholes, and took 1.2 seconds instead of 25. In a side-by-side test, a plain network priced 187 of 1,271 points below zero, which no option can be worth. The PINN priced none."
+  ]
+ ],
+ "AIMS_HEAD": "What this project sets out to show",
+ "ALSO": "Can smarter forecasts (called EWMA and GARCH) predict next month's jumpiness better than simply assuming it will look like last month? We tested this over 60 shares and ten years, always predicting forward in time.",
+ "ANN_TEXT": "Our ANN is an ordinary neural network. It learns to read the ten settings from prices purely from examples. It produced the settings behind the 210-share studies on this site.",
  "A_LONG": "Real option prices bend: protection against a fall usually costs more than a bet on a rise. Double Heston bends the same way, and on all 2,400 real NSE option surfaces we tested, its best fit beat one fixed volatility.",
  "A_NO": "Reading its settings? No.",
  "A_SHORT": "For fitting today's prices, yes.",
- "BACKTEST": "A same-day Black–Scholes fit is a hard bar to clear: it gets refit fresh to that day's own prices, while Double Heston here is using settings our ANN read earlier. Even so, with the settings our ANN reads from each day's own quotes, Double Heston priced that day's options better than that fresh same-day Black–Scholes fit on 4.8% of 12,265 stock-days (589 of them). The fairer, same-conditions comparison carries both forward one day unrefit: there, Double Heston's carried-forward settings beat Black–Scholes's on 19.1%.",
+ "BACKTEST": "This is a tough contest. Black–Scholes gets re-matched fresh to each day's own prices, while Double Heston uses settings our ANN read from that day's quotes. Even so, Double Heston priced the day's options better on 4.8% of 12,265 share-days (589 of them). A fairer contest carries both models' settings forward one day without updating either. There, Double Heston won on 19.1%.",
  "BEAT_BS_NUM": "4.8%",
- "BEND": "Black–Scholes prices every strike at the same volatility, so its smile is flat. Double Heston's two moving volatilities, tied to the price by a negative ρ, make protection against falls dearer: the line bends.",
- "BEND_HEAD": "One fixed volatility draws a flat line. Real prices bend.",
+ "BEND": "Black–Scholes uses the same jumpiness for every strike, so its line is flat, like a line drawn with a ruler. Real prices bend: insurance against a fall costs more than a bet on a rise. In Double Heston, jumpiness tends to rise when prices fall, so its line bends the same way.",
+ "BEND_HEAD": "A ruler can't draw a smile",
  "BT_NEXT_DAY": 0.19078679168365267,
  "BT_PAIRS": 12265,
  "BT_SAME_DAY": 0.04802282918874847,
@@ -180,22 +197,23 @@
    "mkt_iv": 10.81
   }
  ],
+ "CHAIN_NOTE": "Each row is one strike price. The call and put columns are NSE closing prices. IV is the jumpiness those prices imply. The model columns are Double Heston at your settings. Click a row to price that strike.",
  "CHART_NOTES": {
   "smileBend": [
    "Implied volatility by strike, 30 days to expiry",
-   "Strike on the left axis is a percentage of today's price; height is implied volatility. The dashed line is Black–Scholes' one volatility; the solid line is Double Heston at its starting settings."
+   "Across is the strike, as a percentage of today's price. Up is implied volatility. The dashed line is Black–Scholes; the solid line is Double Heston at its starting settings."
   ],
   "marketSmile": [
    "Market against model, by strike",
-   "Rings are NSE closing prices turned into implied volatility; the line is Double Heston at your settings. The dotted line marks today's NIFTY level."
+   "Rings are real NSE closing prices, turned into implied volatility. The line is Double Heston at your settings. The dotted line marks where NIFTY is today."
   ],
   "candles": [
-   "Daily candlesticks with volume",
-   "Each candle is one day: the body runs from open to close, the thin line from low to high. Green closed higher, red lower. Volume is shaded underneath (for an index, the shares traded across its stocks); the tag on the right is the last close."
+   "Daily candles with trading volume",
+   "Each candle is one day. The thick part runs from the day's opening price to its closing price; the thin line from its lowest price to its highest. Green closed higher than it opened, red lower. The bars underneath show how much was traded. The tag on the right is the last closing price."
   ],
   "indexLine": [
    "Closing level by day",
-   "One point per trading day; the shaded area sits under the line. Hover for the date and level."
+   "One point per trading day. Hover over the line to see the date and level."
   ],
   "hist": [
    "How far apart equally good fits landed, per surface",
@@ -256,6 +274,7 @@
  },
  "CONTRACT": "NIFTY 23,150 call",
  "CONTRACT_SUB": "Expires 27 Oct 2026, 32 days",
+ "COVERS_HEAD": "What this site covers",
  "CTA": {
   "model": "Price an option",
   "finding": "See the results",
@@ -263,54 +282,54 @@
  },
  "DATA_SETS": [
   [
-   "Market display",
+   "Market charts",
    "62 trading days",
-   "NSE closing prices, 1 Jul 2026 to 25 Sep 2026, for NIFTY 50, NIFTY BANK and the stocks on the Market page."
+   "NSE closing prices, 1 Jul 2026 to 25 Sep 2026, for NIFTY 50, NIFTY BANK and the Market page shares."
   ],
   [
-   "NIFTY option chain",
+   "NIFTY option prices",
    "17 strikes",
-   "NIFTY options expiring 27 Oct 2026, closing prices on 25 Sep 2026, with traded volume, open interest and trades above zero."
+   "NIFTY options expiring 27 Oct 2026, at the 25 Sep 2026 close, only ones that actually traded."
   ],
   [
-   "Real option surfaces",
-   "12,480 surfaces",
-   "210 NSE stocks × 60 trading days (12,600 attempted, 120 rejected by the data checks). Each surface targets 20 quotes; a typical one has 17."
+   "Real price lists",
+   "12,480",
+   "210 NSE shares × 60 trading days. 12,600 tried; 120 failed our data checks. Each aims for 20 prices; a typical one has 17."
   ],
   [
-   "Ambiguity study",
-   "2,400 surfaces",
-   "The 40 most traded of those stocks over the same 60 days, each surface fitted from 16 starting points."
+   "Equally-good-answers study",
+   "2,400",
+   "The 40 most traded of those shares over the same 60 days, each searched from 16 starting points."
   ],
   [
-   "Simulated surfaces",
-   "60 surfaces",
-   "Made by our own pricer from known settings, so the right answer is known."
+   "Made-up price lists",
+   "60",
+   "Made by our own calculator from settings we chose, so the right answer is known."
   ],
   [
    "ANN test set",
-   "1,500 surfaces",
-   "Simulated surfaces the ANN never saw while learning."
+   "1,500",
+   "Made-up price lists the ANN never saw while learning."
   ],
   [
-   "Held-out dates",
-   "8 dates",
-   "Later trading dates the ANN never saw, used to test it on real quotes."
+   "Unseen days",
+   "8 days",
+   "Later trading days the ANN never saw, used to test it on real prices."
   ],
   [
-   "Backtest",
-   "12,265 stock-days",
-   "Every stock and pair of consecutive trading days: settings from one day used to price the next."
+   "Next-day test",
+   "12,265 share-days",
+   "Every share and every pair of back-to-back trading days: one day's settings used to price the next."
   ],
   [
    "PINN training",
    "100,000 + 18,000",
-   "Exact Double Heston prices to learn from, plus points where the pricing equation itself is enforced."
+   "Exact Double Heston prices to learn from, plus points where the pricing equation itself must hold."
   ],
   [
-   "NIFTY, high volatility",
-   "10 days, 1,750 quotes",
-   "The 10 NIFTY dates of 2026 with the highest recent realised volatility, chosen by a rule fixed before any fit."
+   "NIFTY, high jumpiness",
+   "10 days, 1,750 prices",
+   "The 10 NIFTY days of 2026 with the highest recent jumpiness, picked by a rule fixed before any testing."
   ]
  ],
  "DH_BEAT_ALL": 1.0,
@@ -345,13 +364,52 @@
   ]
  ],
  "DONE_HEAD": "What we did",
+ "EINSTEIN": "A speck kicked at random doesn't travel in a straight line. Einstein showed that, on average, the square of the distance it wanders grows in step with time. So the typical distance grows with the square root of time: wait four times as long and it goes only twice as far.",
+ "EINSTEIN_HEAD": "What Einstein worked out",
+ "EINSTEIN_NEXT": "Five years before Einstein, Louis Bachelier in Paris had already used the same random walk for share prices. In 1923 Norbert Wiener wrote one random kick as exact maths, called dW. Every equation below is built from that dW.",
+ "EINSTEIN_SYMS": [
+  [
+   "⟨x²⟩",
+   "Average of the distance squared"
+  ],
+  [
+   "D",
+   "How easily it spreads: set by the water's temperature, its stickiness and the speck's size"
+  ],
+  [
+   "t",
+   "Time"
+  ]
+ ],
  "EQ_CALL": "C = e^(−rT) [ F·P₁ − K·P₂ ],   Pⱼ = ½ + (1/π) ∫₀^∞ Re[ e^(−iu·ln(K/F)) φⱼ(u) / (iu) ] du",
  "EQ_CF": "φ(u) = φ₁(u) · φ₂(u)",
+ "EQ_EINSTEIN": "⟨x²⟩ = 2Dt",
  "EQ_FELLER": "2κᵢθᵢ > ξᵢ²",
  "EQ_PRICE": "dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂",
  "EQ_VAR": "dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2",
+ "EVIDENCE_HEAD": "The proof",
  "EXPIRY": "27 Oct 2026",
  "EXPLAIN": {
+  "einstein": [
+   "A crowd leaving a cricket stadium. Each person turns left or right at random. After one minute the crowd has spread a little; after four minutes, only twice as far, not four times.",
+   "Random steps partly cancel out, so spreading grows with the square root of time."
+  ],
+  "m-gbm": [
+   "A speck in water whose kicks grow with its size: a ₹2,000 share gets bigger rupee kicks than a ₹20 one, but the same kicks in percent.",
+   "That is why the price can never fall below zero."
+  ],
+  "m-bs": [
+   "Two friends bet in opposite directions on the same match. Whatever happens, together they neither win nor lose.",
+   "Mix the option and the share the right way and the risk cancels, so the mix must earn what a bank pays."
+  ],
+  "m-heston": [
+   "The weather has moods. A calm week can turn stormy, and storms die down again.",
+   "In Heston the jumpiness changes too, and is always pulled back toward normal, like a ball on a spring."
+  ],
+  "m-dh": [
+   "A cup of chai and a big kettle, both just boiled. The cup cools in minutes; the kettle stays warm for hours.",
+   "The fast part forgets a shock in weeks (half gone in 51 days); the slow part takes 1.4 years."
+  ],
   "f-price": [
    "Think of a boat on a river. The current carries it steadily downstream: that's the drift, r − q. Two kinds of waves rock it at once, short choppy ones and long swells. How rough each kind is right now is v₁ and v₂.",
    "So the price wanders at random, and how wildly depends on two separate, changing levels of jumpiness."
@@ -401,8 +459,8 @@
    "Real option prices bend, so the curve fits and the ruler can't."
   ],
   "decay": [
-   "Two cups of coffee cooling: a small cup is cold in minutes, a big pot stays warm for hours. Same law, different speeds.",
-   "Half of a shock to the fast factor is gone in 51 days; in the slow factor it takes 1.4 years."
+   "A cup of chai and a big kettle, both just boiled. The cup is cold in minutes; the kettle stays warm for hours. Same rule, different speeds.",
+   "Half of a shock to the fast part is gone in 51 days; in the slow part it takes 1.4 years."
   ],
   "factors": [
    "Two dogs walked side by side, one on a short leash and one on a long one. The first darts about but stays close; the second wanders slowly and far.",
@@ -413,8 +471,8 @@
    "So the extra cost of protection against a fall shrinks as expiry gets further away."
   ],
   "fan": [
-   "Like a weather forecast cone: tomorrow is fairly certain, next month much less.",
-   "The shaded bands show how far simulated prices spread over a year. Averaging what an option pays across paths like these gives the Monte Carlo price."
+   "Like a cyclone forecast cone: tomorrow's path is fairly certain, next month's much less.",
+   "The shaded bands show how far simulated prices spread over a year. Averaging what an option pays across paths like these gives the simulation price."
   ],
   "surface": [
    "A relief map. Across is the strike, down is time to expiry, and colour is the height: implied volatility.",
@@ -425,49 +483,49 @@
    "The optimizer reproduced the prices almost exactly, but the settings it found scored 1.80, where 1.00 is always guessing the typical value."
   ],
   "proof2": [
-   "Different magnets can raise the same ferrofluid surface.",
-   "On 99% of real surfaces, more than one set of settings priced the options equally well, and those sets were 3.9 times as far apart as two random guesses."
+   "Iron filings over hidden magnets: different arrangements can make the very same pattern.",
+   "On 99% of real price lists, more than one set of settings matched equally well, and those sets were 3.9 times as far apart as two random picks."
   ],
   "hist": [
    "Many witnesses describe the same car. If they agreed, every bar would sit near zero.",
    "Bars far to the right are surfaces whose equally good fits disagreed a lot."
   ],
   "params": [
-   "Some things every thermometer agrees on, like the room's temperature. Others you can't read off the room at all, like how fast it would cool if the heating went off.",
-   "Today's level (v₀) is pinned down by prices; the speeds back to normal (κ) are not."
+   "Every thermometer agrees on how warm the room is now. None of them can tell you how fast it would cool if the heater went off.",
+   "Today's jumpiness (v₀) is pinned down by prices; the speeds back to normal (κ) are not."
   ],
   "magnets": [
    "Two people can draw the same smile with different pens.",
    "Bharti Airtel's 39-day options were fitted equally well by two very different sets of ten settings."
   ],
   "part": [
-   "Two maps that match street for street in the town centre but disagree about the countryside nobody visits.",
-   "Where options trade, the two fits agree. Beyond them, where no price can check them, they part."
+   "Two maps that match street for street in the city centre but disagree about the villages nobody visits.",
+   "Where options trade, the two answers agree. Beyond them, where no price can check them, they part."
   ],
   "six": [
    "Six different recipes that bake the same cake.",
    "Where the spikes bunch, the prices pin that setting down; where they scatter, they don't."
   ],
   "stock": [
-   "A scale that weighs you correctly every morning but reports a different height each day.",
-   "The price error stays small day after day while the distance between equally good fits stays large."
+   "A weighing scale that shows your weight correctly every morning but reports a different height each day.",
+   "The price error stays small day after day while the gap between equally good answers stays large."
   ],
   "heldout": [
-   "A student who did well on the practice papers but slipped in the real exam.",
-   "On 8 later dates the ANN's prices were off by 17.4%, against 4.3% for the best possible fit."
+   "A student who did well on the practice papers but slipped in the board exam.",
+   "On 8 later days the ANN's prices were off by 17.4%, against 4.3% for the best possible match."
   ],
   "backtest": [
-   "A new gadget that beats the old ruler about one day in twenty.",
-   "With the ANN's settings, Double Heston priced better than a same-day Black–Scholes fit on 4.8% of stock-days."
+   "A new gadget that beats a ruler freshly redrawn every morning about one day in twenty.",
+   "With the ANN's settings, Double Heston priced better than a same-day Black–Scholes on 4.8% of share-days."
   ],
   "pinn": [
    "A student who also has to obey the textbook, not just copy past answers.",
    "On real NIFTY options the physics-informed calibrator was off by 2.48 volatility points, against 2.98 for Black–Scholes, and was the best model on 4 of 10 days."
   ]
  },
- "FACTORS": "Each factor gets knocked about and drifts back to its long-run level. The fast one (κ 5.0) loses half of any shock in 51 days; the slow one (κ 0.5) takes 1.4 years. Same kind of process, different clocks.",
- "FACTORS_HEAD": "Two volatilities, one fast and one slow.",
- "FAN_NOTE": "Sixty of 400 simulated one-year paths, all starting at 100, with the middle 50% and 90% of the 400 shaded. The same simulator checks the pricer: 20,000 paths price the NIFTY 23,150 call at ₹597.10 ± 3.56, against ₹600.40 from the formula.",
+ "FACTORS": "Each part gets knocked about and drifts back to its normal level. The fast one (κ 5.0) loses half of any shock in 51 days. The slow one (κ 0.5) takes 1.4 years.",
+ "FACTORS_HEAD": "Two clocks: one fast, one slow",
+ "FAN_NOTE": "60 of 400 simulated one-year paths, all starting at 100. The shading covers the middle 50% and the middle 90% of the 400. The same simulator checks our calculator: 20,000 paths price the NIFTY 23,150 call at ₹597.10 ± 3.56, against ₹600.40 from the formula.",
  "FAST": [
   "Fast factor",
   "κ 5.0",
@@ -487,21 +545,22 @@
   "LT"
  ],
  "FELLER": {
-  "slow": "Feller condition fails: 2κθ = 0.02 is below ξ² = 0.09",
-  "fast": "Feller condition fails: 2κθ = 0.20 is below ξ² = 0.25"
+  "slow": "Can touch zero: 2κθ = 0.02 is below ξ² = 0.09",
+  "fast": "Can touch zero: 2κθ = 0.20 is below ξ² = 0.25"
  },
- "FELLER_NOTE": "Both factors can touch zero at these settings. The simulator uses full truncation, so prices stay valid.",
+ "FELLER_NOTE": "At these settings, either part's jumpiness can touch zero. That's allowed: the simulator simply stops it at zero, so prices stay valid.",
  "FINDING_LINE": "On 99% of 2,400 real NSE option surfaces, several different settings priced the options equally well.",
  "FINDING_SUB": "They sat 3.9 times further apart than two settings picked at random from the model's training data. The market pins down today's volatility; it can't tell how fast volatility returns to normal.",
  "FIND_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
  "FIRST_DAY": "1 Jul 2026",
  "FLAT_BETTER": 0.22732612776006444,
+ "FOOTER": "Not trading advice. Charts use NSE closing prices up to 25 Sep 2026; prices beside each name are live from Upstox while the market is open.",
  "FORMULAS": [
   [
    "price",
-   "The price moves with two variances",
+   "The price is pushed around by two kinds of jumpiness",
    "dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂",
-   "Over a tiny moment of time, the share price drifts at the interest rate minus the dividend yield, and gets two random kicks. How big each kick is depends on one of the two variances.",
+   "In each tiny moment, the share price drifts up a little (interest rate minus dividend) and gets two random kicks. How big each kick is depends on one of the two jumpiness levels.",
    [
     [
      "S",
@@ -513,15 +572,15 @@
     ],
     [
      "q",
-     "Dividend yield"
+     "Dividend"
     ],
     [
      "v₁, v₂",
-     "The two variances, slow and fast"
+     "The slow and fast jumpiness"
     ],
     [
      "dW₁, dW₂",
-     "Two independent random shocks"
+     "Two separate random kicks"
     ],
     [
      "dt",
@@ -531,17 +590,17 @@
   ],
   [
    "variance",
-   "Each variance drifts back to normal",
+   "Each kind of jumpiness drifts back to normal",
    "dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2",
-   "Each variance is pulled back toward its long-run level θ at speed κ, and shaken by random shocks of size ξ. Its shocks move with the price's shocks at correlation ρ. A negative ρ means falls come with rising volatility, which is what tilts the smile.",
+   "Each jumpiness is pulled back toward its normal level (theta, θ) at a speed (kappa, κ), while being shaken at random by an amount (xi, ξ). Its shakes are linked to the price's kicks by rho (ρ). When rho is negative, falls come with rising jumpiness. That is what tilts the smile.",
    [
     [
      "vᵢ",
-     "Today's variance of factor i"
+     "Today's jumpiness of part i"
     ],
     [
      "θᵢ",
-     "The long-run level it returns to"
+     "Its normal level"
     ],
     [
      "κᵢ",
@@ -553,31 +612,31 @@
     ],
     [
      "dZᵢ",
-     "Its own random shock"
+     "Its own random kick"
     ],
     [
      "ρᵢ",
-     "The link between price and variance shocks"
+     "The link between price and jumpiness"
     ],
     [
      "i",
-     "1 for the slow factor, 2 for the fast one"
+     "1 for the slow part, 2 for the fast one"
     ]
    ]
   ],
   [
    "cf",
-   "Independent factors multiply",
+   "Two separate parts multiply",
    "φ(u) = φ₁(u) · φ₂(u)",
-   "The characteristic function φ is a compact fingerprint of where the price could end up. Because the two factors are independent, the model's fingerprint is just the product of each factor's own, so pricing stays fast.",
+   "Phi (φ) is a short \"fingerprint\" of everywhere the price could end up. The two parts don't depend on each other, so the model's fingerprint is just the two fingerprints multiplied. That keeps pricing fast.",
    [
     [
      "φ(u)",
-     "The model's fingerprint, read at frequency u"
+     "The model's fingerprint"
     ],
     [
      "φ₁, φ₂",
-     "The slow and fast factors' own fingerprints"
+     "Each part's own fingerprint"
     ]
    ]
   ],
@@ -585,7 +644,7 @@
    "call",
    "One integral gives the price",
    "C = e^(−rT) [ F·P₁ − K·P₂ ],   Pⱼ = ½ + (1/π) ∫₀^∞ Re[ e^(−iu·ln(K/F)) φⱼ(u) / (iu) ] du",
-   "A call is worth what you expect to receive above the strike, minus what you expect to pay, brought back to today's money. P₂ is the chance, under the pricing measure, that the option ends in the money; P₁ is the same chance counted in shares. Both come out of the fingerprint through one integral (Gil-Pelaez). The code uses the “little trap” form (Albrecher et al., 2007), which avoids a branch-cut error in the 1993 formula at long expiries.",
+   "A call is worth what you expect to receive above the strike, minus what you expect to pay, converted back into today's rupees. P₂ is the chance the option ends up worth using; P₁ is the same chance counted in shares. Both come out of the fingerprint through one integral. Our code uses a safer version of the 1993 formula that doesn't break for long-dated options.",
    [
     [
      "C",
@@ -593,7 +652,7 @@
     ],
     [
      "F",
-     "Forward price of the share"
+     "Expected future share price"
     ],
     [
      "K",
@@ -605,11 +664,11 @@
     ],
     [
      "e^(−rT)",
-     "Discount back to today"
+     "Converts to today's rupees"
     ],
     [
      "P₁, P₂",
-     "The two probabilities"
+     "The two chances"
     ],
     [
      "Re",
@@ -619,17 +678,17 @@
   ],
   [
    "mc",
-   "Check by simulation",
+   "Check it by simulation",
    "C ≈ e^(−rT) · (1/N) Σₙ max(S_T⁽ⁿ⁾ − K, 0)",
-   "Monte Carlo prices the same option the slow way: simulate 20,000 possible paths of the price and both variances, average what the call pays at expiry, and discount. The paths use full-truncation Euler steps and antithetic pairs. For the NIFTY 23,150 call it gives ₹597.10 ± 3.56, against ₹600.40 from the formula: inside the simulation's own margin of error.",
+   "The slow way to the same answer: play out 20,000 possible futures for the price and both jumpiness levels, average what the call pays at the end, and convert to today's rupees. For the NIFTY 23,150 call this gives ₹597.10 ± 3.56, against ₹600.40 from the formula: inside the simulation's own margin of error.",
    [
     [
      "N",
-     "Number of simulated paths, 20,000"
+     "Number of futures played out, 20,000"
     ],
     [
      "S_T⁽ⁿ⁾",
-     "The share price at expiry on path n"
+     "The share price at expiry in future n"
     ],
     [
      "max(S − K, 0)",
@@ -639,19 +698,19 @@
   ],
   [
    "feller",
-   "When a factor can't touch zero",
+   "When jumpiness can't touch zero",
    "2κᵢθᵢ > ξᵢ²",
-   "If 2κθ is bigger than ξ², that factor's variance never reaches zero. Real markets often break this. When a simulated variance would go below zero, the simulator holds it at zero for that step (full truncation), so prices stay valid.",
+   "If 2κθ is bigger than ξ², that part's jumpiness never reaches zero. Real markets often break this rule. When a simulated jumpiness would go below zero, our simulator holds it at zero for that step, so prices stay valid.",
    [
     [
      "κᵢ, θᵢ, ξᵢ",
-     "The speed, long-run level and shake of factor i"
+     "The speed, normal level and shake of part i"
     ]
    ]
   ]
  ],
  "FORMULAS_HEAD": "The model, one formula at a time",
- "FORMULAS_LEDE": "Each card gives the formula, what its symbols mean and what it does. Open “Explain simply” for an everyday picture of it.",
+ "FORMULAS_LEDE": "Each card shows the formula, what its letters mean, and what it does. Hover over the triangle for an everyday picture.",
  "GAP": 230.25,
  "GREEKS": [
   [
@@ -680,15 +739,26 @@
    "₹ per rate point"
   ]
  ],
- "HELDOUT": "On 8 later dates it never saw, our ANN repriced options with a median error of 17.4%, against 4.3% for the best possible fit: a gap of 10.8 points.",
+ "GREEKS_NOTE": "Each number shows how the model's price changes when one thing moves, at your settings.",
+ "GREEK_UNITS": {
+  "Delta": "₹ the option moves per ₹1 move in NIFTY",
+  "Gamma": "how much that changes per ₹1",
+  "Vega": "₹ per 1 point more expected jumpiness",
+  "Theta": "₹ lost each day as expiry nears",
+  "Rho": "₹ per 1 point higher interest rate"
+ },
+ "HELDOUT": "On 8 later trading days it had never seen, the ANN's prices were off by 17.4% on a typical option. The best possible match was off by 4.3%: a gap of 10.8 points.",
+ "HERO_BY": "Where it starts: Albert Einstein, 1905",
  "HERO_KEYS": [
   "from",
   "to"
  ],
+ "HERO_LEAD": "In 1827 the botanist Robert Brown saw tiny specks from pollen jiggling in still water, and nobody could say why. In 1905 Albert Einstein explained it: water molecules, far too small to see, hit each speck from every side at random. That random jiggle, called Brownian motion, is where every model on this page starts.",
  "HERO_TITLE": [
-  "From a speck of pollen",
-  "to Wall Street"
+  "“From a speck of pollen",
+  "to Wall Street”"
  ],
+ "HIST_HEAD": "How far apart the equally good answers were",
  "JOURNEY": [
   [
    "1827",
@@ -764,28 +834,28 @@
  "KEY_NUMS": [
   [
    "100%",
-   "of 2,400 real surfaces: Double Heston beat one flat volatility (23% less error, median)"
+   "of 2,400 real price lists: Double Heston beat one fixed jumpiness on every one, with 23% less error on a typical one"
   ],
   [
    "2.48 vs 2.98",
-   "PINN against Black–Scholes on real NIFTY options, volatility points"
+   "our PINN against Black–Scholes on real NIFTY options, in volatility points"
   ],
   [
    "99%",
-   "of those surfaces had several equally good fits — a finding, not a flaw: it's why every result here was checked this hard"
+   "of those price lists had several equally good answers: a finding, not a flaw"
   ],
   [
    "3.9×",
-   "further apart than two random sets of settings, when that happens"
+   "how far apart those answers were, compared with two settings picked at random"
   ]
  ],
  "LAST_DAY": "25 Sep 2026",
  "LIMITS": [
-  "No jumps: the largest one-day moves are still underestimated.",
-  "Dividends are supported but set to zero; one interest rate for every maturity.",
-  "Prices are frictionless. Real trading crosses a bid–ask spread.",
-  "End-of-day research data has closing prices only, no bid–ask quotes.",
-  "A typical surface has 17 of the 20 target option slots quoted (between 10 and 20 on 80% of surfaces)."
+  "It has no sudden jumps, so it still underestimates the biggest one-day moves.",
+  "Dividends are possible but set to zero, and one interest rate is used for every expiry.",
+  "It ignores trading costs. Real trades pay the gap between the buying and selling price.",
+  "End-of-day data has closing prices only, not live buying and selling quotes.",
+  "A typical price list has 17 of the 20 prices we aim for (between 10 and 20 on 80% of price lists)."
  ],
  "LINEAGE": [
   [
@@ -804,14 +874,21 @@
    "two moving factors, 10 settings"
   ]
  ],
- "LIVE_CLOSED": "Market closed — last traded price shown",
- "LIVE_FALLBACK": "Live prices unavailable right now — the numbers above are NSE's last close.",
+ "LIVE_CLOSED": "The market is closed. Showing the last traded price.",
+ "LIVE_FALLBACK": "Live prices aren't available right now. These are NSE's last closing prices.",
  "LIVE_LOADING": "Checking for live prices…",
  "LIVE_OPEN": "Live, updated {time} IST",
  "MARKET_BUTTON": "Market prices",
- "MARKET_SUB": "Daily history is NSE's official closes, 1 Jul 2026 to 25 Sep 2026, 62 trading days. The price and change beside each name are live, from Upstox, while the market's open.",
+ "MARKET_SUB": "The daily charts use NSE's official closing prices from 1 Jul 2026 to 25 Sep 2026, which is 62 trading days. The price and change next to each name are live from Upstox while the market is open.",
  "MARKET_TITLE": "Market",
- "MATHS_INTRO": "An option's price depends on how jumpy the stock will be before it expires. Black–Scholes assumes one fixed jumpiness. Double Heston (Christoffersen, Heston and Jacobs, 2009) lets it move, and splits it into two parts that move on their own: a fast one for sudden scares and a slow one for long moods. Below is the whole model, one formula at a time.",
+ "MATHS_HEADS": {
+  "factors": "The two parts, moving",
+  "skew": "Why the lopsidedness fades with time",
+  "fan": "Many possible futures",
+  "surface": "The whole picture at once",
+  "settings-list": "Five settings for each part"
+ },
+ "MATHS_INTRO": "An option's price depends on how jumpy the share will be before the option expires. Black–Scholes assumes the jumpiness never changes. Double Heston (2009) lets it change, and splits it into two parts that move on their own: a fast part for sudden scares and a slow part for long moods. Below is the whole model, one formula at a time, each with an everyday picture.",
  "MATHS_STEPS": [
   [
    "Two variances, not one",
@@ -836,12 +913,61 @@
  ],
  "MC_LINE": "Monte Carlo check, 20,000 paths: ₹597.10 ± 3.56",
  "METHOD": [
-  "Prices come from the characteristic-function formula and are checked against Monte Carlo simulation.",
-  "Research data: official NSE end-of-day files. Every dataset, its size and what it was used for is listed on the Results page.",
-  "Every real-market result was re-run after three pipeline bugs were found and fixed, and checked against a flat volatility, which a true best fit can never lose to."
+  "Prices come from the Double Heston formula and are double-checked by simulating thousands of possible futures.",
+  "The research data is NSE's official end-of-day files. The Results page lists every dataset, its size and what it was used for.",
+  "We found and fixed three bugs in our data pipeline, then re-ran every real-market result. We checked each one against one fixed jumpiness, which a true best match should never lose to."
  ],
- "MODEL_EXPLAIN": "The starting settings assume 20% volatility. On 25 Sep 2026 the market was pricing about 11.4%, so the model charges more. Lower today's level (v₀) and the gap closes. There's no fit button: the Results page explains why a computer can't pick all ten settings for you.",
- "MODEL_SOURCE": "Option prices: NSE closing prices, 25 Sep 2026. Forward from NIFTY October futures (23,263.60). Rate: RBI 91-day T-bill, 15 Jul observation carried forward, as in the research.",
+ "MODELS": [
+  [
+   "gbm",
+   "1965",
+   "Paul Samuelson, after Louis Bachelier (1900)",
+   "Geometric Brownian motion",
+   "2 settings: μ and σ",
+   "dS = μ S dt + σ S dW",
+   "In each tiny moment, the price grows by a steady percentage (μ) plus a random kick (σ dW). The kick is Einstein's Brownian kick, but measured in percent of the price, not in rupees.",
+   "Bachelier's kicks were in rupees, so his prices could fall below zero. Kicks in percent never take a price below zero.",
+   "It describes the share. It doesn't yet say what an option on the share is worth."
+  ],
+  [
+   "bs",
+   "1973",
+   "Fischer Black, Myron Scholes and Robert Merton",
+   "Black–Scholes",
+   "1 setting: σ",
+   "∂V/∂t + ½σ²S² ∂²V/∂S² + rS ∂V/∂S − rV = 0",
+   "Take the same share. Mix the option with just the right amount of share and the random kicks cancel out. A mix with no risk must earn the same as a bank deposit, at rate r. That one idea gives this equation for the option's price V, and μ drops out. Change the variables and it turns into the heat equation, the same equation that describes Einstein's spreading specks.",
+   "A fair price for an option, from one formula.",
+   "It keeps the jumpiness σ fixed for ever, so every strike gets the same volatility: a flat line. After the 1987 crash, real prices bent instead. Insurance against a fall started costing more."
+  ],
+  [
+   "heston",
+   "1993",
+   "Steven Heston",
+   "Heston",
+   "5 settings: v₀, θ, κ, ξ, ρ",
+   "dS = r S dt + √v S dW,   dv = κ (θ − v) dt + ξ √v dZ,   corr(dW, dZ) = ρ",
+   "Now the jumpiness itself (v, the variance) takes random kicks of its own, dZ. A spring pulls it back toward its normal level θ at speed κ, and ξ sets how hard it is shaken. ρ links the two kicks: when it is negative, falls in price come with rising jumpiness.",
+   "The bend. Insurance against a fall now costs more, as it does in real markets.",
+   "It has one clock. A scare that fades in weeks and a mood that lasts a year can't share one speed, so options expiring next week and next year don't fit together."
+  ],
+  [
+   "dh",
+   "2009",
+   "Peter Christoffersen, Steven Heston and Kris Jacobs",
+   "Double Heston",
+   "10 settings: five for each part",
+   "dS = (r − q) S dt + √v₁ S dW₁ + √v₂ S dW₂,   dvᵢ = κᵢ (θᵢ − vᵢ) dt + ξᵢ √vᵢ dZᵢ,   corr(dWᵢ, dZᵢ) = ρᵢ,   i = 1, 2",
+   "Two jumpiness levels, each on its own spring: a fast one, which loses half of any shock in 51 days, and a slow one, which takes 1.4 years. Four random kicks drive it: two on the price and one on each jumpiness.",
+   "Short and long expiries together. On all 2,400 real NSE price lists we tested, it beat one fixed volatility, with 23% less error on a typical one.",
+   "On 99% of those price lists, several different sets of ten settings fitted equally well, so the prices alone can't tell you which is right. That is why we built a PINN to read them."
+  ]
+ ],
+ "MODELS_HEAD": "Four models, one step at a time",
+ "MODELS_LEDE": "Each model keeps everything from the one before and lets one more thing move at random. Hover over the triangle on any card for an everyday picture.",
+ "MODEL_EXPLAIN": "The model starts out assuming the price jumps about 20% a year. On 25 Sep 2026 the market was expecting only about 11.4%, so the model asks for more. Lower today's jumpiness (v₀) and the gap shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose all ten settings for you.",
+ "MODEL_LEAD": "Pick a real NIFTY option. Price it with Double Heston, and compare it with what the market actually paid. Move any of the ten settings and the price updates straight away.",
+ "MODEL_SOURCE": "Option prices are NSE closing prices on 25 Sep 2026. The expected future NIFTY level is taken from the NIFTY October futures price, 23,263.60. The interest rate is the RBI 91-day Treasury bill rate, the same one the research used.",
  "NAMES": {
   "NIFTY 50": "Index",
   "NIFTY BANK": "Index",
@@ -879,14 +1005,14 @@
   "rho_f": 0.0,
   "v0_f": 0.00125
  },
- "NN_HEAD": "Two kinds of network: an ANN and a PINN",
+ "NN_HEAD": "Two kinds of neural network: an ANN and a PINN",
  "N_DAYS": 62,
  "PAGES": [
   [
    "home",
    "index.html",
    "Home",
-   "the question and the answer"
+   "the physics behind it"
   ],
   [
    "market",
@@ -936,16 +1062,16 @@
   0.6658999992932944
  ],
  "PAIR_GAP_1Y": 11.700350038715413,
- "PAIR_HEAD": "Same surface, different magnets.",
- "PAIR_LEDE": "Here is Bharti Airtel's option surface at the close on 21 Aug 2026, fitted twice. Both fits miss the market by ₹0.67 an option on average. One says a volatility shock takes 1.1 years to fade by half; the other says 9 days to 37 days.",
- "PAIR_MAGNETS": "Ferrofluid takes its shape from magnets you can't see, and different magnets can raise the same surface. Option prices are the surface; the model's ten settings are the magnets.",
+ "PAIR_HEAD": "One example: Bharti Airtel",
+ "PAIR_LEDE": "Here is Bharti Airtel's price list at the close on 21 Aug 2026, matched twice. Both matches miss the market by ₹0.67 an option on average. But one says a jumpiness shock takes 1.1 years to fade by half. The other says just 9 days to 37 days.",
+ "PAIR_MAGNETS": "Iron filings over hidden magnets: different arrangements of magnets can make the very same pattern. The prices are the pattern; the ten settings are the hidden magnets.",
  "PAIR_MAGNETS_HEAD": "Underneath, the ten settings look nothing alike.",
- "PAIR_NOTE": "Spike height is each setting's size on its own scale. * pressed against the fit's upper search limit for that setting.",
- "PAIR_PART": "That day Bharti Airtel had options expiring in 4 and 39 days, and both fits price them alike. Ask them about a one-year option, which isn't traded, and fit A says 33.6% volatility while fit B says 21.9%. The prices give no reason to prefer either.",
- "PAIR_PART_HEAD": "Where the market trades, they agree. A year out, they're 11.7 points apart.",
- "PAIR_SIX": "Bharti Airtel, 21 Aug 2026: 16 starts, 6 fits within 10% of the best price error. Each spike is one fit. Where they bunch, the prices pin the setting down; where they scatter, they don't.",
+ "PAIR_NOTE": "Each spike's height is that setting's size on its own scale. A star (*) means the setting was pushed against the upper limit the search was allowed.",
+ "PAIR_PART": "That day, Bharti Airtel had options expiring in 4 days and 39 days. Both answers price those alike. Now ask them about a one-year option, which isn't traded. Answer A says 33.6% jumpiness; answer B says 21.9%. The prices give no reason to prefer either.",
+ "PAIR_PART_HEAD": "Where people trade, they agree. A year out, they're 11.7 points apart.",
+ "PAIR_SIX": "Bharti Airtel, 21 Aug 2026: 16 starts gave 6 answers within 10% of the best price error. Each spike is one answer. Where the spikes bunch together, the prices pin that setting down. Where they scatter, they don't.",
  "PAIR_SPOT": 1946.0,
- "PAIR_TYPICAL": "This surface had 6 equally good fits out of 16 starts, and their spread, 4.64, is the median of all 2,400 surfaces. It's the typical case, not the worst.",
+ "PAIR_TYPICAL": "This price list had 6 equally good answers out of 16 starts. Their spread, 4.64, is exactly the typical spread across all 2,400 price lists. So this is the normal case, not the worst one.",
  "PA_HEAD": "What the physics buys: a PINN against an ANN",
  "PA_LEDE": "Two identical networks saw the same 48 exact Double Heston prices. The ANN learned from those prices alone. The PINN also had to obey the model's pricing equation at 4,096 points and the option's payoff at expiry. Below, both price surfaces at today's volatility, drawn in 3D against the exact pricer.",
  "PA_NOTE": "A demonstration run for this site (website/tools/pinn_vs_ann.py, about 3 minutes on a laptop): same architecture, same seed, same data, same training steps for both networks. The research PINNs are larger and trained far longer.",
@@ -988,8 +1114,8 @@
   "pinn_pde_residual_rms": 0.0022265521434856033
  },
  "PA_WHY": "Why a PINN at all: reading a stock's ten settings off its option prices normally means a classical optimizer searching from several starting points, which takes seconds to minutes per surface and, as the Results page shows, can still land on settings that break the model's own rules. A physics-informed network is built differently — trained to obey Double Heston's pricing equation itself, not just copy examples, with its output wired so it cannot propose a setting that violates the model's constraints. Trained once, it then reads a full day's settings in a fraction of a second, not minutes.",
- "PER_PARAM": "Split by setting, the pattern is physical. Today's level (v₀) is pinned down: equally good fits agree on it more closely than random sets would. The speeds back to normal (κ) are not pinned down at all; the best fit's speed sat at the edge of the allowed range on 45% (slow) and 73% (fast) of surfaces.",
- "PINN_MARKET": "On real NIFTY options (10 high-volatility days in April 2026, 1,750 held-out quotes) our physics-informed calibrator priced with a median error of 2.48 volatility points, against 2.98 for Black–Scholes and 2.52 for a classical Double Heston fit, in 1.2 s instead of 25 s. It was the best model on 4 of the 10 days.",
+ "PER_PARAM": "Split by setting, the pattern makes sense. Today's jumpiness (v₀) is pinned down: equally good answers agree on it more closely than random picks would. The speed back to normal (κ) is not pinned down at all. The best answer's speed got stuck at the edge of the allowed range on 45% of price lists for the slow part and 73% for the fast part.",
+ "PINN_MARKET": "We tested it on 10 high-jumpiness days in April 2026: 1,750 NIFTY option prices it had never seen. Our PINN was typically off by 2.48 volatility points. Black–Scholes was off by 2.98, and a classical Double Heston search by 2.52. The PINN took 1.2 seconds instead of 25, and was the best model on 4 of the 10 days.",
  "PINN_NIFTY": {
   "ft_3": 2.4780800297104637,
   "dh_cold": 2.5231205851178746,
@@ -1001,38 +1127,48 @@
   1.1622567290032748,
   25.257970979000675
  ],
- "PINN_TEXT": "Our PINNs (physics-informed neural networks) are also trained on the model's own pricing equation, so their answers must obey the physics, not just match examples. The Double Heston PINN learned from exact prices plus the pricing equation at 18,000 points, and reproduces the exact pricer to 1.1 × 10⁻⁵ (about 0.1 volatility points) on 8,192 points it never saw. On 40 controlled test surfaces it beat a refitted one-factor Heston, which beat Black–Scholes, every time.",
- "PROOF1": "We generated 60 option surfaces from known settings and asked a classical optimizer to find them again, from 4 starting points each. It matched the prices almost exactly: a median price error of 9.16 × 10⁻⁸. The settings it found scored 1.80 on recovery, where 1.00 is what you'd get by always guessing the typical value, and lower is better.",
- "PROOF1_HEAD": "Simulated surfaces, where the right answer is known",
- "PROOF1_NET": "Our neural network (a standard ANN, which learns only from examples) reads the settings from prices and scores 0.80 on the RMSE-based version of the same score, where the optimizer scores 3.00. It does better by leaning toward typical values; the one setting it reads well is today's level (v₀, 0.47).",
+ "PINN_TEXT": "Our PINNs (physics-informed neural networks) are also trained on the model's own pricing equation, so their answers must obey the physics, not just copy examples. The Double Heston PINN learned from exact prices plus the equation at 18,000 points. It matches our exact calculator to 1.1 × 10⁻⁵, about 0.1 volatility points, on 8,192 points it had never seen. On 40 test price lists it beat the simpler one-part Heston every time, and Heston in turn beat Black–Scholes.",
+ "PRICE_HEADS": {
+  "price": "Our model says",
+  "market": "The market paid",
+  "gap": "Difference",
+  "greeks": "How the price reacts",
+  "sliders": "The slow part",
+  "sliders-fast": "The fast part",
+  "smile": "The smile for this expiry",
+  "chain": "Every strike for 27 Oct 2026"
+ },
+ "PROOF1": "We made 60 price lists ourselves, from settings we chose, so we knew the right answer. Then we asked a standard search program to find those settings again, starting from 4 places each time. It matched the prices almost perfectly: a typical error of 9.16 × 10⁻⁸. But the settings it found scored 1.80. On this score 1.00 means \"no better than always guessing the average\", and lower is better.",
+ "PROOF1_HEAD": "Test 1: questions where we already knew the answer",
+ "PROOF1_NET": "Our ANN reads the settings straight from prices. It scores 0.80 on a related version of the same score, where the search program scores 3.00. It does better by playing safe and staying close to typical values. The one setting it reads well is today's jumpiness (v₀, 0.47).",
  "PROOF1_NUMS": [
   [
    "9.16 × 10⁻⁸",
-   "median price error"
+   "typical price error"
   ],
   [
    "1.80",
-   "recovery skill (1.00 = guessing)"
+   "how well it found the settings (1.00 = just guessing)"
   ],
   [
    "1.85",
-   "on the 49 closest price fits"
+   "the same, on the 49 closest price matches"
   ]
  ],
- "PROOF2": "On 2,400 real surfaces (40 of NSE's most traded stocks over 60 days) we started the fit from 16 places each time. On 99% of them, more than one set of settings priced the options equally well, within 10% of the best fit's price error. Those equally good fits sat a median 4.64 apart, against 1.18 for two settings picked at random from the training data: 3.9 times as far.",
- "PROOF2_HEAD": "Real NSE surfaces, where no answer is assumed",
+ "PROOF2": "We took 2,400 real price lists: NSE's 40 most traded shares over 60 days. For each one, we started the search from 16 different places. On 99% of them, more than one set of settings matched the prices equally well (within 10% of the best match). Those equally good answers were typically 4.64 apart, against 1.18 for two settings picked at random: 3.9 times as far.",
+ "PROOF2_HEAD": "Test 2: real NSE prices, no answer assumed",
  "PROOF2_NUMS": [
   [
    "99%",
-   "of 2,400 surfaces had several equally good fits"
+   "of 2,400 price lists had several equally good answers"
   ],
   [
    "3.9×",
-   "further apart than two random parameter sets"
+   "further apart than two random picks"
   ],
   [
    "23%",
-   "less price error than one flat volatility, median"
+   "less error than one fixed jumpiness, on a typical price list"
   ]
  ],
  "Q": "Does letting volatility move price options better?",
@@ -1170,6 +1306,7 @@
    ]
   ]
  ],
+ "REFS_LEAD": "The research papers behind the model and its maths, the history it grew from, and where our data comes from.",
  "REL_LAST": [
   "2026-09-25",
   1210.5,
@@ -1179,131 +1316,143 @@
   13138735.0,
   1219.2
  ],
- "REL_LINE": "RELIANCE, day by day: its best Double Heston fit beat a flat volatility on every one of its 60 days (median price error 0.11% of the share price, against 0.13%). On the same days the equally good fits sat a median 4.3 apart.",
+ "REL_LINE": "Take RELIANCE. Its best Double Heston match beat one fixed jumpiness on all 60 of its days. The typical error was 0.11% of the share price, against 0.13%. On the same days, the equally good answers sat a typical 4.3 apart.",
  "RESULTS": [
   [
-   "Double Heston against one flat volatility",
+   "Double Heston against one fixed jumpiness",
    "23% less error",
-   "Median price error of the best fit on 2,400 real surfaces; it was ahead on every one.",
+   "Typical error of the best match on 2,400 real price lists. It was ahead on every one.",
    "good"
   ],
   [
-   "Fitting simulated prices",
+   "Matching made-up prices",
    "9.16 × 10⁻⁸",
-   "Median price error of a classical optimizer on 60 simulated surfaces.",
+   "Typical error of a search program on 60 made-up price lists.",
    "good"
   ],
   [
-   "Reading the settings back",
+   "Finding the settings again",
    "1.80",
-   "Recovery skill on the same surfaces; 1.00 is always guessing the typical value, lower is better.",
+   "How close it got to the true settings. 1.00 is just guessing; lower is better.",
    "bad"
   ],
   [
-   "Several equally good fits",
+   "Several equally good answers",
    "99%",
-   "Share of 2,400 real surfaces where more than one set of settings priced equally well (within 10% of the best price error).",
+   "Share of 2,400 real price lists with more than one equally good set of settings.",
    "bad"
   ],
   [
-   "How far apart they sat",
+   "How far apart they were",
    "3.9×",
-   "Median distance between equally good fits (4.64) against two random settings (1.18).",
+   "Typical gap between equally good answers (4.64) against two random picks (1.18).",
    "bad"
   ],
   [
-   "Today's level",
+   "Today's jumpiness",
    "0.47",
-   "Distance between equally good fits for the slow factor's level, against about 0.95 at random: pinned down.",
+   "Gap between equally good answers for the slow part's level, against about 0.95 at random. Pinned down.",
    "good"
   ],
   [
    "Speeds back to normal",
    "5.51",
-   "Distance for the slow factor's speed, against about 0.90 at random: not pinned down at all.",
+   "Gap for the slow part's speed, against about 0.90 at random. Not pinned down at all.",
    "bad"
   ],
   [
-   "ANN, reading the settings",
+   "ANN reading the settings",
    "0.80",
-   "RMSE-based recovery skill on 1,500 simulated surfaces, against 3.00 for the optimizer.",
+   "Score on 1,500 made-up price lists, against 3.00 for the search program.",
    "mixed"
   ],
   [
-   "ANN on dates it never saw",
+   "ANN on days it never saw",
    "17.4%",
-   "Median repricing error on 8 later dates, against 4.3% for the best possible fit.",
+   "Typical pricing error on 8 later days, against 4.3% for the best match.",
    "bad"
   ],
   [
    "ANN settings against Black–Scholes",
    "4.8%",
-   "Stock-days where Double Heston with the ANN's settings priced better than a same-day Black–Scholes fit (589 of 12,265).",
+   "Share-days where Double Heston with the ANN's settings priced better than a fresh same-day Black–Scholes (589 of 12,265).",
    "bad"
   ],
   [
    "Next day, against Black–Scholes",
    "19.1%",
-   "Stock-days where yesterday's settings beat yesterday's Black–Scholes volatility on today's quotes.",
+   "Share-days where yesterday's settings beat yesterday's Black–Scholes on today's prices.",
    "mixed"
   ],
   [
-   "PINN fidelity",
+   "PINN accuracy",
    "1.1 × 10⁻⁵",
-   "Price error of the Double Heston PINN against the exact pricer on 8,192 points it never saw (0.1 volatility points).",
+   "PINN's error against the exact calculator on 8,192 unseen points (0.1 volatility points).",
    "good"
   ],
   [
    "PINN, controlled test",
    "40 of 40",
-   "Surfaces where the PINN beat a refitted one-factor Heston, which beat Black–Scholes.",
+   "Price lists where the PINN beat one-part Heston, which beat Black–Scholes.",
    "good"
   ],
   [
-   "PINN calibrator on NIFTY",
+   "PINN on NIFTY",
    "2.48 pts",
-   "Median error in volatility points on 1,750 held-out quotes, against 2.98 for Black–Scholes; best on 4 of 10 days.",
+   "Typical error on 1,750 unseen prices, against 2.98 for Black–Scholes. Best on 4 of 10 days.",
    "good"
   ],
   [
-   "PINN against ANN (demonstration)",
+   "PINN against ANN (demo)",
    "0.8% vs 5.7%",
-   "Price error of two identical networks trained on the same data, with and without the pricing equation.",
+   "Error of two identical networks, with and without the pricing equation.",
    "good"
   ]
  ],
- "RESULTS_DIRECTION": "▲ means a higher number is better news, ▼ a lower one. Open “Explain simply” on any row for an everyday picture.",
+ "RESULTS_DIRECTION": "▲ means a higher number is better news; ▼ means a lower one is. Hover over a triangle for an everyday picture.",
  "RESULTS_HEAD": "Every result, and the data behind it",
- "RESULTS_LEDE": "All the project's numbers in one place: what we measured, on which data, and whether it's good news. Negative results are kept, because they are part of the answer.",
- "RESULTS_PAGE_HEAD": "It beat flat volatility on every surface we tested. Knowing why takes more than a perfect fit.",
- "RESULTS_PAGE_LEDE": "Everything the project found, in one place: the win in numbers, the evidence behind it, what our two kinds of network achieved, then every result in a table with the data it came from — including the results that didn't work, because that's how you know the ones that did are real.",
+ "RESULTS_HEADS": {
+  "pool": "Bharti Airtel, 39-day options",
+  "magnets": "The ten settings of each answer",
+  "six": "All six equally good answers",
+  "stock": "One share, day by day",
+  "heldout": "The ANN on days it had never seen",
+  "backtest": "The ANN against Black–Scholes",
+  "pinn": "The PINN on real NIFTY options",
+  "results": "Every result",
+  "data": "The data",
+  "terms": "What the words mean"
+ },
+ "RESULTS_LEDE": "All the project's numbers in one place: what we measured, on which data, and whether it is good news. The results that didn't work are kept, because they are part of the answer.",
+ "RESULTS_PAGE_HEAD": "It beat the one-number method on every price list we tested. Knowing why takes more than a perfect match.",
+ "RESULTS_PAGE_LEDE": "Everything the project found is on this page. First the win in numbers, then the proof behind it, then what our two kinds of neural network did. At the end, every result sits in one table with the data it came from. That includes the results that didn't work, because they're how you know the ones that did are real.",
  "RESULT_INFO": {
-  "Double Heston against one flat volatility": [
+  "Double Heston against one fixed jumpiness": [
    "higher",
    "A tailored suit against one size fits all.",
    "On a typical surface the best Double Heston fit had 23% less price error, and it was ahead on all 2,400."
   ],
-  "Fitting simulated prices": [
+  "Matching made-up prices": [
    "lower",
    "Tracing a drawing so closely you can't see the original underneath.",
    "The optimizer's prices matched the simulated ones almost exactly."
   ],
-  "Reading the settings back": [
+  "Finding the settings again": [
    "lower",
    "Copying a song perfectly by ear, yet naming the wrong instruments.",
    "1.80 means the recovered settings were further off than always guessing the typical value (1.00)."
   ],
-  "Several equally good fits": [
+  "Several equally good answers": [
    "lower",
    "Different magnets, same ferrofluid surface.",
    "99% of real surfaces had more than one equally good set of settings."
   ],
-  "How far apart they sat": [
+  "How far apart they were": [
    "lower",
    "Two maps that agree on every street but put the landmarks in very different places.",
    "Equally good fits sat 3.9 times as far apart as two random sets of settings."
   ],
-  "Today's level": [
+  "Today's jumpiness": [
    "lower",
    "The room temperature: every thermometer agrees on it.",
    "Equally good fits agreed on today's level more closely than random settings would."
@@ -1313,12 +1462,12 @@
    "Judging how fast a spring snaps back from one photo of it at rest.",
    "Prices barely depend on the speed, so equally good fits put it almost anywhere."
   ],
-  "ANN, reading the settings": [
+  "ANN reading the settings": [
    "lower",
    "A student who learned from worked examples and plays safe by answering near the average.",
    "0.80 beats always guessing (1.00) and the optimizer (3.00), mostly by reading today's level well."
   ],
-  "ANN on dates it never saw": [
+  "ANN on days it never saw": [
    "lower",
    "Good on the practice papers, worse in the real exam.",
    "On new dates its prices were off by 17.4%, about four times the best possible fit."
@@ -1333,7 +1482,7 @@
    "Yesterday's forecast, judged on today's weather.",
    "Settings carried to the next day beat Black–Scholes carried forward about one day in five."
   ],
-  "PINN fidelity": [
+  "PINN accuracy": [
    "lower",
    "A student who also has to obey the textbook.",
    "Its prices match the exact formula to about 0.1 volatility points."
@@ -1343,12 +1492,12 @@
    "Three runners, forty races, the same finishing order every time.",
    "The PINN beat a refitted one-factor Heston on every surface, and Heston beat Black–Scholes."
   ],
-  "PINN calibrator on NIFTY": [
+  "PINN on NIFTY": [
    "lower",
    "Measured like a thermometer's error, in volatility points.",
    "2.48 points against 2.98 for Black–Scholes, on quotes it never saw."
   ],
-  "PINN against ANN (demonstration)": [
+  "PINN against ANN (demo)": [
    "lower",
    "Two students, the same lessons; one also had to obey the textbook.",
    "The one that obeyed the pricing equation was about seven times more accurate and priced nothing impossible."
@@ -1357,16 +1506,16 @@
  "SETTINGS": [
   [
    "v₀",
-   "Today's variance",
-   "How jumpy the stock is right now. Variance is volatility squared: 0.02 is about 14% a year.",
+   "Today's jumpiness",
+   "How jumpy the share is right now. 0.02 means about 14% a year.",
    "Options cost more now, short-dated ones most.",
    "0.02",
    "0.02"
   ],
   [
    "θ",
-   "Long-run variance",
-   "The level the jumpiness settles back to over time.",
+   "Normal jumpiness",
+   "The level jumpiness settles back to.",
    "Long-dated options cost more.",
    "0.02",
    "0.02"
@@ -1374,14 +1523,14 @@
   [
    "κ",
    "Speed back to normal",
-   "How fast jumpiness returns to its long-run level after a shock. Half of a shock is gone after ln 2 ÷ κ years: 1.4 years for the slow factor, 51 days for the fast one.",
-   "Shocks fade faster, so the factor matters less for long-dated options.",
+   "How fast jumpiness calms down after a shock. Half of a shock is gone in 1.4 years for the slow part and 51 days for the fast one.",
+   "Shocks fade faster, so this part matters less for long-dated options.",
    "0.5",
    "5.0"
   ],
   [
    "ξ",
-   "Volatility of volatility",
+   "Jumpiness of the jumpiness",
    "How much the jumpiness itself jumps around.",
    "The smile curves more: options far from today's price cost more.",
    "0.3",
@@ -1389,23 +1538,24 @@
   ],
   [
    "ρ",
-   "Price–volatility link",
-   "Whether jumpiness rises when the price falls (negative) or when it rises (positive), from −1 to 1.",
-   "Toward −1: protection against falls gets dearer than bets on rises, so the smile tilts more.",
+   "Link to price",
+   "Whether jumpiness rises when the price falls (negative) or rises (positive). Runs from −1 to 1.",
+   "Closer to −1: insurance against falls gets dearer, so the smile tilts more.",
    "−0.7",
    "−0.7"
   ]
  ],
  "SETTINGS_HEAD": "The ten settings",
- "SETTINGS_LEDE": "Each factor has the same five settings, so the model has ten. Here is what each one controls and what raising it does. The starting values are the ones Price an option opens with.",
+ "SETTINGS_LEDE": "Each of the two parts has the same five settings, so the model has ten. Here is what each one controls and what turning it up does. The starting values are the ones Price an option opens with.",
+ "SETTINGS_UP": "Turn it up:",
  "SHARE": 0.99125,
  "SITE_NAME": "Double Heston",
- "SKEW_NOTE": "The gap between protection against falls and bets on rises, in volatility points, shrinks as expiry gets further away.",
+ "SKEW_NOTE": "How much more insurance against a fall costs than a bet on a rise, in volatility points. That extra cost shrinks the further away the expiry is.",
  "SLIDERS": [
   [
    "slow",
    "v₀",
-   "Today's variance",
+   "Today's jumpiness",
    0.02,
    0.0005,
    1.0
@@ -1421,7 +1571,7 @@
   [
    "slow",
    "θ",
-   "Long-run variance",
+   "Normal jumpiness",
    0.02,
    0.0005,
    1.0
@@ -1429,7 +1579,7 @@
   [
    "slow",
    "ξ",
-   "Volatility of volatility",
+   "Jumpiness of the jumpiness",
    0.3,
    0.05,
    2.0
@@ -1437,7 +1587,7 @@
   [
    "slow",
    "ρ",
-   "Price–volatility link",
+   "Link to price",
    -0.7,
    -0.99,
    0.99
@@ -1445,7 +1595,7 @@
   [
    "fast",
    "v₀",
-   "Today's variance",
+   "Today's jumpiness",
    0.02,
    0.0005,
    1.0
@@ -1461,7 +1611,7 @@
   [
    "fast",
    "θ",
-   "Long-run variance",
+   "Normal jumpiness",
    0.02,
    0.0005,
    1.0
@@ -1469,7 +1619,7 @@
   [
    "fast",
    "ξ",
-   "Volatility of volatility",
+   "Jumpiness of the jumpiness",
    0.5,
    0.05,
    2.0
@@ -1477,7 +1627,7 @@
   [
    "fast",
    "ρ",
-   "Price–volatility link",
+   "Link to price",
    -0.7,
    -0.99,
    0.99
@@ -1496,65 +1646,66 @@
   "[Supervisor name]",
   "[Department], [College]"
  ],
- "SURFACE_NOTE": "Implied volatility at the starting settings, for every strike and expiry. Low strikes, the protection against falls, carry the most. The tilt is steepest at short expiries: 26.2% down to 15.5% across strikes at one month, 23.4% to 16.6% at one year. ≈ 0 marks options worth almost nothing, where no volatility can be read.",
+ "SUPERVISOR_HEAD": "Guide",
+ "SURFACE_NOTE": "Implied volatility for every strike and every expiry, at the starting settings. Low strikes, which are insurance against falls, carry the most. The tilt is steepest for options that expire soon: 26.2% down to 15.5% across strikes at one month, and 23.4% to 16.6% at one year. \"≈ 0\" marks options worth almost nothing, where no volatility can be read.",
  "TEAM": [
   [
    "[Name]",
-   "[Role: e.g. model and pricer]"
+   "Model and calculator"
   ],
   [
    "[Name]",
-   "[Role: e.g. data pipeline]"
+   "Data"
   ],
   [
    "[Name]",
-   "[Role: e.g. website and design]"
+   "Website and design"
   ],
   [
    "[Name]",
-   "[Role: e.g. research and report]"
+   "Research and report"
   ]
  ],
  "TEAM_HEAD": "The team",
  "TEAM_INTRO": "Built for [Event] at [College]. Replace each placeholder with the real name and what that person built.",
  "TERMS": [
   [
-   "Option surface",
-   "All of one stock's option prices on one day, across strikes and expiries."
+   "Price list (option surface)",
+   "All of one share's option prices on one day, across strikes and expiries."
   ],
   [
-   "Setting (parameter)",
-   "One of Double Heston's ten numbers: for each factor, today's level, long-run level, speed back to normal, volatility of volatility and link to price moves."
+   "Setting",
+   "One of Double Heston's ten numbers. Each part has today's level, normal level, speed back to normal, jumpiness of the jumpiness, and link to price."
   ],
   [
-   "Equally good fit",
-   "A set of settings whose price error is within 10% of the best one found for that surface."
+   "Equally good answer",
+   "A set of settings whose error is within 10% of the best one found for that price list."
   ],
   [
-   "Distance between fits",
-   "How far apart two sets of settings are, measured in spreads of the settings seen in the training data, so every setting counts equally."
+   "Gap between answers",
+   "How far apart two sets of settings are, measured so that every setting counts equally."
   ],
   [
-   "Recovery skill",
-   "Error in the settings divided by the error from always guessing the typical value. 1.00 is no better than guessing; lower is better."
+   "Recovery score",
+   "The error in the settings divided by the error from always guessing the typical value. 1.00 is no better than guessing; lower is better."
   ],
   [
    "Volatility point",
    "One percentage point of implied volatility, for example 15% against 16%."
   ],
   [
-   "Stock-day",
-   "One stock on one trading day."
+   "Share-day",
+   "One share on one trading day."
   ],
   [
-   "Held out",
-   "Data the model never saw while it was being built, kept back to test it fairly."
+   "Unseen (held out)",
+   "Data kept back while the model was being built, so it can be tested fairly."
   ]
  ],
  "THANKS": [
-  "NSE, for the public end-of-day files the research uses.",
-  "Upstox, whose market-data API we plan to use for live prices.",
-  "The authors of NumPy, SciPy and pandas."
+  "NSE, for the free end-of-day files the research uses.",
+  "Upstox, for the market data behind the live prices.",
+  "The people who make NumPy, SciPy and pandas, the free tools we built on."
  ],
  "TICKER_MODEL": [
   [
@@ -1582,9 +1733,11 @@
    "99%"
   ]
  ],
- "TWIST": "Ask it which of its ten settings produced the bend, though, and the prices can't tell you.",
- "TWO_CLOCKS": "Each factor is a volatility that gets knocked around and drifts back to normal. One drifts back slowly, one quickly, which lets the model shape short- and long-dated options differently.",
- "UNIVERSE": "NIFTY 50, NIFTY BANK and the 40 most traded F&O stocks: every stock we show an implied volatility for.",
- "VIDEO_CAPTION": "A narrated overview of the model and the finding, made from the project report. [Video to be added]",
- "VIDEO_SRC": ""
+ "TWIST": "Ask the model which of its ten settings made the bend, though, and the prices can't tell you. Here is how we know.",
+ "TWO_CLOCKS": "Each part is a jumpiness that gets knocked about and then calms down. One calms down slowly and one quickly. That lets the model price next week's options and next year's options differently.",
+ "UNIVERSE": "NIFTY 50, NIFTY BANK, and the 40 most traded shares that have options. Every share we show an implied volatility for is on this list.",
+ "VIDEO_CAPTION": "A short narrated video about the model and what we found, made from our project report. [Video to be added]",
+ "VIDEO_SRC": "",
+ "WATCH_HEAD": "Your list",
+ "WATCH_NOTE": "Click a name to see its chart"
 }

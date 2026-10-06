@@ -18,9 +18,9 @@ function widget(ctx, s, i) {
 }
 
 const renderers = ctx => ({
-  hero: s => `<header class="sb-head sb-hero wrap" data-sec="${s.key}"><p class="sb-q">${esc(s.q)}</p>
-    <h1 class="sb-title sb-title-xl">${esc(s.title)}<br><span class="sb-title-2">${esc(s.title2)}</span></h1>
-    <p class="sb-sub">${esc(s.lead)}</p><div class="sb-cta">${s.ctas.map(([h, l], k) => `<a class="btn${k ? ' ghost' : ''}" href="${h}">${esc(l)}</a>`).join('')}</div></header>`,
+  hero: s => `<header class="sb-head sb-hero wrap" data-sec="${s.key}">${s.q ? `<p class="sb-q">${esc(s.q)}</p>` : ''}
+    <h1 class="sb-title sb-title-xl">${esc(s.title)}<br><span class="sb-title-2">${esc(s.title2)}</span></h1>${s.by ? `<p class="hero-by sb-by">${esc(s.by)}</p>` : ''}
+    <p class="sb-sub">${esc(s.lead)}</p><div class="sb-cta">${(s.ctas || []).map(([h, l], k) => `<a class="btn${k ? ' ghost' : ''}" href="${h}">${esc(l)}</a>`).join('')}</div></header>`,
   head: s => s.level === 2
     ? `<div class="sb-st wrap" data-sec="${s.key}"><h2>${esc(s.title)}</h2>${s.lead ? `<p>${esc(s.lead)}</p>` : ''}</div>`
     : `<header class="sb-head wrap" data-sec="${s.key}"><h1 class="sb-title">${esc(s.title)}</h1>${s.lead ? `<p class="sb-sub">${esc(s.lead)}</p>` : ''}</header>`,

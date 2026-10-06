@@ -14,13 +14,13 @@ const two = n => String(n).padStart(2, '0');
 const renderers = ctx => {
   return {
     hero: s => `<section class="am-hero wrap" data-sec="${s.key}" data-anim>
-      <p class="am-prompt"><span class="am-dollar" aria-hidden="true">$</span> ${esc(s.q)}<span class="am-caret" aria-hidden="true"></span></p>
+      ${s.q ? `<p class="am-prompt"><span class="am-dollar" aria-hidden="true">$</span> ${esc(s.q)}<span class="am-caret" aria-hidden="true"></span></p>` : ''}
       <div class="am-readouts">
         <div class="am-ro"><span class="am-ro-k">[${esc(s.keys?.[0] || "fit")}]</span><b>${esc(s.title)}</b></div>
         <div class="am-ro am-ro-2"><span class="am-ro-k">[${esc(s.keys?.[1] || "read")}]</span><b>${esc(s.title2)}</b></div>
-      </div>
+      </div>${s.by ? `<p class="hero-by am-by">${esc(s.by)}</p>` : ''}
       <p class="am-lede">${esc(s.lead)}</p>
-      <div class="am-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div></section>`,
+      ${s.ctas?.length ? `<div class="am-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div>` : ''}</section>`,
     head: s => (s.level === 2
       ? `<header class="am-h2 wrap" data-sec="${s.key}" data-anim><h2>${esc(s.title)}</h2>${s.lead ? `<p class="am-lede">${esc(s.lead)}</p>` : ''}</header>`
       : `<header class="am-head wrap" data-sec="${s.key}" data-anim><h1>${esc(s.title)}</h1>${s.lead ? `<p class="am-lede">${esc(s.lead)}</p>` : ''}</header>`),

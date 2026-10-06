@@ -368,6 +368,22 @@ html.motion .is-in .b-journey li, html.motion .b-journey.is-in li { opacity: 1; 
 .b-done li > span > b { color: var(--ink); font-size: 17px; }
 .b-done li > span > span { color: var(--body); font-size: 15.5px; line-height: 1.5; }
 
+/* Home: where the line starts, the two aims, the four models */
+.hero-by { margin: 14px 0 0; font: 600 17px/1.4 var(--font-body); color: var(--muted); letter-spacing: .01em; }
+.b-aims { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.b-aims li > span > span { max-width: 62ch; }
+.b-m { display: grid; gap: 14px; }
+.b-m-who { margin: 0; color: var(--muted); font-size: 15px; }
+.b-m-who b { color: var(--acc); margin-right: 6px; }
+.b-m .b-eqn { overflow-x: auto; padding: 4px 0; display: grid; gap: 6px; }
+.b-m .b-eqn math { font-size: 1.02em; }
+@media (max-width: 520px) { .b-m .b-eqn math { font-size: .8em; } }
+.b-m-dl { margin: 0; display: grid; gap: 10px; }
+.b-m-dl dt { font-weight: 700; color: var(--ink); font-size: 15px; }
+.b-m-dl dd { margin: 2px 0 0; color: var(--body); font-size: 15.5px; line-height: 1.5; }
+.b-m-set { margin: 0; font-size: 14px; color: var(--muted); }
+html[data-page="home"] [data-sec="einstein"] .b-eqn math { font-size: 1.6em; }
+
 /* results page */
 .b-data td, .b-results td { white-space: normal; vertical-align: top; }
 .b-data th[scope="row"], .b-results th[scope="row"] { text-align: left; color: var(--ink); font-size: 16px; font-weight: 650; padding: 12px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 170px; }

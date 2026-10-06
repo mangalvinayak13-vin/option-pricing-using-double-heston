@@ -12,8 +12,8 @@ const TWEAK = { 'results:pool': 7, 'results:magnets-why': 5 };
 
 const renderers = ctx => ({
   hero: s => `<section class="in-hero wrap" data-sec="${s.key}" data-anim>
-      <div class="in-hero-t"><p class="in-q">${esc(s.q)}</p><h1 class="in-h1">${esc(s.title)} <span>${esc(s.title2)}</span></h1>
-        <p class="in-lede">${esc(s.lead)}</p><div class="in-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div></div>
+      <div class="in-hero-t">${s.q ? `<p class="in-q">${esc(s.q)}</p>` : ''}<h1 class="in-h1">${esc(s.title)} <span>${esc(s.title2)}</span></h1>${s.by ? `<p class="hero-by in-by">${esc(s.by)}</p>` : ''}
+        <p class="in-lede">${esc(s.lead)}</p>${s.ctas?.length ? `<div class="in-cta"><a class="btn" href="${s.ctas[0][0]}">${esc(s.ctas[0][1])}</a><a class="btn sec" href="${s.ctas[1][0]}">${esc(s.ctas[1][1])}</a></div>` : ''}</div>
       <div class="in-scope" aria-hidden="true"><div class="in-scope-screen"><div class="factor-trace in-hero-trace" data-trace></div></div>
         <div class="in-knobs"><span class="in-knob"></span><span class="in-knob"></span><span class="in-knob in-knob-s"></span></div></div></section>`,
   head: s => (s.level === 2
