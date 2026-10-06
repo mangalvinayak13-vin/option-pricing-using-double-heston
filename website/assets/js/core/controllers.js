@@ -28,7 +28,7 @@ export function mountControllers(scope, ctx) {
 // the Market page's header and day figures for one live quote; fields Upstox didn't send stay as they are
 function liveStats(scope, v) {
   if (!v || v.last == null) return;
-  $$('[data-bind="m-last"], [data-bind="m-close"]', scope).forEach(el => { el.textContent = inr(v.last); });
+  $$('[data-bind="m-last"], [data-bind="m-close"]', scope).forEach(el => tick(el, v.last));
   $$('[data-bind="m-chg"]', scope).forEach(el => {
     const [a, c] = arrow(v.pct ?? 0);
     el.textContent = `${a} ${inr(Math.abs(v.chg ?? 0))} (${Math.abs(v.pct ?? 0).toFixed(2)}%)`;
@@ -59,7 +59,7 @@ function liveQuotes(scope, ctx) {
       const v = q[row.dataset.sym];
       if (!v || v.last == null) return;
       const priceEl = row.querySelector('[data-bind="price"]'), chgEl = row.querySelector('[data-bind="chg"]');
-      if (priceEl) priceEl.textContent = inr(v.last);
+      if (priceEl) tick(priceEl, v.last);
       if (chgEl && v.pct != null) setChg(chgEl, v.pct);
     });
     ctx.liveQuotes = q; // so picking another stock on the Market page shows its live figures at once
@@ -71,13 +71,27 @@ function liveQuotes(scope, ctx) {
     // the header chip says the saved NSE close until live prices arrive, then says they're live
     if (ok) $$('[data-bind="site-status"]', document).forEach(el => { el.textContent = state; });
   };
-  let stopped = false, timer = 0;
+  // every 2 s while the market is open (the edge caches 1 s), every 15 s when it's shut; paused in a hidden tab
+  let stopped = false, timer = 0, open = true;
   const poll = async () => {
-    try { const r = await fetch('/api/live'); if (r.ok && !stopped) apply(await r.json()); } catch { /* keep the static numbers */ }
-    if (!stopped) timer = setTimeout(poll, 8000);
+    if (!document.hidden) {
+      try { const r = await fetch('/api/live'); if (r.ok && !stopped) { const live = await r.json(); open = !!live.market_open; apply(live); } } catch { /* keep the static numbers */ }
+    }
+    if (!stopped) timer = setTimeout(poll, open ? 2000 : 15000);
   };
   timer = setTimeout(poll, 60);
   return { stop() { stopped = true; clearTimeout(timer); } };
+}
+
+// a price that moved flashes green (up) or red (down) for a moment, so a live tick is visible
+function tick(el, v) {
+  const was = parseFloat(el.dataset.last);
+  el.textContent = inr(v);
+  el.dataset.last = v;
+  if (!Number.isFinite(was) || was === v) return;
+  el.classList.remove('tick-up', 'tick-dn');
+  void el.offsetWidth; // restart the animation if it's still running
+  el.classList.add(v > was ? 'tick-up' : 'tick-dn');
 }
 
 // the page dock magnifies under the cursor like the macOS Dock (transform only; rAF-throttled)

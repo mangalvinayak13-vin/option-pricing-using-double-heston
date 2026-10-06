@@ -57,6 +57,7 @@ def market_open(now: datetime | None = None) -> bool:
 
 
 _HOLIDAYS: dict = {"day": None, "list": []}
+_STATUS: dict = {"state": None, "at": None}
 
 
 def _holiday_today(token: str, today) -> str | None:
@@ -77,6 +78,8 @@ def market_state(token: str, now: datetime | None = None) -> tuple[bool, str | N
     can't be read, the clock. `holiday` names today's trading holiday when there is one."""
     import requests
     now = (now or datetime.now(_IST)).astimezone(_IST)
+    if _STATUS["state"] and (now - _STATUS["at"]).total_seconds() < 30:  # NSE's status changes a few times a day
+        return _STATUS["state"]
     try:
         holiday = _holiday_today(token, now.date())
     except Exception:
@@ -85,9 +88,11 @@ def market_state(token: str, now: datetime | None = None) -> tuple[bool, str | N
         r = requests.get("https://api.upstox.com/v2/market/status/NSE", headers={"Authorization": f"Bearer {token}",
                          "Accept": "application/json"}, timeout=4)
         r.raise_for_status()
-        return r.json()["data"]["status"] == "NORMAL_OPEN", holiday
+        state = (r.json()["data"]["status"] == "NORMAL_OPEN", holiday)
     except Exception:
-        return (not holiday and market_open(now)), holiday
+        state = ((not holiday and market_open(now)), holiday)
+    _STATUS.update(state=state, at=now)
+    return state
 
 
 def fetch_live_quotes() -> dict:
