@@ -24,6 +24,22 @@ export function mountControllers(scope, ctx) {
 }
 
 // ------------------------------------------------------------------ live equity prices (Upstox)
+// the Market page's header and day figures for one live quote; fields Upstox didn't send stay as they are
+function liveStats(scope, v) {
+  if (!v || v.last == null) return;
+  $$('[data-bind="m-last"], [data-bind="m-close"]', scope).forEach(el => { el.textContent = inr(v.last); });
+  $$('[data-bind="m-chg"]', scope).forEach(el => {
+    const [a, c] = arrow(v.pct ?? 0);
+    el.textContent = `${a} ${inr(Math.abs(v.chg ?? 0))} (${Math.abs(v.pct ?? 0).toFixed(2)}%)`;
+    el.className = el.className.replace(/\b(up|dn)\b/g, '').trim() + ' ' + c;
+  });
+  if (v.open != null) $$('[data-bind="m-open"]', scope).forEach(el => { el.textContent = inr(v.open); });
+  if (v.high != null) $$('[data-bind="m-high"]', scope).forEach(el => { el.textContent = inr(v.high); });
+  if (v.low != null) $$('[data-bind="m-low"]', scope).forEach(el => { el.textContent = inr(v.low); });
+  if (v.prev_close != null) $$('[data-bind="m-prev-close"]', scope).forEach(el => { el.textContent = inr(v.prev_close); });
+  if (v.volume != null) $$('[data-bind="m-volume"]', scope).forEach(el => { el.textContent = `${inr(v.volume / 1e5, 1)} lakh`; });
+}
+
 // The ticker (every page) and the Market page's watchlist/header/stats poll /api/live and overlay
 // it on the static NSE-close numbers already rendered server-side. Any failure (no token, offline,
 // rate limit) leaves those static numbers exactly as they were -- never a blank or a "NaN".
@@ -45,20 +61,8 @@ function liveQuotes(scope, ctx) {
       if (priceEl) priceEl.textContent = inr(v.last);
       if (chgEl && v.pct != null) setChg(chgEl, v.pct);
     });
-    const sym = store.get('market.sym', 'RELIANCE'), v = q[sym];
-    if (v && v.last != null) {
-      $$('[data-bind="m-last"], [data-bind="m-close"]', scope).forEach(el => { el.textContent = inr(v.last); });
-      $$('[data-bind="m-chg"]', scope).forEach(el => {
-        const [a, c] = arrow(v.pct ?? 0);
-        el.textContent = `${a} ${inr(Math.abs(v.chg ?? 0))} (${Math.abs(v.pct ?? 0).toFixed(2)}%)`;
-        el.className = el.className.replace(/\b(up|dn)\b/g, '').trim() + ' ' + c;
-      });
-      if (v.open != null) $$('[data-bind="m-open"]', scope).forEach(el => { el.textContent = inr(v.open); });
-      if (v.high != null) $$('[data-bind="m-high"]', scope).forEach(el => { el.textContent = inr(v.high); });
-      if (v.low != null) $$('[data-bind="m-low"]', scope).forEach(el => { el.textContent = inr(v.low); });
-      if (v.prev_close != null) $$('[data-bind="m-prev-close"]', scope).forEach(el => { el.textContent = inr(v.prev_close); });
-      if (v.volume != null) $$('[data-bind="m-volume"]', scope).forEach(el => { el.textContent = `${inr(v.volume / 1e5, 1)} lakh`; });
-    }
+    ctx.liveQuotes = q; // so picking another stock on the Market page shows its live figures at once
+    liveStats(scope, q[store.get('market.sym', 'RELIANCE')]);
     $$('[data-bind="live-status"]', scope).forEach(el => {
       if (live.status !== 'live' || !Object.keys(q).length) { el.textContent = C.LIVE_FALLBACK; return; }
       el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
@@ -290,6 +294,7 @@ function marketPage(scope, ctx) {
     $$('[data-bind="m-chg"]', scope).forEach(el => { el.textContent = `${a} ${inr(Math.abs(ch))} (${Math.abs(ch / r[6] * 100).toFixed(2)}%)`; el.className = el.className.replace(/\b(up|dn)\b/g, '') + ' ' + c; });
     set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6]));
     set('m-volume', r[5] ? `${inr(r[5] / 1e5, 1)} lakh` : '—'); // Upstox reports no volume for an index
+    liveStats(scope, ctx.liveQuotes?.[sym]);
     $$('button[data-sym]', scope).forEach(b => {
       const on = b.dataset.sym === sym;
       b.setAttribute('aria-pressed', String(on));
