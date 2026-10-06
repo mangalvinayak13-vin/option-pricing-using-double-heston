@@ -95,8 +95,9 @@ CTA = {"model": "Price an option", "finding": "See the results", "market": "Open
 
 # ------------------------------------------------------------------ market ---------------
 MARKET_TITLE = "Market"
-MARKET_SUB = (f"Daily history is NSE's official closes, {FIRST_DAY} to {LAST_DAY}, {N_DAYS} trading days. "
-              "The price and change beside each name are live, from Upstox, while the market's open.")
+MARKET_SUB = (f"Daily history starts {FIRST_DAY}: NSE's official closes to {LAST_DAY}, then Upstox daily candles "
+              "up to today. The prices, today's candle and the day's figures are live from Upstox while the "
+              "market's open.")
 STATUS = f"Prices as of the NSE close, {LAST_DAY}, 15:30 IST"
 LIVE_LOADING = "Checking for live prices…"
 LIVE_OPEN = "Live, updated {time} IST"

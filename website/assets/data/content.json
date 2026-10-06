@@ -809,7 +809,7 @@
  "LIVE_LOADING": "Checking for live prices…",
  "LIVE_OPEN": "Live, updated {time} IST",
  "MARKET_BUTTON": "Market prices",
- "MARKET_SUB": "Daily history is NSE's official closes, 1 Jul 2026 to 25 Sep 2026, 62 trading days. The price and change beside each name are live, from Upstox, while the market's open.",
+ "MARKET_SUB": "Daily history starts 1 Jul 2026: NSE's official closes to 25 Sep 2026, then Upstox daily candles up to today. The prices, today's candle and the day's figures are live from Upstox while the market's open.",
  "MARKET_TITLE": "Market",
  "MATHS_INTRO": "An option's price depends on how jumpy the stock will be before it expires. Black–Scholes assumes one fixed jumpiness. Double Heston (Christoffersen, Heston and Jacobs, 2009) lets it move, and splits it into two parts that move on their own: a fast one for sudden scares and a slow one for long moods. Below is the whole model, one formula at a time.",
  "MATHS_STEPS": [

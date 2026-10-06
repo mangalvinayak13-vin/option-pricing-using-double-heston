@@ -95,9 +95,9 @@ export function sections(page, ctx) {
           <figure class="fig"><figcaption class="fig-t">${esc(C.CHART_NOTES.candles[0])}</figcaption>${B.candleChart(470)}<p class="fig-cap">${esc(C.CHART_NOTES.candles[1])}</p></figure>
           <div class="s-stats">${B.stockStats(ctx, sym)}</div>` },
         { key: 'watch', title: 'Watchlist', ico: 'market', size: 'narrow', note: 'Pick one to chart it', body: `<div class="s-scroll">${B.stocksList(ctx)}</div>` },
-        { key: 'nifty', title: 'NIFTY 50', ico: 'market', size: 'half', note: `${C.N_DAYS} trading days`, body: fig(ctx, 'indexLine', 260, { which: 'NIFTY' }, { title: 'NIFTY 50, closing level by day' }) },
-        { key: 'banknifty', title: 'NIFTY BANK', ico: 'market', size: 'half', note: `${C.N_DAYS} trading days`, body: fig(ctx, 'indexLine', 260, { which: 'BANKNIFTY' }, { title: 'NIFTY BANK, closing level by day' }) },
-        { key: 'covers', title: 'What the site covers', ico: 'about', size: 'full', lead: `${C.UNIVERSE} ${C.STATUS}.` },
+        { key: 'nifty', title: 'NIFTY 50', ico: 'market', size: 'half', note: `since ${C.FIRST_DAY}`, body: fig(ctx, 'indexLine', 260, { which: 'NIFTY' }, { title: 'NIFTY 50, closing level by day' }) },
+        { key: 'banknifty', title: 'NIFTY BANK', ico: 'market', size: 'half', note: `since ${C.FIRST_DAY}`, body: fig(ctx, 'indexLine', 260, { which: 'BANKNIFTY' }, { title: 'NIFTY BANK, closing level by day' }) },
+        { key: 'covers', title: 'What the site covers', ico: 'about', size: 'full', lead: C.UNIVERSE },
       ];
     }
     case 'model': {

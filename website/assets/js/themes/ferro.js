@@ -49,7 +49,7 @@ const renderers = ctx => ({
 
 function page(id, ctx) {
   return `<div class="fe-tick">${B.ticker(ctx)}</div>
-    <header class="fe-mast wrap"><a class="fe-brand" href="index.html">Double Heston</a><span class="fe-status">${esc(ctx.C.STATUS)}</span></header>
+    <header class="fe-mast wrap"><a class="fe-brand" href="index.html">Double Heston</a><span class="fe-status"><span data-bind="site-status">${esc(ctx.C.STATUS)}</span></span></header>
     <main id="main" class="fe">${renderPage(id, ctx, renderers(ctx))}${ridge()}<div class="wrap fe-end">${B.dock(ctx, { size: 54, tint: 'chrome' })}${B.footer(ctx)}</div></main>`;
 }
 

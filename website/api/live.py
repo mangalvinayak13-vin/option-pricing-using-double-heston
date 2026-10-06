@@ -15,8 +15,10 @@ rather than importing it, for the same bundling reason.
 """
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler
+from urllib.parse import parse_qs, quote, urlparse
 
 INSTRUMENT_MAP = {
     "ADANIPOWER": "NSE_EQ|INE814H01029", "ASHOKLEY": "NSE_EQ|INE208A01029", "BAJFINANCE": "NSE_EQ|INE296A01032",
@@ -77,14 +79,45 @@ def _fetch():
     return {"status": "live" if quotes else "empty", "asof": asof, "market_open": _market_open(), "quotes": quotes}
 
 
+def _candles(sym, since):
+    """GET /api/live?candles=SYM&since=YYYY-MM-DD: daily candles from `since` to today, oldest first,
+    as [date, open, high, low, close, volume] -- Upstox v3 historical days up to yesterday plus today's
+    candle so far from v3 intraday. Mirrors fetch_candles in website/tools/live_quotes.py."""
+    asof = datetime.now(timezone.utc).isoformat()
+    key, token = INSTRUMENT_MAP.get(sym), os.getenv("UPSTOX_ACCESS_TOKEN")
+    if not key or not token or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since or ""):
+        return {"status": "bad_request" if token else "no_token", "asof": asof, "sym": sym, "rows": []}
+    try:
+        import requests
+        h = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        today = datetime.now(_IST).date()
+        k = quote(key, safe="")
+        rows = []
+        if since < today.isoformat():
+            r = requests.get(f"https://api.upstox.com/v3/historical-candle/{k}/days/1/"
+                             f"{(today - timedelta(days=1)).isoformat()}/{since}", headers=h, timeout=8)
+            r.raise_for_status()
+            rows += r.json().get("data", {}).get("candles", [])
+        r = requests.get(f"https://api.upstox.com/v3/historical-candle/intraday/{k}/days/1", headers=h, timeout=8)
+        r.raise_for_status()
+        rows += r.json().get("data", {}).get("candles", [])
+    except Exception as e:
+        return {"status": "error", "error": type(e).__name__, "asof": asof, "sym": sym, "rows": []}
+    out = {c[0][:10]: [c[0][:10], c[1], c[2], c[3], c[4], c[5]] for c in rows if c[0][:10] >= since}
+    return {"status": "live", "asof": asof, "sym": sym, "rows": [out[d] for d in sorted(out)]}
+
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        body = json.dumps(_fetch()).encode()
+        q = parse_qs(urlparse(self.path).query)
+        candles = "candles" in q
+        body = json.dumps(_candles(q["candles"][0], q.get("since", [""])[0]) if candles else _fetch()).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
-        # Vercel's edge caches this for 5s, shared across every visitor -- the real Upstox call
-        # rate stays ~1 per 5s regardless of traffic, well inside its 500/min, 2000/30min limits.
-        self.send_header("Cache-Control", "public, s-maxage=5, stale-while-revalidate=30")
+        # Vercel's edge caches this, shared across every visitor: quotes for 5s, so the real Upstox
+        # call rate stays ~1 per 5s regardless of traffic (well inside 500/min, 2000/30min); candles
+        # for 60s per symbol, since only today's candle moves.
+        self.send_header("Cache-Control", f"public, s-maxage={60 if candles else 5}, stale-while-revalidate=30")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
