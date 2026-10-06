@@ -879,7 +879,7 @@
  "LIVE_LOADING": "Checking for live prices…",
  "LIVE_OPEN": "Live, updated {time} IST",
  "MARKET_BUTTON": "Market prices",
- "MARKET_SUB": "The daily charts use NSE's official closing prices from 1 Jul 2026 to 25 Sep 2026, which is 62 trading days. The price and change next to each name are live from Upstox while the market is open.",
+ "MARKET_SUB": "The daily charts start on 1 Jul 2026. Up to 25 Sep 2026 they use NSE's official closing prices; after that, daily prices from Upstox, up to today. While the market is open, the prices, today's candle and the day's figures are live.",
  "MARKET_TITLE": "Market",
  "MATHS_HEADS": {
   "factors": "The two parts, moving",

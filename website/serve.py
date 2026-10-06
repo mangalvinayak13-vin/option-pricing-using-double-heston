@@ -25,6 +25,7 @@ import mimetypes
 import sys
 import threading
 import time
+from urllib.parse import parse_qs, urlparse
 from functools import lru_cache
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -167,6 +168,9 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path.startswith("/api/health"):
             return self._json(200, {"ok": True, "pricer": "legacy_streamlit_site/models.py"})
         if self.path.startswith("/api/live"):
+            q = parse_qs(urlparse(self.path).query)
+            if "candles" in q:  # /api/live?candles=SYM&since=YYYY-MM-DD -> daily candles up to today
+                return self._json(200, live_quotes.fetch_candles(q["candles"][0], q.get("since", [""])[0]))
             return self._json(200, live_quotes_cached())
         if self.path.startswith("/api/"):
             return self._json(404, {"error": "unknown endpoint"})

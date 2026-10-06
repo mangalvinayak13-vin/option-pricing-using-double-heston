@@ -31,7 +31,7 @@ function page(id, ctx) {
   const nifty = ctx.D.watch.find(x => x.sym === 'NIFTY 50'), bank = ctx.D.watch.find(x => x.sym === 'NIFTY BANK');
   const ix = v => `<span><b>${esc(v.sym)}</b> <span class="num">${v.last.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span> <span class="num ${v.pct >= 0 ? 'up' : 'dn'}">${v.pct >= 0 ? '▲' : '▼'} ${Math.abs(v.pct).toFixed(2)}%</span></span>`;
   return `<div class="tr-top"><a class="tr-brand" href="index.html">Double<span>Heston</span></a><div class="tr-ix">${ix(nifty)}${ix(bank)}</div>
-      <span class="tr-st"><i></i>${esc(ctx.C.STATUS)}</span></div>
+      <span class="tr-st"><i></i><span data-bind="site-status">${esc(ctx.C.STATUS)}</span></span></div>
     <div class="tr-tick">${B.ticker(ctx)}</div>
     <main id="main" class="tr">${renderPage(id, ctx, renderers(ctx))}<div class="tr-end">${B.dock(ctx, { size: 48, tint: 'azure' })}${B.footer(ctx)}</div></main>`;
 }

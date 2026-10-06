@@ -39,7 +39,7 @@ function page(id, ctx) {
   const idx = ctx.pages.findIndex(p => p.id === ctx.navPage);
   const sub = id !== ctx.navPage ? ` / ${ctx.all.find(p => p.id === id).label}` : '';
   return `<div class="am-tick">${B.ticker(ctx)}</div>
-    <header class="am-bar wrap"><a class="am-brand" href="index.html">Double Heston</a><span class="am-chip"><i></i>${esc(ctx.C.STATUS)}</span>
+    <header class="am-bar wrap"><a class="am-brand" href="index.html">Double Heston</a><span class="am-chip"><i></i><span data-bind="site-status">${esc(ctx.C.STATUS)}</span></span>
       <span class="am-where">[${two(idx + 1)}] ${esc(ctx.pages[idx].label + sub)}</span></header>
     <main id="main" class="am">${renderPage(id, ctx, renderers(ctx))}
       <div class="wrap am-end">${B.dock(ctx, { size: 52, tint: 'amber' })}${B.footer(ctx)}</div></main>`;

@@ -15,7 +15,7 @@ export function mountControllers(scope, ctx) {
   videoSlots(scope, ctx);
   stops.push(explainHover(scope));
   if (scope.querySelector('[data-ctl="model-form"], [data-param]')) modelPage(scope, ctx);
-  if (scope.querySelector('[data-chart="candles"]')) marketPage(scope, ctx);
+  if (scope.querySelector('[data-chart="candles"]')) stops.push(marketPage(scope, ctx));
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
   $$('[data-pa3d]', scope).forEach(el => stops.push(createPA3D(el, ctx.PA)));
   $$('.b-dock-in', scope).forEach(d => stops.push(dockMagnify(d)));
@@ -61,6 +61,10 @@ function liveQuotes(scope, ctx) {
     }
     $$('[data-bind="live-status"]', scope).forEach(el => {
       if (live.status !== 'live' || !Object.keys(q).length) { el.textContent = C.LIVE_FALLBACK; return; }
+      el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
+    });
+    // the header chip says the saved NSE close until live prices arrive, then says they're live
+    if (live.status === 'live' && Object.keys(q).length) $$('[data-bind="site-status"]', document).forEach(el => {
       el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
     });
   };
@@ -284,16 +288,54 @@ function marketPage(scope, ctx) {
     set('m-sym', sym); set('m-name', ctx.C.NAMES[sym] || '');
     $$('[data-bind="m-last"]', scope).forEach(el => { el.textContent = inr(r[4]); });
     $$('[data-bind="m-chg"]', scope).forEach(el => { el.textContent = `${a} ${inr(Math.abs(ch))} (${Math.abs(ch / r[6] * 100).toFixed(2)}%)`; el.className = el.className.replace(/\b(up|dn)\b/g, '') + ' ' + c; });
-    set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6])); set('m-volume', `${inr(r[5] / 1e5, 1)} lakh`);
+    set('m-open', inr(r[1])); set('m-high', inr(r[2])); set('m-low', inr(r[3])); set('m-close', inr(r[4])); set('m-prev-close', inr(r[6]));
+    set('m-volume', r[5] ? `${inr(r[5] / 1e5, 1)} lakh` : '—'); // Upstox reports no volume for an index
     $$('button[data-sym]', scope).forEach(b => {
       const on = b.dataset.sym === sym;
       b.setAttribute('aria-pressed', String(on));
       b.closest('tr, li')?.classList.toggle('sel', on);
     });
   };
-  $$('button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); }));
+  $$('button[data-sym]', scope).forEach(b => b.addEventListener('click', () => { sym = b.dataset.sym; redraw(); extend(sym); }));
   $$('[data-seg="range"]', scope).forEach(s => s.addEventListener('seg', e => { range = e.detail; redraw(); }));
   $$('[data-seg="mode"]', scope).forEach(s => s.addEventListener('seg', e => { mode = e.detail; redraw(); }));
+
+  // The saved history ends at the last NSE file; fill every trading day since then, today's candle
+  // included, from Upstox daily candles (/api/live?candles=). Re-asked each minute while the page is
+  // open, so today's candle keeps up; any failure leaves the saved history exactly as it was.
+  const INDEX = { 'NIFTY 50': 'NIFTY', 'NIFTY BANK': 'BANKNIFTY' };
+  const merge = (s, rows) => {
+    const eq = ctx.D.equity[s];
+    if (!eq || !rows?.length) return false;
+    const ix = ctx.D.index_close[INDEX[s]];
+    let changed = false;
+    for (const [d, o, h, l, c, v] of rows) {
+      const last = eq.at(-1);
+      if (d < last[0] || (d === last[0] && last[4] === c)) continue;
+      if (d === last[0]) eq[eq.length - 1] = [d, o, h, l, c, v, last[6]]; // today's candle, moved on
+      else eq.push([d, o, h, l, c, v, last[4]]);
+      if (ix) { if (ix.at(-1)[0] === d) ix.at(-1)[1] = c; else if (ix.at(-1)[0] < d) ix.push([d, c]); }
+      changed = true;
+    }
+    return changed;
+  };
+  const since = new Map(); // first date we asked Upstox for, per symbol: one day after the saved history
+  const extend = async s => {
+    if (!ctx.D.equity[s]) return;
+    if (!since.has(s)) { const d = new Date(ctx.D.equity[s].at(-1)[0] + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1); since.set(s, d.toISOString().slice(0, 10)); }
+    try {
+      const r = await fetch(`/api/live?candles=${encodeURIComponent(s)}&since=${since.get(s)}`);
+      if (!r.ok || stopped) return;
+      if (!merge(s, (await r.json()).rows)) return;
+      if (s === sym) redraw();
+      if (INDEX[s]) $$('.chart[data-chart="indexLine"]', scope).filter(el => (JSON.parse(el.dataset.o || '{}').which || 'NIFTY') === INDEX[s]).forEach(el => replay(el, ctx));
+    } catch { /* keep the saved history */ }
+  };
+  let stopped = false;
+  const refresh = () => [...new Set([sym, 'NIFTY 50', 'NIFTY BANK'])].forEach(extend);
+  refresh();
+  const timer = setInterval(refresh, 60000);
+  return { stop() { stopped = true; clearInterval(timer); } };
 }
 
 // ------------------------------------------------------------------ the Results page stock picker

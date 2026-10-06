@@ -95,8 +95,9 @@ CTA = {"model": "Price an option", "finding": "See the results", "market": "Open
 
 # ------------------------------------------------------------------ market ---------------
 MARKET_TITLE = "Market"
-MARKET_SUB = (f"Daily history is NSE's official closes, {FIRST_DAY} to {LAST_DAY}, {N_DAYS} trading days. "
-              "The price and change beside each name are live, from Upstox, while the market's open.")
+MARKET_SUB = (f"Daily history starts {FIRST_DAY}: NSE's official closes to {LAST_DAY}, then Upstox daily candles "
+              "up to today. The prices, today's candle and the day's figures are live from Upstox while the "
+              "market's open.")
 STATUS = f"Prices as of the NSE close, {LAST_DAY}, 15:30 IST"
 LIVE_LOADING = "Checking for live prices…"
 LIVE_OPEN = "Live, updated {time} IST"
@@ -813,8 +814,9 @@ PAGES = [
 ]
 
 # ------------------------------------------------------------------ market
-MARKET_SUB = (f"The daily charts use NSE's official closing prices from {FIRST_DAY} to {LAST_DAY}, which is {N_DAYS} "
-              "trading days. The price and change next to each name are live from Upstox while the market is open.")
+MARKET_SUB = (f"The daily charts start on {FIRST_DAY}. Up to {LAST_DAY} they use NSE's official closing prices; after "
+              "that, daily prices from Upstox, up to today. While the market is open, the prices, today's candle and "
+              "the day's figures are live.")
 LIVE_CLOSED = "The market is closed. Showing the last traded price."
 LIVE_FALLBACK = "Live prices aren't available right now. These are NSE's last closing prices."
 UNIVERSE = ("NIFTY 50, NIFTY BANK, and the 40 most traded shares that have options. Every share we show an implied "

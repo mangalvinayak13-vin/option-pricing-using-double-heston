@@ -13,6 +13,7 @@ to the Physics project SEM 1 .env file the same way src/upstox_data_fetcher.py a
 from __future__ import annotations
 
 import os
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -88,3 +89,33 @@ def fetch_live_quotes() -> dict:
         quotes[sym] = {"last": last, "chg": chg, "pct": pct, "open": ohlc.get("open"), "high": ohlc.get("high"),
                         "low": ohlc.get("low"), "prev_close": prev, "volume": row.get("volume")}
     return {"status": "live" if quotes else "empty", "asof": asof, "market_open": market_open(), "quotes": quotes}
+
+
+def fetch_candles(sym: str, since: str) -> dict:
+    """Daily candles for one symbol from `since` (YYYY-MM-DD) to today, oldest first, as
+    [date, open, high, low, close, volume]: Upstox v3 historical days up to yesterday, plus
+    today's candle so far from v3 intraday. Fills the gap between the saved NSE history and now.
+    Index volume comes back 0 from Upstox (it isn't traded); the page shows that as a dash."""
+    asof = datetime.now(timezone.utc).isoformat()
+    key, token = INSTRUMENT_MAP.get(sym), _token()
+    if not key or not token or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", since or ""):
+        return {"status": "bad_request" if token else "no_token", "asof": asof, "sym": sym, "rows": []}
+    try:
+        import requests
+        from urllib.parse import quote
+        h = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        today = datetime.now(_IST).date()
+        k = quote(key, safe="")
+        rows = []
+        if since < today.isoformat():
+            r = requests.get(f"https://api.upstox.com/v3/historical-candle/{k}/days/1/"
+                             f"{(today - timedelta(days=1)).isoformat()}/{since}", headers=h, timeout=8)
+            r.raise_for_status()
+            rows += r.json().get("data", {}).get("candles", [])
+        r = requests.get(f"https://api.upstox.com/v3/historical-candle/intraday/{k}/days/1", headers=h, timeout=8)
+        r.raise_for_status()
+        rows += r.json().get("data", {}).get("candles", [])
+    except Exception as e:
+        return {"status": "error", "error": type(e).__name__, "asof": asof, "sym": sym, "rows": []}
+    out = {c[0][:10]: [c[0][:10], c[1], c[2], c[3], c[4], c[5]] for c in rows if c[0][:10] >= since}
+    return {"status": "live", "asof": asof, "sym": sym, "rows": [out[d] for d in sorted(out)]}
