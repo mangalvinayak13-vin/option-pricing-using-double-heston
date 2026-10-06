@@ -8,6 +8,7 @@ import { createFerroNav } from './core/nav-ferro.js';
 import { observe, resetObservers, stopAllLoops, reduced } from './core/motion.js';
 import { mountCharts } from './core/charts.js';
 import { mountControllers } from './core/controllers.js';
+import { loadLiveChain } from './core/live-chain.js';
 
 const root = document.documentElement;
 const app = document.getElementById('app');
@@ -95,6 +96,13 @@ async function switchTheme(id) {
 const controls = initControls({ onTheme: switchTheme });
 on(what => { if (what === 'mode') controls.sync(); });
 await render(theme());
+// Price an option opens on the saved chain, then re-renders on live NIFTY options when they arrive
+if (page === 'model') loadLiveChain(ctx).then(async live => {
+  if (!live || busy) return;
+  const a = anchor();
+  await render(theme());
+  restore(a);
+});
 document.body.dataset.ready = '1';
 document.fonts?.ready.then(() => { document.body.dataset.h = String(document.documentElement.scrollHeight); });
 export { THEMES, mode };

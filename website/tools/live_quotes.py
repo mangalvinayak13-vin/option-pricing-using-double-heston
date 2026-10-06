@@ -47,13 +47,47 @@ def _token() -> str | None:
 
 
 def market_open(now: datetime | None = None) -> bool:
-    """NSE's equity cash-market hours, 09:15-15:30 IST, Monday-Friday. No holiday calendar here --
-    this only drives a UI label ("Live" vs "Market closed"), never whether we trust the quote."""
+    """NSE's equity cash-market hours by the clock, 09:15-15:30 IST, Monday-Friday: the fallback when
+    NSE's own status (market_state) can't be read. It only drives a label, never whether we trust a quote."""
     now = (now or datetime.now(_IST)).astimezone(_IST)
     if now.weekday() >= 5:
         return False
     hm = now.hour * 60 + now.minute
     return 9 * 60 + 15 <= hm <= 15 * 60 + 30
+
+
+_HOLIDAYS: dict = {"day": None, "list": []}
+
+
+def _holiday_today(token: str, today) -> str | None:
+    """Today's NSE trading holiday by name (e.g. "Gandhi Jayanti"), from Upstox's holiday calendar,
+    fetched once a day."""
+    import requests
+    if _HOLIDAYS["day"] != today:
+        r = requests.get("https://api.upstox.com/v2/market/holidays", headers={"Authorization": f"Bearer {token}",
+                         "Accept": "application/json"}, timeout=4)
+        r.raise_for_status()
+        _HOLIDAYS.update(day=today, list=r.json().get("data") or [])
+    return next((h.get("description") for h in _HOLIDAYS["list"] if h.get("date") == today.isoformat()
+                 and h.get("holiday_type") == "TRADING_HOLIDAY" and "NSE" in (h.get("closed_exchanges") or [])), None)
+
+
+def market_state(token: str, now: datetime | None = None) -> tuple[bool, str | None]:
+    """(open, holiday): NSE's own status via Upstox, so holidays and special sessions count; when that
+    can't be read, the clock. `holiday` names today's trading holiday when there is one."""
+    import requests
+    now = (now or datetime.now(_IST)).astimezone(_IST)
+    try:
+        holiday = _holiday_today(token, now.date())
+    except Exception:
+        holiday = None
+    try:
+        r = requests.get("https://api.upstox.com/v2/market/status/NSE", headers={"Authorization": f"Bearer {token}",
+                         "Accept": "application/json"}, timeout=4)
+        r.raise_for_status()
+        return r.json()["data"]["status"] == "NORMAL_OPEN", holiday
+    except Exception:
+        return (not holiday and market_open(now)), holiday
 
 
 def fetch_live_quotes() -> dict:
@@ -88,7 +122,8 @@ def fetch_live_quotes() -> dict:
         pct = round(chg / prev * 100, 4) if prev and chg is not None else None
         quotes[sym] = {"last": last, "chg": chg, "pct": pct, "open": ohlc.get("open"), "high": ohlc.get("high"),
                         "low": ohlc.get("low"), "prev_close": prev, "volume": row.get("volume")}
-    return {"status": "live" if quotes else "empty", "asof": asof, "market_open": market_open(), "quotes": quotes}
+    is_open, holiday = market_state(token)
+    return {"status": "live" if quotes else "empty", "asof": asof, "market_open": is_open, "holiday": holiday, "quotes": quotes}
 
 
 def fetch_candles(sym: str, since: str) -> dict:

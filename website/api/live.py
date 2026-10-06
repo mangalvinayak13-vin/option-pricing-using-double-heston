@@ -48,6 +48,39 @@ def _market_open(now=None):
     return 9 * 60 + 15 <= hm <= 15 * 60 + 30
 
 
+_HOLIDAYS = {"day": None, "list": []}
+
+
+def _holiday_today(token, today):
+    """Today's NSE trading holiday by name, from Upstox's holiday calendar, fetched once a day per instance."""
+    import requests
+    if _HOLIDAYS["day"] != today:
+        r = requests.get("https://api.upstox.com/v2/market/holidays", headers={"Authorization": f"Bearer {token}",
+                         "Accept": "application/json"}, timeout=4)
+        r.raise_for_status()
+        _HOLIDAYS.update(day=today, list=r.json().get("data") or [])
+    return next((h.get("description") for h in _HOLIDAYS["list"] if h.get("date") == today.isoformat()
+                 and h.get("holiday_type") == "TRADING_HOLIDAY" and "NSE" in (h.get("closed_exchanges") or [])), None)
+
+
+def _market_state(token):
+    """(open, holiday): NSE's own status via Upstox, so holidays and special sessions count; the clock
+    when that can't be read. Mirrors market_state in website/tools/live_quotes.py."""
+    import requests
+    now = datetime.now(_IST)
+    try:
+        holiday = _holiday_today(token, now.date())
+    except Exception:
+        holiday = None
+    try:
+        r = requests.get("https://api.upstox.com/v2/market/status/NSE", headers={"Authorization": f"Bearer {token}",
+                         "Accept": "application/json"}, timeout=4)
+        r.raise_for_status()
+        return r.json()["data"]["status"] == "NORMAL_OPEN", holiday
+    except Exception:
+        return (not holiday and _market_open(now)), holiday
+
+
 def _fetch():
     token = os.getenv("UPSTOX_ACCESS_TOKEN")
     asof = datetime.now(timezone.utc).isoformat()
@@ -76,7 +109,8 @@ def _fetch():
         pct = round(chg / prev * 100, 4) if prev and chg is not None else None
         quotes[sym] = {"last": last, "chg": chg, "pct": pct, "open": ohlc.get("open"), "high": ohlc.get("high"),
                         "low": ohlc.get("low"), "prev_close": prev, "volume": row.get("volume")}
-    return {"status": "live" if quotes else "empty", "asof": asof, "market_open": _market_open(), "quotes": quotes}
+    is_open, holiday = _market_state(token)
+    return {"status": "live" if quotes else "empty", "asof": asof, "market_open": is_open, "holiday": holiday, "quotes": quotes}
 
 
 def _candles(sym, since):

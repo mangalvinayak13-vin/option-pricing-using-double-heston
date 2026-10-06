@@ -7,6 +7,7 @@ import { retarget } from './motion.js';
 import { renderChart, morphPath } from './charts.js';
 import { price, DEFAULT_PARAMS, OFFLINE_HELP, feller } from './model.js';
 import { stockLine } from './blocks.js';
+import { marketOf, refreshLiveChain, istTime as hhmm } from './live-chain.js';
 import { createPA3D } from './pa3d.js';
 
 export function mountControllers(scope, ctx) {
@@ -14,7 +15,7 @@ export function mountControllers(scope, ctx) {
   segs(scope);
   videoSlots(scope, ctx);
   stops.push(explainHover(scope));
-  if (scope.querySelector('[data-ctl="model-form"], [data-param]')) modelPage(scope, ctx);
+  if (scope.querySelector('[data-ctl="model-form"], [data-param]')) { modelPage(scope, ctx); stops.push({ stop: () => stopModel?.() }); }
   if (scope.querySelector('[data-chart="candles"]')) stops.push(marketPage(scope, ctx));
   if (scope.querySelector('[data-in="finding-sym"]')) findingPage(scope, ctx);
   $$('[data-pa3d]', scope).forEach(el => stops.push(createPA3D(el, ctx.PA)));
@@ -63,14 +64,12 @@ function liveQuotes(scope, ctx) {
     });
     ctx.liveQuotes = q; // so picking another stock on the Market page shows its live figures at once
     liveStats(scope, q[store.get('market.sym', 'RELIANCE')]);
-    $$('[data-bind="live-status"]', scope).forEach(el => {
-      if (live.status !== 'live' || !Object.keys(q).length) { el.textContent = C.LIVE_FALLBACK; return; }
-      el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
-    });
+    const ok = live.status === 'live' && Object.keys(q).length;
+    const state = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof))
+      : live.holiday ? C.LIVE_HOLIDAY.replace('{day}', live.holiday) : C.LIVE_CLOSED;
+    $$('[data-bind="live-status"]', scope).forEach(el => { el.textContent = ok ? state : C.LIVE_FALLBACK; });
     // the header chip says the saved NSE close until live prices arrive, then says they're live
-    if (live.status === 'live' && Object.keys(q).length) $$('[data-bind="site-status"]', document).forEach(el => {
-      el.textContent = live.market_open ? C.LIVE_OPEN.replace('{time}', istTime(live.asof)) : C.LIVE_CLOSED;
-    });
+    if (ok) $$('[data-bind="site-status"]', document).forEach(el => { el.textContent = state; });
   };
   let stopped = false, timer = 0;
   const poll = async () => {
@@ -175,21 +174,34 @@ function segs(scope) {
 }
 
 // ------------------------------------------------------------------ the model page
+let stopModel = null;
 function modelPage(scope, ctx) {
+  stopModel?.();
   const K = ctx.D.contract;
   const bind = k => $$(`[data-bind="${k}"]`, scope);
   let params = { ...DEFAULT_PARAMS, ...store.get('model.params', {}) };
   let strike = store.get('model.strike', K.strike), kind = store.get('model.kind', 'call');
+  if (!ctx.D.chain.some(r => r.strike === strike)) strike = K.strike; // a strike from another chain
   const isDefault = () => Object.keys(DEFAULT_PARAMS).every(k => Math.abs(params[k] - DEFAULT_PARAMS[k]) < 1e-9) && strike === K.strike && kind === 'call';
 
   const setStatus = (txt, cls = '') => bind('status').forEach(el => { el.textContent = txt; el.dataset.state = cls; });
 
   // market values for the chosen contract are fixed data; only the model's side is recomputed
   function marketSide() {
-    const row = ctx.D.chain.find(r => r.strike === strike);
+    const K = ctx.D.contract, row = ctx.D.chain.find(r => r.strike === strike);
     const px = row[kind], iv = row[`${kind}_iv`];
-    bind('mkt').forEach(el => { el.textContent = `₹${inr(px)}`; });
+    bind('mkt').forEach(el => { el.textContent = px != null ? `₹${inr(px)}` : '–'; });
     bind('mkt-iv').forEach(el => { el.textContent = iv != null ? `${iv.toFixed(2)}%` : '–'; });
+    if (K.live) bind('mkt-when').forEach(el => {
+      el.textContent = `${row[`${kind}_src`] === 'mid' ? ctx.C.MKT_MID : ctx.C.MKT_LAST}, ${hhmm(K.asof)} IST`;
+    });
+    // the live chain's market columns and the underlying move between reprices
+    for (const r of ctx.D.chain) for (const side of ['call', 'put']) {
+      bind(`mk-${side}-${r.strike}`).forEach(el => { el.textContent = r[side] != null ? inr(r[side]) : '–'; });
+      bind(`mk-${side}-iv-${r.strike}`).forEach(el => { el.textContent = r[`${side}_iv`] != null ? `${r[`${side}_iv`].toFixed(1)}%` : '–'; });
+    }
+    bind('spot').forEach(el => { el.textContent = inr(K.spot); });
+    bind('dte').forEach(el => { el.textContent = `${K.dte} days`; });
     bind('contract').forEach(el => { el.textContent = `NIFTY ${inr(strike, 0)} ${kind}`; });
     $$('.b-chain tr[data-strike]', scope).forEach(tr => tr.classList.toggle('sel', +tr.dataset.strike === strike));
     return px;
@@ -212,7 +224,7 @@ function modelPage(scope, ctx) {
     const mkt = marketSide();
     bind('dh').forEach(el => { flash(el, res.price); retarget(el, res.price, { f: fmt.inr, pre: '₹' }); });
     bind('dh-iv').forEach(el => { flash(el, res.iv); retarget(el, res.iv, { suf: '%' }); });
-    const gap = res.price - mkt;
+    const gap = mkt != null ? res.price - mkt : NaN;
     bind('gap').forEach(el => { flash(el, gap); retarget(el, gap, { f: v => (v < 0 ? '−' : '+') + '₹' + inr(Math.abs(v)) }); });
     if (res.mc) bind('mc').forEach(el => { el.textContent = `₹${inr(res.mc.price)} ± ${res.mc.se.toFixed(2)}`; });
     const g = res.greeks;
@@ -244,7 +256,7 @@ function modelPage(scope, ctx) {
   const run = debounce(async () => {
     store.set('model.params', params); store.set('model.strike', strike); store.set('model.kind', kind);
     setStatus('Pricing…', 'busy');
-    const r = await price({ strike, kind, params, mc: true });
+    const r = await price({ strike, kind, params, mc: true, market: marketOf(ctx) });
     if (r.stale) return;
     if (r.error) { setStatus(/fetch|network|Failed/i.test(r.error) ? OFFLINE_HELP : `Couldn't price that: ${r.error}`, 'error'); return; }
     apply(r.res);
@@ -278,7 +290,15 @@ function modelPage(scope, ctx) {
   });
   // a returning visitor (or a theme change) keeps their settings: reprice them once
   marketSide();
-  if (!isDefault()) { liveNumbers(); run(); }
+  if (!isDefault() || ctx.D.contract.live) { liveNumbers(); run(); }
+  // live options: the market side refreshes each minute; a move in NIFTY or a quote reprices the model
+  if (ctx.D.contract.live) {
+    const tick = setInterval(async () => {
+      if (document.hidden) return;
+      if (await refreshLiveChain(ctx)) { marketSide(); run(); }
+    }, 60000);
+    stopModel = () => clearInterval(tick);
+  }
 }
 
 // ------------------------------------------------------------------ the market page

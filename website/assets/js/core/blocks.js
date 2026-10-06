@@ -5,6 +5,7 @@ import { sparkline } from './charts.js';
 import { icon } from './icons.js';
 import { store } from './state.js';
 import { DEFAULT_PARAMS, SLIDER_KEYS } from './model.js';
+import { longDate } from './live-chain.js';
 
 const w = (ctx, sym) => ctx.D.watch.find(x => x.sym === sym);
 
@@ -88,8 +89,8 @@ export function pricingForm(ctx, cls = 'b-form') {
   const strike = store.get('model.strike', K.strike), kind = store.get('model.kind', 'call');
   const opts = ctx.D.chain.map(r => `<option value="${r.strike}"${r.strike === strike ? ' selected' : ''}>${inr(r.strike, 0)}${r.strike === K.strike ? ' (at the money)' : ''}</option>`).join('');
   return `<form class="${cls}" data-ctl="model-form" onsubmit="return false">
-    <div class="field"><span>Underlying</span><div class="b-fixed">NIFTY 50 <span class="b-sub num">${inr(K.spot)}</span></div></div>
-    <div class="field"><span>Expiry</span><div class="b-fixed">${esc(C.EXPIRY)} <span class="b-sub">${K.dte} days</span></div></div>
+    <div class="field"><span>Underlying</span><div class="b-fixed">NIFTY 50 <span class="b-sub num" data-bind="spot">${inr(K.spot)}</span></div></div>
+    <div class="field"><span>Expiry</span><div class="b-fixed">${esc(longDate(K.expiry))} <span class="b-sub" data-bind="dte">${K.dte} days</span></div></div>
     <label class="field"><span>Strike</span><select class="select num" data-in="strike">${opts}</select></label>
     <div class="field"><span>Type</span>${seg('kind', [['call', 'Call'], ['put', 'Put']], kind, 'Option type')}</div>
   </form>`;
@@ -98,24 +99,32 @@ export function pricingForm(ctx, cls = 'b-form') {
 // the model's outputs: every value is live (data-bind) and animates to its new number
 export function priceReadouts(ctx) {
   const K = ctx.D.contract, row = ctx.D.chain.find(r => r.strike === K.strike);
+  // a live contract arrives unpriced: its model numbers show a dash until the first reprice lands
+  const priced = K.dh != null, gap = priced && row.call != null ? K.dh - row.call : null;
+  const iv = v => (v != null ? `${v.toFixed(2)}%` : '–');
   return {
-    dh: `<b class="num" data-bind="dh" data-v="${K.dh}" data-count="${K.dh}" data-fmt="inr" data-pre="₹">₹${inr(K.dh)}</b>`,
-    dhIv: `<span class="num" data-bind="dh-iv" data-v="${K.dh_iv}">${K.dh_iv.toFixed(2)}%</span>`,
-    mkt: `<b class="num" data-bind="mkt">₹${inr(row.call)}</b>`,
-    mktIv: `<span class="num" data-bind="mkt-iv">${row.call_iv.toFixed(2)}%</span>`,
-    gap: `<b class="num" data-bind="gap" data-v="${K.dh - row.call}" data-count="${K.dh - row.call}" data-fmt="inr" data-pre="+₹">+₹${inr(K.dh - row.call)}</b>`,
-    mc: `<span class="num" data-bind="mc">₹${inr(K.mc)} ± ${K.mc_se.toFixed(2)}</span>`,
+    dh: priced ? `<b class="num" data-bind="dh" data-v="${K.dh}" data-count="${K.dh}" data-fmt="inr" data-pre="₹">₹${inr(K.dh)}</b>` : '<b class="num" data-bind="dh">–</b>',
+    dhIv: `<span class="num" data-bind="dh-iv"${priced ? ` data-v="${K.dh_iv}"` : ''}>${iv(K.dh_iv)}</span>`,
+    mkt: `<b class="num" data-bind="mkt">${row.call != null ? `₹${inr(row.call)}` : '–'}</b>`,
+    mktIv: `<span class="num" data-bind="mkt-iv">${iv(row.call_iv)}</span>`,
+    gap: gap != null ? `<b class="num" data-bind="gap" data-v="${gap}" data-count="${gap}" data-fmt="inr" data-pre="+₹">+₹${inr(gap)}</b>` : '<b class="num" data-bind="gap">–</b>',
+    mc: `<span class="num" data-bind="mc">${K.mc != null ? `₹${inr(K.mc)} ± ${K.mc_se.toFixed(2)}` : '–'}</span>`,
     contract: `<span data-bind="contract">NIFTY ${inr(K.strike, 0)} call</span>`,
-    status: `<span class="b-status" data-bind="status" role="status" aria-live="polite">Starting settings</span>`,
+    status: `<span class="b-status" data-bind="status" role="status" aria-live="polite">${priced ? 'Starting settings' : 'Pricing…'}</span>`,
   };
 }
 
 export function chainTable(ctx, cols = ['Strike', 'Call', 'Call IV', 'Model call', 'Put', 'Put IV', 'Model put']) {
   const K = ctx.D.contract;
+  const px = v => (v != null ? inr(v) : '–'), iv = v => (v != null ? `${v.toFixed(1)}%` : '–');
   const rows = ctx.D.chain.filter(r => Math.abs(r.strike - K.strike) <= 250).map(r =>
-    `<tr data-strike="${r.strike}"${r.strike === store.get('model.strike', K.strike) ? ' class="sel"' : ''}><td class="num"><b>${inr(r.strike, 0)}</b></td><td class="num">${inr(r.call)}</td><td class="num b-sub">${r.call_iv.toFixed(1)}%</td>` +
-    `<td class="num b-model" data-bind="ch-call-${r.strike}">${inr(r.dh_call)}</td><td class="num">${inr(r.put)}</td><td class="num b-sub">${r.put_iv.toFixed(1)}%</td><td class="num b-model" data-bind="ch-put-${r.strike}">${inr(r.dh_put)}</td></tr>`).join('');
-  return `<table class="b-tb b-chain"><caption class="vh">NIFTY option chain, 27 Oct 2026 expiry: market closing prices and implied volatilities against the model</caption><thead><tr>${cols.map((c, i) => `<th scope="col"${i ? ' class="num"' : ''}>${c}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+    `<tr data-strike="${r.strike}"${r.strike === store.get('model.strike', K.strike) ? ' class="sel"' : ''}><td class="num"><b>${inr(r.strike, 0)}</b></td>` +
+    `<td class="num" data-bind="mk-call-${r.strike}">${px(r.call)}</td><td class="num b-sub" data-bind="mk-call-iv-${r.strike}">${iv(r.call_iv)}</td>` +
+    `<td class="num b-model" data-bind="ch-call-${r.strike}">${px(r.dh_call)}</td>` +
+    `<td class="num" data-bind="mk-put-${r.strike}">${px(r.put)}</td><td class="num b-sub" data-bind="mk-put-iv-${r.strike}">${iv(r.put_iv)}</td>` +
+    `<td class="num b-model" data-bind="ch-put-${r.strike}">${px(r.dh_put)}</td></tr>`).join('');
+  const what = K.live ? 'live market prices' : 'market closing prices';
+  return `<table class="b-tb b-chain"><caption class="vh">NIFTY option chain, ${esc(longDate(K.expiry))} expiry: ${what} and implied volatilities against the model</caption><thead><tr>${cols.map((c, i) => `<th scope="col"${i ? ' class="num"' : ''}>${c}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 export function sliders(ctx, factor) {
@@ -136,7 +145,7 @@ export function greeks(ctx, cls = 'b-greek') {
   const K = ctx.D.contract;
   const units = ctx.C.GREEK_UNITS;
   const val = { Delta: [K.delta, 3], Gamma: [K.gamma, 5], Vega: [K.vega, 1], Theta: [K.theta, 2], Rho: [K.rho, 1] };
-  return Object.keys(units).map(n => `<div class="${cls}"><span class="b-lab">${n}</span><b class="num" data-bind="g-${n.toLowerCase()}" data-v="${val[n][0]}">${fmt.num(val[n][0], val[n][1])}</b><span class="b-sub">${units[n]}</span></div>`).join('');
+  return Object.keys(units).map(n => `<div class="${cls}"><span class="b-lab">${n}</span><b class="num" data-bind="g-${n.toLowerCase()}"${val[n][0] != null ? ` data-v="${val[n][0]}"` : ''}>${val[n][0] != null ? fmt.num(val[n][0], val[n][1]) : '–'}</b><span class="b-sub">${units[n]}</span></div>`).join('');
 }
 
 // ------------------------------------------------------------------ text blocks

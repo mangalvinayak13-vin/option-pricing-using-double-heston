@@ -1149,3 +1149,23 @@ EXPLAIN = {**EXPLAIN,
     "backtest": ("A new gadget that beats a ruler freshly redrawn every morning about one day in twenty.",
                  f"With the ANN's settings, Double Heston priced better than a same-day Black–Scholes on {BEAT_BS_NUM} of share-days."),
 }
+
+# ------------------------------------------------------------------ Price an option, on live NIFTY options
+PRICE_HEADS = {**PRICE_HEADS, "chain": "Every strike for"}
+CHAIN_FIG = "NSE closing prices and the jumpiness they imply, with the model's price for each strike"
+CHAIN_FIG_LIVE = "Live NSE prices and the jumpiness they imply, with the model's price for each strike"
+CHAIN_NOTE = ("Each row is one strike price. The call and put columns are NSE prices. IV is the jumpiness those prices "
+              "imply. The model columns are Double Heston at your settings. Click a row to price that strike.")
+MKT_MID, MKT_LAST = "Live quote (halfway between the best buy and sell prices)", "Last traded price"
+MODEL_EXPLAIN_LIVE = ("The model starts out assuming the price jumps about 20% a year. Right now the market is pricing "
+                      "about {iv}% for this option, so the model asks for more. Lower today's jumpiness (v₀) and the gap "
+                      "shrinks. There's no \"fit it for me\" button: the Results page explains why a computer can't choose "
+                      "all ten settings for you.")
+MODEL_SOURCE_LIVE = ("Option prices are live NSE prices from Upstox, updated every minute: halfway between the best buy "
+                     "and sell quotes, or the last trade when there is no quote. The expected future NIFTY level ({fwd}) "
+                     "comes from the call and put prices at the {k} strike. The interest rate is the RBI 91-day Treasury "
+                     "bill rate the research used.")
+LIVE_HOLIDAY = "NSE is closed today for {day}. Showing the last traded prices."
+CHART_NOTES = {**CHART_NOTES, "marketSmileLive": ("Market against model, by strike",
+    "Rings are live NSE prices, turned into implied volatility. The line is Double Heston at your settings. The dotted "
+    "line marks where NIFTY is now.")}

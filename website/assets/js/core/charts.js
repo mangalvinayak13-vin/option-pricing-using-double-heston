@@ -3,6 +3,7 @@
 // when it scrolls into view. Candles are always green up / red down with the price axis on the right.
 import { esc, inr, scale, ticks, uid, shortDate, clamp, median } from './util.js';
 import { whenInView, tween, ease, reduced } from './motion.js';
+import { longDate } from './live-chain.js';
 
 // ------------------------------------------------------------------ svg helpers
 const f1 = v => (Math.round(v * 10) / 10).toString();
@@ -143,7 +144,7 @@ registerChart('marketSmile', (w, o, ctx, el) => {
   const res = el._res; // latest model result, if repriced
   const lo = D.chain[0].strike - 50, hi = D.chain[D.chain.length - 1].strike + 50;
   const mk = D.chain.filter(r => r.mkt_iv).map(r => [r.strike, r.mkt_iv]);
-  const dh = res ? res.smile.filter(([k, v]) => v != null && k >= lo && k <= hi) : D.chain.map(r => [r.strike, r.dh_iv]);
+  const dh = res ? res.smile.filter(([k, v]) => v != null && k >= lo && k <= hi) : D.chain.map(r => [r.strike, r.dh_iv]).filter(p => p[1] != null);
   const all = [...mk.map(p => p[1]), ...dh.map(p => p[1])];
   const y0 = Math.floor(Math.min(...all) - 1.5), y1 = Math.ceil(Math.max(...all) + 1.5);
   const h = o.h, left = 50, right = 16, top = 40, bottom = 44;
@@ -159,12 +160,12 @@ registerChart('marketSmile', (w, o, ctx, el) => {
   const P = dh.map(([k, v]) => [xs(k), ys(v)]);
   b += Pa(P, 'c-model a-draw ms-line', 'pathLength="1"');
   b += mk.map(([k, v], i) => Ci(xs(k), ys(v), 5.5, 'c-dot-mk a-pop', `style="--i:${i};--d:500ms"`)).join('');
-  b += `<g class="a-fade" style="--d:300ms">` + Ci(left + 8, 16, 5.5, 'c-dot-mk') + T(left + 20, 21, 'Market, NSE close 25 Sep', 't-ink') +
+  b += `<g class="a-fade" style="--d:300ms">` + Ci(left + 8, 16, 5.5, 'c-dot-mk') + T(left + 20, 21, K.live ? 'Market, live' : 'Market, NSE close 25 Sep', 't-ink') +
     L(left + 250, 16, left + 280, 16, 'c-model') + T(left + 290, 21, res ? 'Double Heston, your settings' : 'Double Heston, starting settings', 't-ink') + '</g>';
   const byK = new Map(mk);
   return {
     h, body: b, points: P,
-    label: 'Implied volatility by strike for the 27 Oct 2026 NIFTY expiry: market closing prices against Double Heston',
+    label: `Implied volatility by strike for the ${longDate(K.expiry)} NIFTY expiry: ${K.live ? 'live market prices' : 'market closing prices'} against Double Heston`,
     hover: { xs: dh.map(p => xs(p[0])), x0: left, x1: w - right, top, bottom: h - bottom, ys: i => [P[i][1], byK.has(dh[i][0]) ? ys(byK.get(dh[i][0])) : null],
       tipY: i => Math.min(P[i][1], byK.has(dh[i][0]) ? ys(byK.get(dh[i][0])) : 1e9) - 8,
       html: i => `Strike <b>${inr(dh[i][0], 0)}</b>: model <b>${dh[i][1].toFixed(2)}%</b>${byK.has(dh[i][0]) ? `, market <b>${byK.get(dh[i][0]).toFixed(2)}%</b>` : ''}` },
